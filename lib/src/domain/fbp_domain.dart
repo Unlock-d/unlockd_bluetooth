@@ -27,8 +27,6 @@ typedef UnlockdCharacteristicProperties = CharacteristicProperties;
 
 typedef UnlockdBluetoothDescriptor = BluetoothDescriptor;
 
-typedef UnlockdBluetoothDeviceType = BluetoothDeviceType;
-
 typedef UnlockdAdvertisementData = AdvertisementData;
 
 typedef UnlockdBluetoothException = FlutterBluePlusException;

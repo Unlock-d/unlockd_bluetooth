@@ -8,13 +8,6 @@ extension BluetoothAdapterStateExtension on UnlockdBluetoothAdapterState {
   }
 }
 
-extension BluetoothDeviceTypeExtension on UnlockdBluetoothDeviceType {
-  static UnlockdBluetoothDeviceType fromValue(String value) {
-    return UnlockdBluetoothDeviceType.values
-        .firstWhere((element) => element.name == value);
-  }
-}
-
 extension BluetoothConnectionStateExtension on UnlockdBluetoothConnectionState {
   static UnlockdBluetoothConnectionState fromValue(String value) {
     return UnlockdBluetoothConnectionState.values
@@ -24,7 +17,7 @@ extension BluetoothConnectionStateExtension on UnlockdBluetoothConnectionState {
 
 extension AdvertisementDataExtension on UnlockdAdvertisementData {
   Json toJson() => {
-        'localName': localName,
+        'localName': advName,
         'txPowerLevel': txPowerLevel,
         'connectable': connectable,
         'manufacturerData':
@@ -35,7 +28,7 @@ extension AdvertisementDataExtension on UnlockdAdvertisementData {
 
   static UnlockdAdvertisementData fromJson(Json json) {
     return UnlockdAdvertisementData(
-      localName: json['localName'] as String,
+      advName: json['localName'] as String,
       txPowerLevel: json['txPowerLevel'] as int?,
       connectable: json['connectable'] as bool,
       manufacturerData: (json['manufacturerData'] as Json).map(
@@ -46,12 +39,12 @@ extension AdvertisementDataExtension on UnlockdAdvertisementData {
       ),
       serviceData: (json['serviceData'] as Json).map(
         (key, value) => MapEntry(
-          key,
+          Guid.fromString(key),
           (value as List<dynamic>).map((e) => e as int).toList(),
         ),
       ),
       serviceUuids: (json['serviceUuids'] as List<dynamic>)
-          .map((e) => e as String)
+          .map((e) => Guid.fromString(e as String))
           .toList(),
     );
   }
@@ -59,7 +52,7 @@ extension AdvertisementDataExtension on UnlockdAdvertisementData {
 
 extension BluetoothServiceExtension on UnlockdBluetoothService {
   Json toJson() => {
-        'service_uuid': uuid.toMac(),
+        'service_uuid': uuid.str128,
         'is_primary': isPrimary ? 1 : 0,
         'remote_id': remoteId.str,
         'characteristics': characteristics.map((e) => e.toJson()).toList(),
@@ -73,8 +66,8 @@ extension BluetoothServiceExtension on UnlockdBluetoothService {
 
 extension BluetoothCharacteristicExtension on UnlockdBluetoothCharacteristic {
   Json toJson() => {
-        'characteristic_uuid': uuid.toMac(),
-        'service_uuid': serviceUuid.toMac(),
+        'characteristic_uuid': uuid.str128,
+        'service_uuid': serviceUuid.str128,
         'remote_id': remoteId.str,
         'properties': properties.toJson(),
         'descriptors': descriptors.map((e) => e.toJson()).toList(),
@@ -89,9 +82,9 @@ extension BluetoothCharacteristicExtension on UnlockdBluetoothCharacteristic {
 
 extension BluetoothDescriptorExtension on UnlockdBluetoothDescriptor {
   Json toJson() => {
-        'descriptor_uuid': uuid.toMac(),
-        'characteristic_uuid': characteristicUuid.toMac(),
-        'service_uuid': serviceUuid.toMac(),
+        'descriptor_uuid': uuid.str128,
+        'characteristic_uuid': characteristicUuid.str128,
+        'service_uuid': serviceUuid.str128,
         'remote_id': remoteId.str,
       };
 

@@ -6,11 +6,9 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 
-import 'package:example/injection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:injectable/injectable.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:unlockd_bluetooth/unlockd_bluetooth.dart';
 
@@ -24,7 +22,9 @@ final Map<UnlockdDeviceIdentifier, ValueNotifier<bool>>
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await configureGetItDependencies(Environment.dev);
+
+  const isEmulator = true;
+
   if (Platform.isAndroid) {
     [
       Permission.location,
@@ -34,12 +34,10 @@ Future<void> main() async {
       Permission.bluetoothConnect,
       Permission.bluetoothScan,
     ].request().then((status) {
-      runApp(FlutterBlueApp(
-          isEmulator: !getIt<bool>(instanceName: 'isPhysicalDevice')));
+      runApp(const FlutterBlueApp(isEmulator: isEmulator));
     });
   } else {
-    runApp(FlutterBlueApp(
-        isEmulator: !getIt<bool>(instanceName: 'isPhysicalDevice')));
+    runApp(const FlutterBlueApp(isEmulator: isEmulator));
   }
 }
 

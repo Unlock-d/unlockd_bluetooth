@@ -5,9 +5,8 @@ import 'package:fpdart/fpdart.dart';
 import 'package:unlockd_bluetooth/unlockd_bluetooth.dart';
 import 'package:watcher/watcher.dart';
 
-const bluetoothConfigPath = '/storage/self/primary/Download/bluetooth.json';
-const bluetoothDeviceConfigPath =
-    '/storage/self/primary/Download/bluetooth_device.json';
+const bluetoothConfigPath = 'assets/bluetooth.json';
+const bluetoothDeviceConfigPath = 'assets/bluetooth_device.json';
 
 Stream<WatchEvent> watchConfig() => FileWatcher(bluetoothConfigPath).events;
 
@@ -17,9 +16,7 @@ Stream<WatchEvent> watchBluetoothDeviceConfig() =>
 TaskEither<FileHandlingException, Json> readJsonFile(FilePath path) =>
     openFile(path)
         .chainTask(readFileContents)
-        // TODO(PJ): for some reason this cast is needed. Figure out why.
-        // ignore: unnecessary_cast
-        .mapLeft((l) => l as FileHandlingException)
+        .mapLeft((l) => l)
         .map(jsonDecode)
         .map((dynamicValue) => dynamicValue as Json);
 

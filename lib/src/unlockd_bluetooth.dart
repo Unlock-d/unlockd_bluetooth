@@ -28,7 +28,7 @@ sealed class UnlockdBluetooth {
   }) =>
       isEmulator
           ? EmulatorBluePlus.connectedSystemDevices
-          : FlutterBluePlus.connectedSystemDevices;
+          : FlutterBluePlus.systemDevices;
 
   static TurnOn turnOn({
     required IsEmulator isEmulator,
@@ -48,7 +48,5 @@ sealed class UnlockdBluetooth {
   static Stream<ScanResults> scanResults({
     required IsEmulator isEmulator,
   }) =>
-      isEmulator
-          ? EmulatorBluePlus.scanResults
-          : FlutterBluePlus.scanResults;
+      isEmulator ? EmulatorBluePlus.scanResults : FlutterBluePlus.scanResults;
 }

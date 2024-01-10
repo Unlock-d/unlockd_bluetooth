@@ -7,37 +7,37 @@ typedef IsEmulator = bool;
 class EmulatedBluetoothDevice extends UnlockdBluetoothDevice {
   EmulatedBluetoothDevice({
     required super.remoteId,
-    required super.localName,
-    required super.type,
+    required this.discoveredServices,
     this.deviceConnectionState,
     this.rssi,
-    this.discoveredServices,
   });
 
   final UnlockdBluetoothConnectionState? deviceConnectionState;
   final int? rssi;
-  final List<UnlockdBluetoothService>? discoveredServices;
+  final List<UnlockdBluetoothService> discoveredServices;
 
   @override
   Future<void> connect({
     Duration timeout = const Duration(seconds: 35),
+    int? mtu,
     bool autoConnect = false,
   }) async {
     print('override connect');
   }
 
   @override
-  Future<void> disconnect({int timeout = 35}) async {
+  Future<void> disconnect({bool queue = false, int timeout = 35}) async {
     print('override disconnect');
   }
 
   @override
-  List<UnlockdBluetoothService>? get servicesList {
+  List<UnlockdBluetoothService> get servicesList {
     return discoveredServices;
   }
 
   @override
   Future<List<UnlockdBluetoothService>> discoverServices({
+    bool subscribeToServicesChanged = true,
     int timeout = 15,
   }) async =>
       readBluetoothDeviceState()
@@ -80,30 +80,25 @@ class EmulatedBluetoothDevice extends UnlockdBluetoothDevice {
 
   Json toJson() => {
         'remoteId': remoteId.str,
-        'localName': localName,
-        'type': type.name,
+        'localName': advName,
         'deviceConnectionState': deviceConnectionState?.name,
         'rssi': rssi,
         'discoveredServices':
-            discoveredServices?.map((e) => e.toJson()).toList(),
+            discoveredServices.map((e) => e.toJson()).toList(),
       };
 
   static EmulatedBluetoothDevice fromJson(Json json) {
     return EmulatedBluetoothDevice(
       remoteId: DeviceIdentifier(json['remoteId'] as String),
-      localName: json['localName'] as String,
-      type: BluetoothDeviceTypeExtension.fromValue(json['type'] as String),
       deviceConnectionState: json['deviceConnectionState'] != null
           ? BluetoothConnectionStateExtension.fromValue(
               json['deviceConnectionState'] as String,
             )
           : null,
       rssi: json['rssi'] as int?,
-      discoveredServices: json['discoveredServices'] != null
-          ? (json['discoveredServices'] as List<dynamic>)
-              .map((e) => BluetoothServiceExtension.fromJson(e as Json))
-              .toList()
-          : null,
+      discoveredServices: (json['discoveredServices'] as List<dynamic>)
+          .map((e) => BluetoothServiceExtension.fromJson(e as Json))
+          .toList(),
     );
   }
 }
