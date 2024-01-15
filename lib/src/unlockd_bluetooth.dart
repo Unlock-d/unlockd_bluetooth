@@ -1,52 +1,93 @@
 import 'dart:async';
 
-import 'package:flutter_blue_plus/flutter_blue_plus.dart';
-import 'package:unlockd_bluetooth/unlockd_bluetooth.dart';
+import 'package:isar/isar.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:unlockd_bluetooth/src/domain/bluetooth_emulator_config.dart';
+import 'package:unlockd_bluetooth/src/domain/unlockd_bluetooth_adapter_state.dart';
+import 'package:unlockd_bluetooth/src/domain/unlockd_bluetooth_device.dart';
+import 'package:unlockd_bluetooth/src/domain/unlockd_scan_result.dart';
+import 'package:unlockd_bluetooth/src/fbp/fbp_bluetooth_config.dart';
+import 'package:unlockd_bluetooth/src/isar/isar.dart';
 
-sealed class UnlockdBluetooth {
+class UnlockdBluetooth {
   UnlockdBluetooth._();
 
-  static Stream<UnlockdBluetoothAdapterState> adapterState({
-    required IsEmulator isEmulator,
-  }) =>
-      isEmulator ? EmulatorBluePlus.adapterState : FlutterBluePlus.adapterState;
+  bool _initialized = false;
+  Isar? isar;
+  late BluetoothEmulatorConfig _emulatorConfig;
 
-  static FutureOr<bool> isScanningNow({
-    required IsEmulator isEmulator,
-  }) async =>
-      isEmulator
-          ? await EmulatorBluePlus.isScanningNow
-          : FlutterBluePlus.isScanningNow;
+  static final UnlockdBluetooth _instance = UnlockdBluetooth._();
 
-  static Stream<bool> isScanning({
-    required IsEmulator isEmulator,
-  }) =>
-      isEmulator ? EmulatorBluePlus.isScanning : FlutterBluePlus.isScanning;
+  static Future<UnlockdBluetooth> initialize({
+    Isar? isar,
+    bool isEmulator = false,
+  }) async {
+    assert(
+      !_instance._initialized,
+      'This instance is already initialized',
+    );
 
-  static Future<ConnectedBluetoothDevices> connectedSystemDevices({
-    required IsEmulator isEmulator,
-  }) =>
-      isEmulator
-          ? EmulatorBluePlus.connectedSystemDevices
-          : FlutterBluePlus.systemDevices;
+    await _instance._init(isar, isEmulator);
+    return _instance;
+  }
 
-  static TurnOn turnOn({
-    required IsEmulator isEmulator,
-  }) =>
-      isEmulator ? EmulatorBluePlus.turnOn : FlutterBluePlus.turnOn;
+  Future<void> _init(Isar? isar, bool isEmulator) async {
+    this.isar = isar;
+    _emulatorConfig = isEmulator
+        ? IsarBluetoothEmulatorConfig(isar ?? await _initIsar())
+        : FbpBluetoothConfig.instance;
+    _initialized = true;
+  }
 
-  static StartScan startScan({
-    required IsEmulator isEmulator,
-  }) =>
-      isEmulator ? EmulatorBluePlus.startScan : FlutterBluePlus.startScan;
+  Future<void> turnOn() => _emulatorConfig.turnOn();
 
-  static StopScan stopScan({
-    required IsEmulator isEmulator,
-  }) =>
-      isEmulator ? EmulatorBluePlus.stopScan : FlutterBluePlus.stopScan;
+  Future<void> turnOff() => _emulatorConfig.turnOff();
 
-  static Stream<ScanResults> scanResults({
-    required IsEmulator isEmulator,
+  Stream<UnlockdBluetoothAdapterState> adapterState() =>
+      _emulatorConfig.adapterState();
+
+  FutureOr<bool> isScanningNow() async => _emulatorConfig.isScanningNow();
+
+  Stream<bool> isScanning() => _emulatorConfig.isScanning();
+
+  Future<void> startScan({
+    Duration? timeout,
+    bool? androidUsesFineLocation,
   }) =>
-      isEmulator ? EmulatorBluePlus.scanResults : FlutterBluePlus.scanResults;
+      _emulatorConfig.startScan(
+        timeout: timeout,
+        androidUsesFineLocation: androidUsesFineLocation,
+      );
+
+  Future<void> stopScan() => _emulatorConfig.stopScan();
+
+  Future<List<UnlockdBluetoothDevice>> systemDevices() =>
+      _emulatorConfig.systemDevices();
+
+  Stream<List<UnlockdScanResult>> scanResults() =>
+      _emulatorConfig.scanResults();
+
+  static UnlockdBluetooth get instance {
+    assert(
+      _instance._initialized,
+      'You must initialize the UnlockdBluetooth instance '
+      'before calling UnlockdBluetooth.instance',
+    );
+    return _instance;
+  }
+
+  Future<Isar> _initIsar() async {
+    final dir = await getApplicationDocumentsDirectory();
+    return Isar.open(
+      [
+        IsarBluetoothConfigSchema,
+        IsarBluetoothDeviceSchema,
+        IsarBluetoothServiceSchema,
+        IsarBluetoothCharacteristicSchema,
+        IsarBluetoothDescriptorSchema,
+        IsarScanResultSchema,
+      ],
+      directory: dir.path,
+    );
+  }
 }

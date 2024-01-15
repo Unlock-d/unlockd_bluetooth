@@ -17,13 +17,17 @@ import 'widgets.dart';
 final snackBarKeyA = GlobalKey<ScaffoldMessengerState>();
 final snackBarKeyB = GlobalKey<ScaffoldMessengerState>();
 final snackBarKeyC = GlobalKey<ScaffoldMessengerState>();
-final Map<UnlockdDeviceIdentifier, ValueNotifier<bool>>
+final Map<String, ValueNotifier<bool>>
     isConnectingOrDisconnecting = {};
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   const isEmulator = true;
+  await UnlockdBluetooth.initialize(
+    isEmulator: isEmulator,
+  );
+  final bluetooth = UnlockdBluetooth.instance;
 
   if (Platform.isAndroid) {
     [
@@ -34,26 +38,25 @@ Future<void> main() async {
       Permission.bluetoothConnect,
       Permission.bluetoothScan,
     ].request().then((status) {
-      runApp(const FlutterBlueApp(isEmulator: isEmulator));
+      runApp(FlutterBlueApp(bluetooth: bluetooth));
     });
   } else {
-    runApp(const FlutterBlueApp(isEmulator: isEmulator));
+    runApp(FlutterBlueApp(bluetooth: bluetooth));
   }
 }
 
 class BluetoothAdapterStateObserver extends NavigatorObserver {
-  BluetoothAdapterStateObserver(this.isEmulator);
+  BluetoothAdapterStateObserver(this.bluetooth);
 
+  final UnlockdBluetooth bluetooth;
   StreamSubscription<UnlockdBluetoothAdapterState>? _btStateSubscription;
-  final bool isEmulator;
 
   @override
   void didPush(Route route, Route? previousRoute) {
     super.didPush(route, previousRoute);
     if (route.settings.name == '/deviceScreen') {
       // Start listening to Bluetooth state changes when a new route is pushed
-      _btStateSubscription ??=
-          UnlockdBluetooth.adapterState(isEmulator: isEmulator).listen((state) {
+      _btStateSubscription ??= bluetooth.adapterState().listen((state) {
         if (state != UnlockdBluetoothAdapterState.on) {
           // Pop the current route if Bluetooth is off
           navigator?.pop();
@@ -72,32 +75,32 @@ class BluetoothAdapterStateObserver extends NavigatorObserver {
 }
 
 class FlutterBlueApp extends StatelessWidget {
-  const FlutterBlueApp({Key? key, required this.isEmulator}) : super(key: key);
+  const FlutterBlueApp({Key? key, required this.bluetooth}) : super(key: key);
 
-  final bool isEmulator;
+  final UnlockdBluetooth bluetooth;
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       color: Colors.lightBlue,
       home: StreamBuilder<UnlockdBluetoothAdapterState>(
-          stream: UnlockdBluetooth.adapterState(isEmulator: isEmulator),
+          stream: bluetooth.adapterState(),
           initialData: UnlockdBluetoothAdapterState.unknown,
           builder: (c, snapshot) {
             final adapterState = snapshot.data;
             if (adapterState == UnlockdBluetoothAdapterState.on) {
               return FindDevicesScreen(
-                isEmulator: isEmulator,
+                bluetooth: bluetooth,
               );
             } else {
-              UnlockdBluetooth.stopScan(isEmulator: isEmulator).call();
+              bluetooth.stopScan();
               return BluetoothOffScreen(
                 adapterState: adapterState,
-                isEmulator: isEmulator,
+                bluetooth: bluetooth,
               );
             }
           }),
-      navigatorObservers: [BluetoothAdapterStateObserver(isEmulator)],
+      navigatorObservers: [BluetoothAdapterStateObserver(bluetooth)],
     );
   }
 }
@@ -106,10 +109,10 @@ class BluetoothOffScreen extends StatelessWidget {
   const BluetoothOffScreen({
     Key? key,
     this.adapterState,
-    required this.isEmulator,
+    required this.bluetooth,
   }) : super(key: key);
 
-  final IsEmulator isEmulator;
+  final UnlockdBluetooth bluetooth;
   final UnlockdBluetoothAdapterState? adapterState;
 
   @override
@@ -140,8 +143,7 @@ class BluetoothOffScreen extends StatelessWidget {
                   onPressed: () async {
                     try {
                       if (Platform.isAndroid) {
-                        await UnlockdBluetooth.turnOn(isEmulator: isEmulator)
-                            .call();
+                        await bluetooth.turnOn();
                       }
                     } catch (e) {
                       final snackBar =
@@ -160,10 +162,10 @@ class BluetoothOffScreen extends StatelessWidget {
 }
 
 class FindDevicesScreen extends StatefulWidget {
-  const FindDevicesScreen({Key? key, required this.isEmulator})
+  const FindDevicesScreen({Key? key, required this.bluetooth})
       : super(key: key);
 
-  final IsEmulator isEmulator;
+  final UnlockdBluetooth bluetooth;
 
   @override
   State<FindDevicesScreen> createState() => _FindDevicesScreenState();
@@ -181,11 +183,11 @@ class _FindDevicesScreenState extends State<FindDevicesScreen> {
         body: RefreshIndicator(
           onRefresh: () {
             setState(() {}); // force refresh of connectedSystemDevices
-            if (UnlockdBluetooth.isScanningNow(isEmulator: widget.isEmulator) ==
-                false) {
-              UnlockdBluetooth.startScan(isEmulator: widget.isEmulator).call(
-                  timeout: const Duration(seconds: 15),
-                  androidUsesFineLocation: false);
+            if (widget.bluetooth.isScanningNow() == false) {
+              widget.bluetooth.startScan(
+                timeout: const Duration(seconds: 15),
+                androidUsesFineLocation: false,
+              );
             }
             return Future.delayed(
               const Duration(milliseconds: 500),
@@ -195,14 +197,12 @@ class _FindDevicesScreenState extends State<FindDevicesScreen> {
             child: Column(
               children: <Widget>[
                 StreamBuilder<List<UnlockdBluetoothDevice>>(
-                  stream: Stream.fromFuture(
-                      UnlockdBluetooth.connectedSystemDevices(
-                          isEmulator: widget.isEmulator)),
+                  stream: Stream.fromFuture(widget.bluetooth.systemDevices()),
                   initialData: const [],
                   builder: (c, snapshot) => Column(
                     children: (snapshot.data ?? [])
                         .map((d) => ListTile(
-                              title: Text(d.localName),
+                              title: Text(d.platformName),
                               subtitle: Text(d.remoteId.toString()),
                               trailing: StreamBuilder<
                                   UnlockdBluetoothConnectionState>(
@@ -281,8 +281,7 @@ class _FindDevicesScreenState extends State<FindDevicesScreen> {
                   ),
                 ),
                 StreamBuilder<List<UnlockdScanResult>>(
-                  stream: UnlockdBluetooth.scanResults(
-                      isEmulator: widget.isEmulator),
+                  stream: widget.bluetooth.scanResults(),
                   initialData: const [],
                   builder: (c, snapshot) => Column(
                     children: (snapshot.data ?? [])
@@ -330,15 +329,14 @@ class _FindDevicesScreenState extends State<FindDevicesScreen> {
           ),
         ),
         floatingActionButton: StreamBuilder<bool>(
-          stream: UnlockdBluetooth.isScanning(isEmulator: widget.isEmulator),
+          stream: widget.bluetooth.isScanning(),
           initialData: false,
           builder: (c, snapshot) {
             if (snapshot.data ?? false) {
               return FloatingActionButton(
                 onPressed: () async {
                   try {
-                    UnlockdBluetooth.stopScan(isEmulator: widget.isEmulator)
-                        .call();
+                    widget.bluetooth.stopScan();
                   } catch (e) {
                     final snackBar =
                         snackBarFail(prettyException("Stop Scan Error:", e));
@@ -354,11 +352,9 @@ class _FindDevicesScreenState extends State<FindDevicesScreen> {
                   child: const Text("SCAN"),
                   onPressed: () async {
                     try {
-                      await UnlockdBluetooth.startScan(
-                              isEmulator: widget.isEmulator)
-                          .call(
-                              timeout: const Duration(seconds: 15),
-                              androidUsesFineLocation: false);
+                      await widget.bluetooth.startScan(
+                          timeout: const Duration(seconds: 15),
+                          androidUsesFineLocation: false);
                     } catch (e) {
                       final snackBar =
                           snackBarFail(prettyException("Start Scan Error:", e));
@@ -504,11 +500,11 @@ class DeviceScreen extends StatelessWidget {
       key: snackBarKeyC,
       child: Scaffold(
         appBar: AppBar(
-          title: Text(device.localName),
+          title: Text(device.platformName),
           actions: <Widget>[
             StreamBuilder<UnlockdBluetoothConnectionState>(
               stream: device.connectionState,
-              initialData: UnlockdBluetoothConnectionState.connecting,
+              initialData: UnlockdBluetoothConnectionState.disconnected,
               builder: (c, snapshot) {
                 VoidCallback? onPressed;
                 String text;
@@ -608,12 +604,12 @@ class DeviceScreen extends StatelessWidget {
             children: <Widget>[
               StreamBuilder<UnlockdBluetoothConnectionState>(
                 stream: device.connectionState,
-                initialData: UnlockdBluetoothConnectionState.connecting,
+                initialData: UnlockdBluetoothConnectionState.disconnected,
                 builder: (c, snapshot) => Column(
                   children: [
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Text('${device.remoteId}'),
+                      child: Text(device.remoteId),
                     ),
                     ListTile(
                       leading: Column(
@@ -642,47 +638,6 @@ class DeviceScreen extends StatelessWidget {
                       ),
                       title: Text(
                           'Device is ${snapshot.data.toString().split('.')[1]}.'),
-                      trailing: StreamBuilder<bool>(
-                        stream: device.isDiscoveringServices,
-                        initialData: false,
-                        builder: (c, snapshot) => IndexedStack(
-                          index: (snapshot.data ?? false) ? 1 : 0,
-                          children: <Widget>[
-                            TextButton(
-                              child: const Text("Get Services"),
-                              onPressed: () async {
-                                try {
-                                  await device.discoverServices();
-                                  final snackBar = snackBarGood(
-                                      "Discover Services: Success");
-                                  snackBarKeyC.currentState
-                                      ?.removeCurrentSnackBar();
-                                  snackBarKeyC.currentState
-                                      ?.showSnackBar(snackBar);
-                                } catch (e) {
-                                  final snackBar = snackBarFail(prettyException(
-                                      "Discover Services Error:", e));
-                                  snackBarKeyC.currentState
-                                      ?.removeCurrentSnackBar();
-                                  snackBarKeyC.currentState
-                                      ?.showSnackBar(snackBar);
-                                }
-                              },
-                            ),
-                            const IconButton(
-                              icon: SizedBox(
-                                width: 18.0,
-                                height: 18.0,
-                                child: CircularProgressIndicator(
-                                  valueColor:
-                                      AlwaysStoppedAnimation(Colors.grey),
-                                ),
-                              ),
-                              onPressed: null,
-                            )
-                          ],
-                        ),
-                      ),
                     ),
                   ],
                 ),
@@ -710,15 +665,7 @@ class DeviceScreen extends StatelessWidget {
                       }),
                 ),
               ),
-              StreamBuilder<List<UnlockdBluetoothService>>(
-                stream: device.servicesStream,
-                initialData: const [],
-                builder: (c, snapshot) {
-                  return Column(
-                    children: _buildServiceTiles(context, snapshot.data ?? []),
-                  );
-                },
-              ),
+              ..._buildServiceTiles(context, device.servicesList),
             ],
           ),
         ),
@@ -753,9 +700,7 @@ class DeviceScreen extends StatelessWidget {
 }
 
 String prettyException(String prefix, dynamic e) {
-  if (e is UnlockdBluetoothException) {
-    return "$prefix ${e.description}";
-  } else if (e is PlatformException) {
+  if (e is PlatformException) {
     return "$prefix ${e.message}";
   }
   return prefix + e.toString();

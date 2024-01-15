@@ -1,0 +1,4 @@
+enum UnlockdBluetoothConnectionState {
+  disconnected,
+  connected,
+}
