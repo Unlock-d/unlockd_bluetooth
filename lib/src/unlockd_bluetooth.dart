@@ -79,14 +79,7 @@ class UnlockdBluetooth {
   Future<Isar> _initIsar() async {
     final dir = await getApplicationDocumentsDirectory();
     return Isar.open(
-      [
-        IsarBluetoothConfigSchema,
-        IsarBluetoothDeviceSchema,
-        IsarBluetoothServiceSchema,
-        IsarBluetoothCharacteristicSchema,
-        IsarBluetoothDescriptorSchema,
-        IsarScanResultSchema,
-      ],
+      unlockdBluetoothSchemas,
       directory: dir.path,
     );
   }
