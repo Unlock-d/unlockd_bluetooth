@@ -61,4 +61,6 @@ abstract class UnlockdBluetoothDevice {
 
   /// Read the RSSI of connected remote device
   Future<int> readRssi();
+
+  Future<List<UnlockdBluetoothService>> discoverServices();
 }

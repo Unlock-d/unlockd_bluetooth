@@ -25,6 +25,7 @@ class IsarBluetoothDevice extends UnlockdBluetoothDevice {
   @override
   String advName = '';
 
+  @override
   int mtuNow = 0;
 
   int rssi = 0;
@@ -79,4 +80,10 @@ class IsarBluetoothDevice extends UnlockdBluetoothDevice {
 
   @override
   Future<int> readRssi() async => rssi;
+
+  @override
+  Future<List<UnlockdBluetoothService>> discoverServices() {
+    // TODO: implement discoverServices
+    throw UnimplementedError();
+  }
 }

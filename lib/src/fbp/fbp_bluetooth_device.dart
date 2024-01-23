@@ -55,4 +55,11 @@ class FbpBluetoothDevice extends UnlockdBluetoothDevice {
 
   @override
   Future<int> readRssi() => _device.readRssi();
+
+  @override
+  Future<List<UnlockdBluetoothService>> discoverServices() {
+    return _device
+        .discoverServices()
+        .then((value) => value.map(FbpBluetoothService.fromFbp).toList());
+  }
 }
