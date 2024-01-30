@@ -9,6 +9,10 @@ class FbpBluetoothDevice extends UnlockdBluetoothDevice {
     return FbpBluetoothDevice._(device);
   }
 
+  factory FbpBluetoothDevice.fromRemoteId(String remoteId) {
+    return FbpBluetoothDevice._(BluetoothDevice.fromId(remoteId));
+  }
+
   final BluetoothDevice _device;
 
   @override
@@ -44,7 +48,10 @@ class FbpBluetoothDevice extends UnlockdBluetoothDevice {
       _device.servicesList.map(FbpBluetoothService.fromFbp).toList();
 
   @override
-  Future<void> connect({required Duration timeout}) =>
+  Future<void> connect({
+    required Duration timeout,
+    bool autoConnect = false,
+  }) =>
       _device.connect(timeout: timeout);
 
   @override

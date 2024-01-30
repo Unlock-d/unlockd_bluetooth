@@ -1,5 +1,4 @@
 import 'package:isar/isar.dart';
-import 'package:unlockd_bluetooth/src/isar/isar.dart';
 import 'package:unlockd_bluetooth/unlockd_bluetooth.dart';
 
 part 'isar_bluetooth_device.g.dart';
@@ -49,7 +48,10 @@ class IsarBluetoothDevice extends UnlockdBluetoothDevice {
       isarBluetoothServices.toList();
 
   @override
-  Future<void> connect({required Duration timeout}) async {
+  Future<void> connect({
+    required Duration timeout,
+    bool autoConnect = false,
+  }) async {
     final updatedDevice = this
       ..isarConnectionState = UnlockdBluetoothConnectionState.connected;
 
@@ -82,8 +84,7 @@ class IsarBluetoothDevice extends UnlockdBluetoothDevice {
   Future<int> readRssi() async => rssi;
 
   @override
-  Future<List<UnlockdBluetoothService>> discoverServices() {
-    // TODO: implement discoverServices
-    throw UnimplementedError();
+  Future<List<UnlockdBluetoothService>> discoverServices() async {
+    return servicesList;
   }
 }

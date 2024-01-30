@@ -48,10 +48,12 @@ class FbpBluetoothConfig extends BluetoothEmulatorConfig {
   Future<void> startScan({
     Duration? timeout,
     bool? androidUsesFineLocation,
+    List<String>? withRemoteIds,
   }) =>
       FlutterBluePlus.startScan(
         timeout: timeout,
         androidUsesFineLocation: androidUsesFineLocation ?? false,
+        withRemoteIds: withRemoteIds ?? const [],
       );
 
   @override
@@ -64,5 +66,14 @@ class FbpBluetoothConfig extends BluetoothEmulatorConfig {
 
   @override
   Stream<List<UnlockdScanResult>> scanResults() => FlutterBluePlus.scanResults
-      .map((list) => list.map((e) => FbpScanResult.fromFbp(e)).toList());
+      .map((list) => list.map(FbpScanResult.fromFbp).toList());
+
+  @override
+  Stream<List<UnlockdScanResult>> onScanResults() =>
+      FlutterBluePlus.onScanResults
+          .map((list) => list.map(FbpScanResult.fromFbp).toList());
+
+  @override
+  void cancelWhenScanComplete<T>(StreamSubscription<T> subscription) =>
+      FlutterBluePlus.cancelWhenScanComplete(subscription);
 }

@@ -53,10 +53,12 @@ class UnlockdBluetooth {
   Future<void> startScan({
     Duration? timeout,
     bool? androidUsesFineLocation,
+    List<String>? withRemoteIds,
   }) =>
       _emulatorConfig.startScan(
         timeout: timeout,
         androidUsesFineLocation: androidUsesFineLocation,
+        withRemoteIds: withRemoteIds,
       );
 
   Future<void> stopScan() => _emulatorConfig.stopScan();
@@ -66,6 +68,12 @@ class UnlockdBluetooth {
 
   Stream<List<UnlockdScanResult>> scanResults() =>
       _emulatorConfig.scanResults();
+
+  Stream<List<UnlockdScanResult>> onScanResults() =>
+      _emulatorConfig.onScanResults();
+
+  void cancelWhenScanComplete<T>(StreamSubscription<T> subscription) =>
+      _emulatorConfig.cancelWhenScanComplete(subscription);
 
   static UnlockdBluetooth get instance {
     assert(

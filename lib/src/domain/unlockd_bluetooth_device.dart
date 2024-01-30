@@ -46,7 +46,10 @@ abstract class UnlockdBluetoothDevice {
   ///      - auto connect is turned off by calling `disconnect`
   ///      - auto connect results in a slower connection process compared to a direct connection
   ///        because it relies on the internal scheduling of background scans.
-  Future<void> connect({required Duration timeout});
+  Future<void> connect({
+    required Duration timeout,
+    bool autoConnect = false,
+  });
 
   /// Cancels connection to the Bluetooth Device
   ///   - [queue] If true, this disconnect request will be executed after all other operations complete.

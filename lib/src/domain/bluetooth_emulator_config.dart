@@ -18,6 +18,7 @@ abstract class BluetoothEmulatorConfig {
   Future<void> startScan({
     Duration? timeout,
     bool? androidUsesFineLocation,
+    List<String>? withRemoteIds,
   });
 
   Future<void> stopScan();
@@ -25,4 +26,8 @@ abstract class BluetoothEmulatorConfig {
   Future<List<UnlockdBluetoothDevice>> systemDevices();
 
   Stream<List<UnlockdScanResult>> scanResults();
+
+  Stream<List<UnlockdScanResult>> onScanResults();
+
+  void cancelWhenScanComplete<T>(StreamSubscription<T> subscription);
 }

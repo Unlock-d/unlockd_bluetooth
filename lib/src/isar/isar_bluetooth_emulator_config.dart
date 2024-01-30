@@ -50,6 +50,7 @@ class IsarBluetoothEmulatorConfig extends BluetoothEmulatorConfig {
   Future<void> startScan({
     Duration? timeout,
     bool? androidUsesFineLocation,
+    List<String>? withRemoteIds,
   }) async {
     await _changeConfig((config) => config..isScanningNow = true);
 
@@ -70,6 +71,20 @@ class IsarBluetoothEmulatorConfig extends BluetoothEmulatorConfig {
   @override
   Stream<List<UnlockdScanResult>> scanResults() {
     return _configStream.map((config) => config.scanResults.toList());
+  }
+
+  @override
+  Stream<List<UnlockdScanResult>> onScanResults() {
+    return _configStream.map((config) => config.scanResults.toList());
+  }
+
+  @override
+  void cancelWhenScanComplete<T>(StreamSubscription<T> subscription) {
+    _configStream
+        .where((event) => event.isScanningNow == false)
+        .listen((event) {
+      subscription.cancel();
+    });
   }
 
   Future<IsarBluetoothConfig> get _config async =>
