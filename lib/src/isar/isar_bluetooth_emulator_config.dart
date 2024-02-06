@@ -1,7 +1,4 @@
-import 'dart:async';
-
-import 'package:isar/isar.dart';
-import 'package:unlockd_bluetooth/unlockd_bluetooth.dart';
+part of 'isar.dart';
 
 class IsarBluetoothEmulatorConfig extends BluetoothEmulatorConfig {
   IsarBluetoothEmulatorConfig(this._isar);

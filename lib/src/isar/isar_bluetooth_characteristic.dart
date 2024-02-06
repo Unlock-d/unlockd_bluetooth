@@ -1,10 +1,4 @@
-import 'package:isar/isar.dart';
-import 'package:unlockd_bluetooth/src/domain/domain.dart';
-import 'package:unlockd_bluetooth/src/isar/isar.dart';
-import 'package:unlockd_bluetooth/src/isar/isar_characteristic_properties.dart';
-import 'package:unlockd_bluetooth/src/unlockd_bluetooth.dart';
-
-part 'isar_bluetooth_characteristic.g.dart';
+part of 'isar.dart';
 
 @Collection(inheritance: false)
 class IsarBluetoothCharacteristic extends UnlockdBluetoothCharacteristic {

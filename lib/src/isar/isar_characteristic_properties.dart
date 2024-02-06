@@ -1,7 +1,4 @@
-import 'package:isar/isar.dart';
-import 'package:unlockd_bluetooth/src/domain/domain.dart';
-
-part 'isar_characteristic_properties.g.dart';
+part of 'isar.dart';
 
 @embedded
 class IsarCharacteristicProperties extends UnlockdCharacteristicProperties {

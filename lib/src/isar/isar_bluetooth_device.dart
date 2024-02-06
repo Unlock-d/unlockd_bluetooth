@@ -1,7 +1,4 @@
-import 'package:isar/isar.dart';
-import 'package:unlockd_bluetooth/unlockd_bluetooth.dart';
-
-part 'isar_bluetooth_device.g.dart';
+part of 'isar.dart';
 
 @Collection(inheritance: false)
 class IsarBluetoothDevice extends UnlockdBluetoothDevice {

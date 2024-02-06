@@ -1,6 +1,5 @@
-import 'package:isar/isar.dart';
 
-part 'isar_manufacturer_data.g.dart';
+part of 'isar.dart';
 
 @embedded
 class IsarManufacturerData {

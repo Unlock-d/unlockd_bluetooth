@@ -1,9 +1,5 @@
-import 'package:isar/isar.dart';
-import 'package:unlockd_bluetooth/src/domain/unlockd_bluetooth_device.dart';
-import 'package:unlockd_bluetooth/src/domain/unlockd_scan_result.dart';
-import 'package:unlockd_bluetooth/src/isar/isar.dart';
 
-part 'isar_scan_result.g.dart';
+part of 'isar.dart';
 
 @Collection(inheritance: false)
 class IsarScanResult extends UnlockdScanResult {

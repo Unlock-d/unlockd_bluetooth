@@ -1,8 +1,4 @@
-import 'package:isar/isar.dart';
-import 'package:unlockd_bluetooth/src/domain/unlockd_bluetooth_adapter_state.dart';
-import 'package:unlockd_bluetooth/src/isar/isar.dart';
-
-part 'isar_bluetooth_config.g.dart';
+part of 'isar.dart';
 
 const isarBluetoothConfigId = 1;
 

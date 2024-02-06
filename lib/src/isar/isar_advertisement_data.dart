@@ -1,8 +1,4 @@
-import 'package:isar/isar.dart';
-import 'package:unlockd_bluetooth/src/domain/domain.dart';
-import 'package:unlockd_bluetooth/src/isar/isar.dart';
-
-part 'isar_advertisement_data.g.dart';
+part of 'isar.dart';
 
 @Embedded(inheritance: false)
 class IsarAdvertisementData extends UnlockdAdvertisementData {
