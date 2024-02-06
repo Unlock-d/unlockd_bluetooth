@@ -23,6 +23,8 @@ abstract class BluetoothEmulatorConfig {
 
   Future<void> stopScan();
 
+  UnlockdBluetoothDevice fromRemoteId(String remoteId);
+
   Future<List<UnlockdBluetoothDevice>> systemDevices();
 
   Stream<List<UnlockdScanResult>> scanResults();

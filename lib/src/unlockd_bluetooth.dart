@@ -63,6 +63,9 @@ class UnlockdBluetooth {
 
   Future<void> stopScan() => _emulatorConfig.stopScan();
 
+  static UnlockdBluetoothDevice fromRemoteId(String remoteId) =>
+      _instance._emulatorConfig.fromRemoteId(remoteId);
+
   Future<List<UnlockdBluetoothDevice>> systemDevices() =>
       _emulatorConfig.systemDevices();
 

@@ -60,6 +60,10 @@ class FbpBluetoothConfig extends BluetoothEmulatorConfig {
   Future<void> stopScan() => FlutterBluePlus.stopScan();
 
   @override
+  UnlockdBluetoothDevice fromRemoteId(String remoteId) =>
+      FbpBluetoothDevice.fromRemoteId(remoteId);
+
+  @override
   Future<List<UnlockdBluetoothDevice>> systemDevices() =>
       FlutterBluePlus.systemDevices
           .then((list) => list.map(FbpBluetoothDevice.fromFbp).toList());

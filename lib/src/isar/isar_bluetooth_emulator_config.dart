@@ -1,11 +1,7 @@
 import 'dart:async';
 
 import 'package:isar/isar.dart';
-import 'package:unlockd_bluetooth/src/domain/bluetooth_emulator_config.dart';
-import 'package:unlockd_bluetooth/src/domain/unlockd_bluetooth_adapter_state.dart';
-import 'package:unlockd_bluetooth/src/domain/unlockd_bluetooth_device.dart';
-import 'package:unlockd_bluetooth/src/domain/unlockd_scan_result.dart';
-import 'package:unlockd_bluetooth/src/isar/isar_bluetooth_config.dart';
+import 'package:unlockd_bluetooth/unlockd_bluetooth.dart';
 
 class IsarBluetoothEmulatorConfig extends BluetoothEmulatorConfig {
   IsarBluetoothEmulatorConfig(this._isar);
@@ -63,6 +59,13 @@ class IsarBluetoothEmulatorConfig extends BluetoothEmulatorConfig {
   @override
   Future<void> stopScan() =>
       _changeConfig((config) => config..isScanningNow = false);
+
+  @override
+  UnlockdBluetoothDevice fromRemoteId(String remoteId) =>
+      (_isar.isarBluetoothConfigs.getSync(isarBluetoothConfigId) ??
+              IsarBluetoothConfig())
+          .systemDevices
+          .firstWhere((element) => element.remoteId == remoteId);
 
   @override
   Future<List<UnlockdBluetoothDevice>> systemDevices() async =>
