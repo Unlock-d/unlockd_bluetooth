@@ -1,0 +1,23 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version_command:
+        description: 'The command to run to bump the version in pubspec.yaml. Accepted values are "major", "minor", "patch", "build"'
+        required: true
+        type: choice
+        options: [ 'major', 'minor', 'patch' ]
+        default: 'patch'
+
+# These are required for the increase_pubspec_version workflow
+permissions:
+  contents: write
+
+jobs:
+  increase_pubspec_version:
+    uses: Unlock-d/unlockd_workflows/.github/workflows/increase_pubspec_version.yaml@v1
+    with:
+      flutter_version: ${{ vars.FLUTTER_VERSION }}
+      git_tag_prefix: 'v'
+      version_command: ${{ inputs.version_command }}
