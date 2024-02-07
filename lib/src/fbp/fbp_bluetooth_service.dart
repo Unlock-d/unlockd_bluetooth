@@ -12,9 +12,6 @@ class FbpBluetoothService extends UnlockdBluetoothService {
   final BluetoothService _service;
 
   @override
-  String get uuid => _service.uuid.str128;
-
-  @override
   String get serviceUuid => _service.serviceUuid.str128;
 
   @override

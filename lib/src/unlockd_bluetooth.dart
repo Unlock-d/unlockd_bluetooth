@@ -21,21 +21,31 @@ class UnlockdBluetooth {
   static Future<UnlockdBluetooth> initialize({
     Isar? isar,
     bool isEmulator = false,
+    Future<void> Function(Isar isar)? onInitializeEmulator,
   }) async {
     assert(
       !_instance._initialized,
       'This instance is already initialized',
     );
 
-    await _instance._init(isar, isEmulator);
+    await _instance._init(isar, isEmulator, onInitializeEmulator);
     return _instance;
   }
 
-  Future<void> _init(Isar? isar, bool isEmulator) async {
-    this.isar = isar;
-    _emulatorConfig = isEmulator
-        ? IsarBluetoothEmulatorConfig(isar ?? await _initIsar())
-        : FbpBluetoothConfig.instance;
+  Future<void> _init(
+    Isar? isar,
+    bool isEmulator,
+    Future<void> Function(Isar isar)? onInitializeEmulator,
+  ) async {
+    if (isEmulator) {
+      this.isar = isar ?? await _initIsar();
+      if (this.isar!.isarBluetoothConfigs.countSync() == 0) {
+        await onInitializeEmulator?.call(this.isar!);
+      }
+      _emulatorConfig = IsarBluetoothEmulatorConfig(this.isar!);
+    } else {
+      _emulatorConfig = FbpBluetoothConfig.instance;
+    }
     _initialized = true;
   }
 

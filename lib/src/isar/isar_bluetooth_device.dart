@@ -52,8 +52,10 @@ class IsarBluetoothDevice extends UnlockdBluetoothDevice {
     final updatedDevice = this
       ..isarConnectionState = UnlockdBluetoothConnectionState.connected;
 
-    await UnlockdBluetooth.instance.isar?.isarBluetoothDevices
-        .put(updatedDevice);
+    final isar = UnlockdBluetooth.instance.isar;
+    if (isar != null) {
+      await isar.writeTxn(() => isar.isarBluetoothDevices.put(updatedDevice));
+    }
   }
 
   @override

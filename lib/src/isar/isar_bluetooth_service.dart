@@ -11,10 +11,7 @@ class IsarBluetoothService extends UnlockdBluetoothService {
       IsarLinks<IsarBluetoothCharacteristic>();
 
   @override
-  String get uuid => '';
-
-  @override
-  String get serviceUuid => '';
+  String serviceUuid = '';
 
   @ignore
   @override
