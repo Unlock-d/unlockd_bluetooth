@@ -1,8 +1,4 @@
-import 'dart:async';
-
-import 'package:unlockd_bluetooth/src/domain/unlockd_bluetooth_adapter_state.dart';
-import 'package:unlockd_bluetooth/src/domain/unlockd_bluetooth_device.dart';
-import 'package:unlockd_bluetooth/src/domain/unlockd_scan_result.dart';
+part of 'domain.dart';
 
 abstract class BluetoothEmulatorConfig {
   Future<void> turnOn();

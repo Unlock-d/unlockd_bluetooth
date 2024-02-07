@@ -1,10 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
-import 'package:unlockd_bluetooth/src/domain/bluetooth_emulator_config.dart';
-import 'package:unlockd_bluetooth/src/domain/unlockd_bluetooth_adapter_state.dart';
-import 'package:unlockd_bluetooth/src/domain/unlockd_bluetooth_device.dart';
-import 'package:unlockd_bluetooth/src/domain/unlockd_scan_result.dart';
+import 'package:unlockd_bluetooth/src/domain/domain.dart';
 import 'package:unlockd_bluetooth/src/fbp/fbp_bluetooth_device.dart';
 import 'package:unlockd_bluetooth/src/fbp/fbp_scan_result.dart';
 

@@ -1,3 +1,5 @@
+part of 'domain.dart';
+
 abstract class UnlockdCharacteristicProperties {
   bool get broadcast;
 

@@ -1,3 +1,5 @@
+part of 'domain.dart';
+
 enum UnlockdBluetoothAdapterState {
   unknown,
   unavailable,

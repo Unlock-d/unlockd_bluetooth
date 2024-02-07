@@ -2,10 +2,7 @@ import 'dart:async';
 
 import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:unlockd_bluetooth/src/domain/bluetooth_emulator_config.dart';
-import 'package:unlockd_bluetooth/src/domain/unlockd_bluetooth_adapter_state.dart';
-import 'package:unlockd_bluetooth/src/domain/unlockd_bluetooth_device.dart';
-import 'package:unlockd_bluetooth/src/domain/unlockd_scan_result.dart';
+import 'package:unlockd_bluetooth/src/domain/domain.dart';
 import 'package:unlockd_bluetooth/src/fbp/fbp_bluetooth_config.dart';
 import 'package:unlockd_bluetooth/src/isar/isar.dart';
 

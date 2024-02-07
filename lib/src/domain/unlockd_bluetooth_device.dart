@@ -1,4 +1,4 @@
-import 'package:unlockd_bluetooth/src/domain/domain.dart';
+part of 'domain.dart';
 
 abstract class UnlockdBluetoothDevice {
   /// Id of the remote device

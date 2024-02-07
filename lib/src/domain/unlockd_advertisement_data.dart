@@ -1,3 +1,5 @@
+part of 'domain.dart';
+
 abstract class UnlockdAdvertisementData {
   String get advName;
 
