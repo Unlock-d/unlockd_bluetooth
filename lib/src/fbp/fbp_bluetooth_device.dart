@@ -1,4 +1,5 @@
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:unlockd_bluetooth/src/dfu/dfu.dart';
 import 'package:unlockd_bluetooth/src/domain/domain.dart';
 import 'package:unlockd_bluetooth/src/fbp/fbp.dart';
 
@@ -68,5 +69,34 @@ class FbpBluetoothDevice extends UnlockdBluetoothDevice {
     return _device
         .discoverServices()
         .then((value) => value.map(FbpBluetoothService.fromFbp).toList());
+  }
+
+  @override
+  Future<void> performUpdate(
+    FirmwarePackage firmwarePackage, {
+    required ProgressCallback onProgressChanged,
+    DeviceCallback? onConnected,
+    DeviceCallback? onConnecting,
+    DeviceCallback? onDisconnected,
+    DeviceCallback? onDisconnecting,
+    DeviceCallback? onAborted,
+    DeviceCallback? onCompleted,
+    DeviceCallback? onProcessStarted,
+    DeviceCallback? onProcessStarting,
+    int timeout = 10,
+  }) async {
+    await DfuService.instance().performUpdate(
+      remoteId,
+      firmwarePackage,
+      onProgressChanged: onProgressChanged,
+      onCompleted: onCompleted,
+      onConnected: onConnected,
+      onConnecting: onConnecting,
+      onDisconnected: onDisconnected,
+      onDisconnecting: onDisconnecting,
+      onAborted: onAborted,
+      onProcessStarted: onProcessStarted,
+      onProcessStarting: onProcessStarting,
+    );
   }
 }

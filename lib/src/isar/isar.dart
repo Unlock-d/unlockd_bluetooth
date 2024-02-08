@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:isar/isar.dart';
+import 'package:unlockd_bluetooth/src/dfu/dfu.dart';
 import 'package:unlockd_bluetooth/unlockd_bluetooth.dart';
 
 part 'isar.g.dart';

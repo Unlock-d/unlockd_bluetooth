@@ -1,5 +1,26 @@
 part of 'domain.dart';
 
+/// Callback for when dfu status has changed
+/// [deviceAddress] Device with error
+typedef DeviceCallback = void Function(String deviceAddress);
+
+/// Callback for when the dfu progress has changed
+/// [deviceAddress] Device with dfu
+/// [percent] Percentage dfu completed
+/// [speed] Speed of the dfu proces
+/// [avgSpeed] Average speed of the dfu process
+/// [currentPart] Current part being uploaded
+/// [partsTotal] All parts that need to be uploaded
+typedef ProgressCallback = void Function(
+  String deviceAddress,
+  int percent,
+  double speed,
+  double avgSpeed,
+  int currentPart,
+  int partsTotal,
+);
+
+/// Represents a Bluetooth Device
 abstract class UnlockdBluetoothDevice {
   /// Id of the remote device
   ///   - iOS uses 128-bit uuids the remoteId, e.g. e006b3a7-ef7b-4980-a668-1f8005f84383
@@ -52,18 +73,45 @@ abstract class UnlockdBluetoothDevice {
   });
 
   /// Cancels connection to the Bluetooth Device
-  ///   - [queue] If true, this disconnect request will be executed after all other operations complete.
-  ///     If false, this disconnect request will be executed right now, i.e. skipping to the front
-  ///     of the fbp operation queue, which is useful to cancel an in-progress connection attempt.
   Future<void> disconnect();
 
   /// Request to change MTU (Android Only)
   ///  - returns new MTU
-  ///  - [predelay] adds delay to avoid race conditions on some devices. see comments below.
   Future<void> requestMtu(int mtu);
 
   /// Read the RSSI of connected remote device
   Future<int> readRssi();
 
+  /// Discover services, characteristics, and descriptors of the remote device
   Future<List<UnlockdBluetoothService>> discoverServices();
+
+  /// Start the DFU Process.
+  /// Required:
+  /// [firmwarePackage] zip file path
+  ///
+  /// Optional:
+  ///
+  /// Callbacks:
+  /// [onConnected] Callback for when device is connected
+  /// [onConnecting] Callback for when device is connecting
+  /// [onDisconnected] Callback for when device is disconnected
+  /// [onDisconnecting] Callback for when device is disconnecting
+  /// [onAborted] Callback for dfu is Aborted
+  /// [onCompleted] Callback for when dfu is completed
+  /// [onProcessStarted] Callback for when dfu has been started
+  /// [onProcessStarting] Callback for when dfu is starting
+  /// [onProgressChanged] Callback for when the dfu progress has changed
+  Future<void> performUpdate(
+    FirmwarePackage firmwarePackage, {
+    required ProgressCallback onProgressChanged,
+    DeviceCallback? onConnected,
+    DeviceCallback? onConnecting,
+    DeviceCallback? onDisconnected,
+    DeviceCallback? onDisconnecting,
+    DeviceCallback? onAborted,
+    DeviceCallback? onCompleted,
+    DeviceCallback? onProcessStarted,
+    DeviceCallback? onProcessStarting,
+    int timeout = 10,
+  });
 }

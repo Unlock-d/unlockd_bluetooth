@@ -86,4 +86,37 @@ class IsarBluetoothDevice extends UnlockdBluetoothDevice {
   Future<List<UnlockdBluetoothService>> discoverServices() async {
     return servicesList;
   }
+
+  @override
+  Future<void> performUpdate(
+    FirmwarePackage firmwarePackage, {
+    required ProgressCallback onProgressChanged,
+    DeviceCallback? onConnected,
+    DeviceCallback? onConnecting,
+    DeviceCallback? onDisconnected,
+    DeviceCallback? onDisconnecting,
+    DeviceCallback? onAborted,
+    DeviceCallback? onCompleted,
+    DeviceCallback? onProcessStarted,
+    DeviceCallback? onProcessStarting,
+    int timeout = 10,
+  }) async {
+    var counter = 3;
+
+    Timer.periodic(Duration(seconds: counter), (timer) {
+      if (counter == 0) {
+        timer.cancel();
+      } else {
+        onProgressChanged(
+          remoteId,
+          timer.tick * 10,
+          100,
+          33.3,
+          timer.tick,
+          counter,
+        );
+        counter--;
+      }
+    });
+  }
 }
