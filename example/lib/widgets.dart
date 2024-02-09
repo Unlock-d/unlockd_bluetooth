@@ -3,7 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:unlockd_bluetooth/unlockd_bluetooth.dart';
+import 'package:unlockd_bluetooth_core/unlockd_bluetooth.dart';
 
 class ScanResultTile extends StatelessWidget {
   const ScanResultTile({Key? key, required this.result, this.onTap})

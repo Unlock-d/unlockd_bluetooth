@@ -10,7 +10,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:unlockd_bluetooth/unlockd_bluetooth.dart';
+import 'package:unlockd_bluetooth_core/unlockd_bluetooth.dart';
 
 import 'widgets.dart';
 
