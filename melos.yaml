@@ -1,0 +1,11 @@
+name: unlockd_bluetooth
+
+packages:
+  - bluetooth_providers/*
+  - storage_providers/*
+  - unlockd_bluetooth_core
+  - example
+
+scripts:
+  test:
+    exec: flutter test .

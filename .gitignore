@@ -30,6 +30,9 @@
 /build/
 pubspec.lock
 
+# Melos related
+pubspec_overrides.yaml
+
 # Web related
 lib/generated_plugin_registrant.dart
 
