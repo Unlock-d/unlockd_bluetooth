@@ -2,12 +2,12 @@ import 'dart:async';
 
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:unlockd_bluetooth_core/unlockd_bluetooth.dart';
-import 'package:unlockd_flutter_blue_plus_provider/src/fbp.dart';
+import 'package:unlockd_flutter_blue_plus_provider/src/fbp/fbp.dart';
 
-class FbpBluetoothConfig extends UnlockdBluetoothProvider {
-  FbpBluetoothConfig._();
+class FbpBluetoothProvider extends UnlockdBluetoothProvider {
+  FbpBluetoothProvider._();
 
-  static final FbpBluetoothConfig instance = FbpBluetoothConfig._();
+  static final FbpBluetoothProvider instance = FbpBluetoothProvider._();
 
   @override
   Future<void> turnOn() => FlutterBluePlus.turnOn();

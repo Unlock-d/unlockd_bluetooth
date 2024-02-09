@@ -1,6 +1,6 @@
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:unlockd_bluetooth_core/unlockd_bluetooth.dart';
-import 'package:unlockd_flutter_blue_plus_provider/src/fbp.dart';
+import 'package:unlockd_flutter_blue_plus_provider/src/fbp/fbp.dart';
 
 class FbpBluetoothCharacteristic extends UnlockdBluetoothCharacteristic {
   FbpBluetoothCharacteristic._(this._characteristic);

@@ -11,23 +11,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:unlockd_bluetooth_core/unlockd_bluetooth.dart';
+import 'package:unlockd_flutter_blue_plus_provider/unlockd_flutter_blue_plus_provider.dart';
 
 import 'widgets.dart';
 
 final snackBarKeyA = GlobalKey<ScaffoldMessengerState>();
 final snackBarKeyB = GlobalKey<ScaffoldMessengerState>();
 final snackBarKeyC = GlobalKey<ScaffoldMessengerState>();
-final Map<String, ValueNotifier<bool>>
-    isConnectingOrDisconnecting = {};
+final Map<String, ValueNotifier<bool>> isConnectingOrDisconnecting = {};
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  const isEmulator = true;
-  await UnlockdBluetoothProvider.initialize(
-    isEmulator: isEmulator,
-  );
-  final bluetooth = UnlockdBluetoothProvider.instance;
+  final bluetooth = FbpBluetoothProvider.instance;
 
   if (Platform.isAndroid) {
     [
