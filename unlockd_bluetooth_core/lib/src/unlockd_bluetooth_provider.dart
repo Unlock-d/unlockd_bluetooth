@@ -1,6 +1,8 @@
-part of 'domain.dart';
+import 'dart:async';
 
-abstract class BluetoothEmulatorConfig {
+import 'package:unlockd_bluetooth_core/src/domain/domain.dart';
+
+abstract class UnlockdBluetoothProvider {
   Future<void> turnOn();
 
   Future<void> turnOff();

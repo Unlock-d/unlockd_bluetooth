@@ -4,7 +4,7 @@ import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:unlockd_bluetooth_core/unlockd_bluetooth.dart';
 import 'package:unlockd_flutter_blue_plus_provider/src/fbp.dart';
 
-class FbpBluetoothConfig extends BluetoothEmulatorConfig {
+class FbpBluetoothConfig extends UnlockdBluetoothProvider {
   FbpBluetoothConfig._();
 
   static final FbpBluetoothConfig instance = FbpBluetoothConfig._();

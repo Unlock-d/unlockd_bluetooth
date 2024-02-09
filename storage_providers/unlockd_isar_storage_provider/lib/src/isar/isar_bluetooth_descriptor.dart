@@ -29,13 +29,17 @@ class IsarBluetoothDescriptor extends UnlockdBluetoothDescriptor {
   Future<void> write(List<int> value) async {
     final updatedDescriptor = this..contents = value;
 
-    final bluetoothStorage = UnlockdBluetooth.instance.bluetoothStorage;
-    if (bluetoothStorage != null && bluetoothStorage is IsarBluetoothStorage) {
-      await bluetoothStorage.isar.writeTxn(
-        () => bluetoothStorage.isar.isarBluetoothDescriptors.put(
-          updatedDescriptor,
-        ),
-      );
-    }
+    await _writeDescriptor(updatedDescriptor);
+  }
+
+  Future<void> _writeDescriptor(
+    IsarBluetoothDescriptor updatedDescriptor,
+  ) async {
+    final isar = IsarBluetoothProvider.instance._isar;
+    await isar.writeTxn<void>(
+      () => isar.isarBluetoothDescriptors.put(
+        updatedDescriptor,
+      ),
+    );
   }
 }

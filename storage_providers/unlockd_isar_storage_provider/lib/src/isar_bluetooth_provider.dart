@@ -1,8 +1,28 @@
-part of 'isar.dart';
+part of 'isar/isar.dart';
 
-class IsarBluetoothEmulatorConfig extends BluetoothEmulatorConfig {
-  IsarBluetoothEmulatorConfig(this._isar);
+class IsarBluetoothProvider extends UnlockdBluetoothProvider {
+  IsarBluetoothProvider._(this._isar);
 
+  /// Returns the singleton instance of [IsarBluetoothProvider].
+  static Future<IsarBluetoothProvider> initialize({
+    required Isar isar,
+    required Future<void> Function(Isar) initialize,
+  }) async {
+    _instance = IsarBluetoothProvider._(isar);
+    await initialize(isar);
+    return _instance!;
+  }
+
+  static IsarBluetoothProvider get instance {
+    assert(
+      _instance != null,
+      '$IsarBluetoothProvider has not been initialized. '
+      'Call $initialize first.',
+    );
+    return _instance!;
+  }
+
+  static IsarBluetoothProvider? _instance;
   final Isar _isar;
 
   @override

@@ -24,10 +24,10 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   const isEmulator = true;
-  await UnlockdBluetooth.initialize(
+  await UnlockdBluetoothProvider.initialize(
     isEmulator: isEmulator,
   );
-  final bluetooth = UnlockdBluetooth.instance;
+  final bluetooth = UnlockdBluetoothProvider.instance;
 
   if (Platform.isAndroid) {
     [
@@ -48,7 +48,7 @@ Future<void> main() async {
 class BluetoothAdapterStateObserver extends NavigatorObserver {
   BluetoothAdapterStateObserver(this.bluetooth);
 
-  final UnlockdBluetooth bluetooth;
+  final UnlockdBluetoothProvider bluetooth;
   StreamSubscription<UnlockdBluetoothAdapterState>? _btStateSubscription;
 
   @override
@@ -77,7 +77,7 @@ class BluetoothAdapterStateObserver extends NavigatorObserver {
 class FlutterBlueApp extends StatelessWidget {
   const FlutterBlueApp({Key? key, required this.bluetooth}) : super(key: key);
 
-  final UnlockdBluetooth bluetooth;
+  final UnlockdBluetoothProvider bluetooth;
 
   @override
   Widget build(BuildContext context) {
@@ -112,7 +112,7 @@ class BluetoothOffScreen extends StatelessWidget {
     required this.bluetooth,
   }) : super(key: key);
 
-  final UnlockdBluetooth bluetooth;
+  final UnlockdBluetoothProvider bluetooth;
   final UnlockdBluetoothAdapterState? adapterState;
 
   @override
@@ -165,7 +165,7 @@ class FindDevicesScreen extends StatefulWidget {
   const FindDevicesScreen({Key? key, required this.bluetooth})
       : super(key: key);
 
-  final UnlockdBluetooth bluetooth;
+  final UnlockdBluetoothProvider bluetooth;
 
   @override
   State<FindDevicesScreen> createState() => _FindDevicesScreenState();

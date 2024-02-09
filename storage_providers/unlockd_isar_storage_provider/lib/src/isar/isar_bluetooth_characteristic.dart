@@ -40,25 +40,23 @@ class IsarBluetoothCharacteristic extends UnlockdBluetoothCharacteristic {
   Future<void> write(List<int> value, {bool? withoutResponse}) async {
     final updatedChar = this..contents = value;
 
-    final bluetoothStorage = UnlockdBluetooth.instance.bluetoothStorage;
-    if (bluetoothStorage != null && bluetoothStorage is IsarBluetoothStorage) {
-      await bluetoothStorage.isar.writeTxn(
-        () => bluetoothStorage.isar.isarBluetoothCharacteristics.put(
-          updatedChar,
-        ),
-      );
-    }
+    await _writeChar(updatedChar);
   }
 
   @override
   Future<bool> setNotifyValue(bool value) async {
     final updatedChar = this..isNotifying = value;
 
-    final bluetoothStorage = UnlockdBluetooth.instance.bluetoothStorage;
-    if (bluetoothStorage != null && bluetoothStorage is IsarBluetoothStorage) {
-      await bluetoothStorage.isar.writeTxn(() =>
-          bluetoothStorage.isar.isarBluetoothCharacteristics.put(updatedChar));
-    }
+    await _writeChar(updatedChar);
     return value;
+  }
+
+  Future<void> _writeChar(IsarBluetoothCharacteristic updatedChar) async {
+    final isar = IsarBluetoothProvider.instance._isar;
+    await isar.writeTxn<void>(
+      () => isar.isarBluetoothCharacteristics.put(
+        updatedChar,
+      ),
+    );
   }
 }

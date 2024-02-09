@@ -52,14 +52,7 @@ class IsarBluetoothDevice extends UnlockdBluetoothDevice {
     final updatedDevice = this
       ..isarConnectionState = UnlockdBluetoothConnectionState.connected;
 
-    final bluetoothStorage = UnlockdBluetooth.instance.bluetoothStorage;
-    if (bluetoothStorage != null && bluetoothStorage is IsarBluetoothStorage) {
-      await bluetoothStorage.isar.writeTxn(
-        () => bluetoothStorage.isar.isarBluetoothDevices.put(
-          updatedDevice,
-        ),
-      );
-    }
+    await _writeDevice(updatedDevice);
   }
 
   @override
@@ -67,28 +60,14 @@ class IsarBluetoothDevice extends UnlockdBluetoothDevice {
     final updatedDevice = this
       ..isarConnectionState = UnlockdBluetoothConnectionState.disconnected;
 
-    final bluetoothStorage = UnlockdBluetooth.instance.bluetoothStorage;
-    if (bluetoothStorage != null && bluetoothStorage is IsarBluetoothStorage) {
-      await bluetoothStorage.isar.writeTxn(
-        () => bluetoothStorage.isar.isarBluetoothDevices.put(
-          updatedDevice,
-        ),
-      );
-    }
+    await _writeDevice(updatedDevice);
   }
 
   @override
   Future<void> requestMtu(int mtu) async {
     final updatedDevice = this..mtuNow = mtu;
 
-    final bluetoothStorage = UnlockdBluetooth.instance.bluetoothStorage;
-    if (bluetoothStorage != null && bluetoothStorage is IsarBluetoothStorage) {
-      await bluetoothStorage.isar.writeTxn(
-        () => bluetoothStorage.isar.isarBluetoothDevices.put(
-          updatedDevice,
-        ),
-      );
-    }
+    await _writeDevice(updatedDevice);
   }
 
   @override
@@ -130,5 +109,14 @@ class IsarBluetoothDevice extends UnlockdBluetoothDevice {
         counter--;
       }
     });
+  }
+
+  Future<void> _writeDevice(IsarBluetoothDevice updatedDevice) async {
+    final isar = IsarBluetoothProvider.instance._isar;
+    await isar.writeTxn<void>(
+      () => isar.isarBluetoothDevices.put(
+        updatedDevice,
+      ),
+    );
   }
 }
