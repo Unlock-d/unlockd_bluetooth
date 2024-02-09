@@ -7,5 +7,7 @@ packages:
   - example
 
 scripts:
+  get:
+    exec: dart pub get .
   test:
     exec: flutter test .

@@ -10,9 +10,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_blue_plus: 1.31.7
   unlockd_bluetooth_core:
     path: ../../unlockd_bluetooth_core
-  flutter_blue_plus: 1.31.7
 
 dev_dependencies:
   flutter_test:
