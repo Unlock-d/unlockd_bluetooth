@@ -11,6 +11,5 @@ part 'unlockd_bluetooth_connection_state.dart';
 part 'unlockd_bluetooth_descriptors.dart';
 part 'unlockd_bluetooth_device.dart';
 part 'unlockd_bluetooth_service.dart';
-part 'unlockd_bluetooth_storage.dart';
 part 'unlockd_characteristic_properties.dart';
 part 'unlockd_scan_result.dart';
