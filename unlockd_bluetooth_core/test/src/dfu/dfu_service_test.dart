@@ -31,6 +31,8 @@ void main() {
       ) {},
     );
 
+    await Future<void>.delayed(const Duration(seconds: 1));
+
     expect(completer.isCompleted, isTrue);
   });
 }

@@ -2,12 +2,12 @@ name: unlockd_bluetooth
 
 packages:
   - bluetooth_providers/*
-  - storage_providers/*
   - unlockd_bluetooth_core
   - example
 
 scripts:
-  get:
-    exec: dart pub get .
   test:
-    exec: flutter test .
+    run: flutter test --test-randomize-ordering-seed=random
+    description: Run Dart tests for all packages in the project.
+    exec:
+      failFast: true

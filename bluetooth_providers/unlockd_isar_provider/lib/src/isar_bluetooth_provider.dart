@@ -9,7 +9,11 @@ class IsarBluetoothProvider extends UnlockdBluetoothProvider {
     required Future<void> Function(Isar) initialize,
   }) async {
     _instance = IsarBluetoothProvider._(isar);
-    await initialize(isar);
+
+    if (isar.isarBluetoothConfigs.countSync() == 0) {
+      await initialize(isar);
+    }
+
     return _instance!;
   }
 
