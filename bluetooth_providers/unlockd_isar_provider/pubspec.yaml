@@ -1,4 +1,4 @@
-name: unlockd_isar_storage_provider
+name: unlockd_isar_provider
 description: A Unlock'd Flutter package created by Unlock'd.
 version: 0.1.0+1
 publish_to: none

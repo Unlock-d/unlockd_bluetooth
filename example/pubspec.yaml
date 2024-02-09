@@ -34,8 +34,8 @@ dependencies:
     path: ../unlockd_bluetooth_core
   unlockd_flutter_blue_plus_provider:
     path: ../bluetooth_providers/unlockd_flutter_blue_plus_provider
-  unlockd_isar_storage_provider:
-    path: ../storage_providers/unlockd_isar_storage_provider
+  unlockd_isar_provider:
+    path: ../bluetooth_providers/unlockd_isar_provider
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
