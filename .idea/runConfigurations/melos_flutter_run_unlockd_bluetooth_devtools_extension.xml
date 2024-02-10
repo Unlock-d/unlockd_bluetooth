@@ -1,0 +1,7 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Flutter Run -&gt; 'unlockd_bluetooth_devtools_extension'" type="FlutterRunConfigurationType" factoryName="Flutter">
+    <option name="filePath" value="$PROJECT_DIR$/unlockd_bluetooth_devtools_extension/lib/main.dart" />
+    <option name="additionalArgs" value="--dart-define=use_simulated_environment=true" />
+    <method v="2" />
+  </configuration>
+</component>
