@@ -1,3 +1,7 @@
+# Setup instructions
+
+https://github.com/flutter/devtools/tree/master/packages/devtools_extensions
+
 ## Trying to copy the app to
 
 Stacktrace from running `dart run devtools_extensions build_and_copy`
@@ -96,3 +100,21 @@ Failed to compile application.
 ```
 
 The package isn't up-to-date and even fails for static analysis (https://pub.dev/packages/devtools_app_shared/)
+
+## Running the application
+
+1. Use the Simulated DevTools Environment (recommended for development)
+    ```sh
+    # From within the unlockd_bluetooth_devtools_extension directory
+    flutter run -d chrome --dart-define=use_simulated_environment=true
+    # Start another Flutter app
+    # Link the DevTools extension to the running app from within the DevTools UI
+    ```
+
+2. Use a real DevTools Environment
+   ```sh
+   cd unlockd_bluetooth_devtools_extension;
+   flutter pub get;
+   dart run devtools_extensions build_and_copy --source=. --dest=../unlockd_bluetooth_core/extension/devtools
+   # Start another Flutter app that uses unlockd_bluetooth_core
+   ```

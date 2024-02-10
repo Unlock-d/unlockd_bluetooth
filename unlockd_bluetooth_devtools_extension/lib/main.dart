@@ -13,7 +13,7 @@ class FooDevToolsExtension extends StatelessWidget {
 
     // After this you can use extensionManager and serviceManager to send messages back and forth with DevTools or interact with the connected app.
     return const DevToolsExtension(
-      child: Text('Hello world'), // Build your extension here
+      child: Text('Hello, world'), // Build your extension here
     );
   }
 }
