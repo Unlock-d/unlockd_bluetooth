@@ -118,3 +118,9 @@ The package isn't up-to-date and even fails for static analysis (https://pub.dev
    dart run devtools_extensions build_and_copy --source=. --dest=../unlockd_bluetooth_core/extension/devtools
    # Start another Flutter app that uses unlockd_bluetooth_core
    ```
+   
+
+## Reading a value from the app
+
+https://invertase.io/blog/how-to-flutter-devtool-plugin
+Useful example. Needed to find either a commit that works on the current sdk or just set the packages to values I know work https://github.com/flutter/devtools/tree/master/packages/devtools_extensions/example

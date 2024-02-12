@@ -1,9 +1,11 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:developer';
 
 import 'package:unlockd_bluetooth_core/unlockd_bluetooth.dart';
 
 class UnlockdBluetooth implements UnlockdBluetoothProvider {
-  UnlockdBluetooth._(this._provider);
+  UnlockdBluetooth._(this._provider, this._emulator);
 
   factory UnlockdBluetooth.initialize({
     required UnlockdBluetoothProvider provider,
@@ -15,9 +17,22 @@ class UnlockdBluetooth implements UnlockdBluetoothProvider {
       '$emulationProvider must be provided if $shouldEmulate is true',
     );
 
-    _instance = UnlockdBluetooth._(
-      shouldEmulate ? emulationProvider! : provider,
-    );
+    if (_instance == null) {
+      _instance = UnlockdBluetooth._(
+        provider,
+        emulationProvider,
+      );
+
+      registerExtension('ext.bluetooth.getController', (method, parameters) async {
+        return ServiceExtensionResponse.result(
+          json.encode({
+            'provider': instance._provider.runtimeType.toString(),
+            'emulator': instance._emulator.runtimeType.toString(),
+          }),
+        );
+      });
+    }
+
     return instance;
   }
 
@@ -32,6 +47,7 @@ class UnlockdBluetooth implements UnlockdBluetoothProvider {
 
   static UnlockdBluetooth? _instance;
   final UnlockdBluetoothProvider _provider;
+  final UnlockdBluetoothProvider? _emulator;
 
   static UnlockdBluetoothDevice fromProvider(String remoteId) =>
       instance.fromRemoteId(remoteId);

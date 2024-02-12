@@ -12,6 +12,8 @@ dependencies:
     sdk: flutter
   devtools_extensions: 0.0.6
   devtools_app_shared: 0.0.5
+  unlockd_bluetooth_core:
+    path: ../unlockd_bluetooth_core
 
 dev_dependencies:
   flutter_test:
