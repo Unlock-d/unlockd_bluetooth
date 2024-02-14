@@ -1,14 +1,19 @@
 part of 'isar.dart';
 
+/// [UnlockdBluetoothDevice] which uses [Isar] as the underlying storage.
 @Collection(inheritance: false)
 class IsarBluetoothDevice extends UnlockdBluetoothDevice {
+  /// Internal [Isar] id.
   Id id = Isar.autoIncrement;
 
+  /// [IsarLink] to [IsarBluetoothConfig].
   final IsarLink<IsarBluetoothConfig> config = IsarLink();
 
+  /// [Backlink] to [IsarScanResult].
   @Backlink(to: 'isarBluetoothDevice')
   final IsarLink<IsarScanResult> result = IsarLink();
 
+  /// [IsarLinks] of [IsarBluetoothService].
   final IsarLinks<IsarBluetoothService> isarBluetoothServices =
       IsarLinks<IsarBluetoothService>();
 
@@ -24,8 +29,10 @@ class IsarBluetoothDevice extends UnlockdBluetoothDevice {
   @override
   int mtuNow = 0;
 
-  int rssi = 0;
+  /// Internal [Isar] rssi.
+  int isarRssi = 0;
 
+  /// Internal [Isar] connection state.
   @enumerated
   UnlockdBluetoothConnectionState isarConnectionState =
       UnlockdBluetoothConnectionState.disconnected;
@@ -43,6 +50,11 @@ class IsarBluetoothDevice extends UnlockdBluetoothDevice {
   @override
   List<UnlockdBluetoothService> get servicesList =>
       isarBluetoothServices.toList();
+
+  @ignore
+  @override
+  bool get isConnected =>
+      isarConnectionState == UnlockdBluetoothConnectionState.connected;
 
   @override
   Future<void> connect({
@@ -71,7 +83,7 @@ class IsarBluetoothDevice extends UnlockdBluetoothDevice {
   }
 
   @override
-  Future<int> readRssi() async => rssi;
+  Future<int> readRssi() async => isarRssi;
 
   @override
   Future<List<UnlockdBluetoothService>> discoverServices() async {

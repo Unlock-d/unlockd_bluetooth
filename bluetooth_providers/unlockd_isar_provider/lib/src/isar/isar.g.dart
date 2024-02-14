@@ -2430,25 +2430,25 @@ const IsarBluetoothDeviceSchema = CollectionSchema(
       type: IsarType.byte,
       enumMap: _IsarBluetoothDeviceisarConnectionStateEnumValueMap,
     ),
-    r'mtuNow': PropertySchema(
+    r'isarRssi': PropertySchema(
       id: 2,
+      name: r'isarRssi',
+      type: IsarType.long,
+    ),
+    r'mtuNow': PropertySchema(
+      id: 3,
       name: r'mtuNow',
       type: IsarType.long,
     ),
     r'platformName': PropertySchema(
-      id: 3,
+      id: 4,
       name: r'platformName',
       type: IsarType.string,
     ),
     r'remoteId': PropertySchema(
-      id: 4,
+      id: 5,
       name: r'remoteId',
       type: IsarType.string,
-    ),
-    r'rssi': PropertySchema(
-      id: 5,
-      name: r'rssi',
-      type: IsarType.long,
     )
   },
   estimateSize: _isarBluetoothDeviceEstimateSize,
@@ -2505,10 +2505,10 @@ void _isarBluetoothDeviceSerialize(
 ) {
   writer.writeString(offsets[0], object.advName);
   writer.writeByte(offsets[1], object.isarConnectionState.index);
-  writer.writeLong(offsets[2], object.mtuNow);
-  writer.writeString(offsets[3], object.platformName);
-  writer.writeString(offsets[4], object.remoteId);
-  writer.writeLong(offsets[5], object.rssi);
+  writer.writeLong(offsets[2], object.isarRssi);
+  writer.writeLong(offsets[3], object.mtuNow);
+  writer.writeString(offsets[4], object.platformName);
+  writer.writeString(offsets[5], object.remoteId);
 }
 
 IsarBluetoothDevice _isarBluetoothDeviceDeserialize(
@@ -2524,10 +2524,10 @@ IsarBluetoothDevice _isarBluetoothDeviceDeserialize(
       _IsarBluetoothDeviceisarConnectionStateValueEnumMap[
               reader.readByteOrNull(offsets[1])] ??
           UnlockdBluetoothConnectionState.disconnected;
-  object.mtuNow = reader.readLong(offsets[2]);
-  object.platformName = reader.readString(offsets[3]);
-  object.remoteId = reader.readString(offsets[4]);
-  object.rssi = reader.readLong(offsets[5]);
+  object.isarRssi = reader.readLong(offsets[2]);
+  object.mtuNow = reader.readLong(offsets[3]);
+  object.platformName = reader.readString(offsets[4]);
+  object.remoteId = reader.readString(offsets[5]);
   return object;
 }
 
@@ -2547,11 +2547,11 @@ P _isarBluetoothDeviceDeserializeProp<P>(
     case 2:
       return (reader.readLong(offset)) as P;
     case 3:
-      return (reader.readString(offset)) as P;
+      return (reader.readLong(offset)) as P;
     case 4:
       return (reader.readString(offset)) as P;
     case 5:
-      return (reader.readLong(offset)) as P;
+      return (reader.readString(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -2920,6 +2920,62 @@ extension IsarBluetoothDeviceQueryFilter on QueryBuilder<IsarBluetoothDevice,
   }
 
   QueryBuilder<IsarBluetoothDevice, IsarBluetoothDevice, QAfterFilterCondition>
+      isarRssiEqualTo(int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'isarRssi',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<IsarBluetoothDevice, IsarBluetoothDevice, QAfterFilterCondition>
+      isarRssiGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'isarRssi',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<IsarBluetoothDevice, IsarBluetoothDevice, QAfterFilterCondition>
+      isarRssiLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'isarRssi',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<IsarBluetoothDevice, IsarBluetoothDevice, QAfterFilterCondition>
+      isarRssiBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'isarRssi',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<IsarBluetoothDevice, IsarBluetoothDevice, QAfterFilterCondition>
       mtuNowEqualTo(int value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -3246,62 +3302,6 @@ extension IsarBluetoothDeviceQueryFilter on QueryBuilder<IsarBluetoothDevice,
       ));
     });
   }
-
-  QueryBuilder<IsarBluetoothDevice, IsarBluetoothDevice, QAfterFilterCondition>
-      rssiEqualTo(int value) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'rssi',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<IsarBluetoothDevice, IsarBluetoothDevice, QAfterFilterCondition>
-      rssiGreaterThan(
-    int value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'rssi',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<IsarBluetoothDevice, IsarBluetoothDevice, QAfterFilterCondition>
-      rssiLessThan(
-    int value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'rssi',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<IsarBluetoothDevice, IsarBluetoothDevice, QAfterFilterCondition>
-      rssiBetween(
-    int lower,
-    int upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'rssi',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
-    });
-  }
 }
 
 extension IsarBluetoothDeviceQueryObject on QueryBuilder<IsarBluetoothDevice,
@@ -3433,6 +3433,20 @@ extension IsarBluetoothDeviceQuerySortBy
   }
 
   QueryBuilder<IsarBluetoothDevice, IsarBluetoothDevice, QAfterSortBy>
+      sortByIsarRssi() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isarRssi', Sort.asc);
+    });
+  }
+
+  QueryBuilder<IsarBluetoothDevice, IsarBluetoothDevice, QAfterSortBy>
+      sortByIsarRssiDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isarRssi', Sort.desc);
+    });
+  }
+
+  QueryBuilder<IsarBluetoothDevice, IsarBluetoothDevice, QAfterSortBy>
       sortByMtuNow() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'mtuNow', Sort.asc);
@@ -3471,20 +3485,6 @@ extension IsarBluetoothDeviceQuerySortBy
       sortByRemoteIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'remoteId', Sort.desc);
-    });
-  }
-
-  QueryBuilder<IsarBluetoothDevice, IsarBluetoothDevice, QAfterSortBy>
-      sortByRssi() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'rssi', Sort.asc);
-    });
-  }
-
-  QueryBuilder<IsarBluetoothDevice, IsarBluetoothDevice, QAfterSortBy>
-      sortByRssiDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'rssi', Sort.desc);
     });
   }
 }
@@ -3534,6 +3534,20 @@ extension IsarBluetoothDeviceQuerySortThenBy
   }
 
   QueryBuilder<IsarBluetoothDevice, IsarBluetoothDevice, QAfterSortBy>
+      thenByIsarRssi() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isarRssi', Sort.asc);
+    });
+  }
+
+  QueryBuilder<IsarBluetoothDevice, IsarBluetoothDevice, QAfterSortBy>
+      thenByIsarRssiDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isarRssi', Sort.desc);
+    });
+  }
+
+  QueryBuilder<IsarBluetoothDevice, IsarBluetoothDevice, QAfterSortBy>
       thenByMtuNow() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'mtuNow', Sort.asc);
@@ -3574,20 +3588,6 @@ extension IsarBluetoothDeviceQuerySortThenBy
       return query.addSortBy(r'remoteId', Sort.desc);
     });
   }
-
-  QueryBuilder<IsarBluetoothDevice, IsarBluetoothDevice, QAfterSortBy>
-      thenByRssi() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'rssi', Sort.asc);
-    });
-  }
-
-  QueryBuilder<IsarBluetoothDevice, IsarBluetoothDevice, QAfterSortBy>
-      thenByRssiDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'rssi', Sort.desc);
-    });
-  }
 }
 
 extension IsarBluetoothDeviceQueryWhereDistinct
@@ -3603,6 +3603,13 @@ extension IsarBluetoothDeviceQueryWhereDistinct
       distinctByIsarConnectionState() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'isarConnectionState');
+    });
+  }
+
+  QueryBuilder<IsarBluetoothDevice, IsarBluetoothDevice, QDistinct>
+      distinctByIsarRssi() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'isarRssi');
     });
   }
 
@@ -3624,13 +3631,6 @@ extension IsarBluetoothDeviceQueryWhereDistinct
       distinctByRemoteId({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'remoteId', caseSensitive: caseSensitive);
-    });
-  }
-
-  QueryBuilder<IsarBluetoothDevice, IsarBluetoothDevice, QDistinct>
-      distinctByRssi() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'rssi');
     });
   }
 }
@@ -3657,6 +3657,12 @@ extension IsarBluetoothDeviceQueryProperty
     });
   }
 
+  QueryBuilder<IsarBluetoothDevice, int, QQueryOperations> isarRssiProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'isarRssi');
+    });
+  }
+
   QueryBuilder<IsarBluetoothDevice, int, QQueryOperations> mtuNowProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'mtuNow');
@@ -3674,12 +3680,6 @@ extension IsarBluetoothDeviceQueryProperty
       remoteIdProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'remoteId');
-    });
-  }
-
-  QueryBuilder<IsarBluetoothDevice, int, QQueryOperations> rssiProperty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'rssi');
     });
   }
 }

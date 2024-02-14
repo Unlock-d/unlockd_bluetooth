@@ -45,6 +45,9 @@ abstract class UnlockdBluetoothDevice {
   /// The current connection state *of our app* to the device
   Stream<UnlockdBluetoothConnectionState> get connectionState;
 
+  /// Returns true if this device currently connected to your app
+  bool get isConnected;
+
   /// The current MTU size in bytes
   int get mtuNow;
 

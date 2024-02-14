@@ -2,13 +2,23 @@ import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:unlockd_bluetooth_core/unlockd_bluetooth.dart';
 import 'package:unlockd_flutter_blue_plus_provider/unlockd_flutter_blue_plus_provider.dart';
 
+/// A [UnlockdBluetoothDevice] implementation for the [FlutterBluePlus] package.
 class FbpBluetoothDevice extends UnlockdBluetoothDevice {
   FbpBluetoothDevice._(this._device);
 
+  /// Creates a [FbpBluetoothDevice] from a [BluetoothDevice].
   factory FbpBluetoothDevice.fromFbp(BluetoothDevice device) {
     return FbpBluetoothDevice._(device);
   }
 
+  /// Creates a [FbpBluetoothDevice] from a remote id.
+  ///
+  ///   - to connect, this device must have been discovered
+  ///   by your app in a previous scan
+  ///   - iOS uses 128-bit uuids the remoteId,
+  ///   e.g. e006b3a7-ef7b-4980-a668-1f8005f84383
+  ///   - Android uses 48-bit mac addresses as the remoteId,
+  ///   e.g. 06:E5:28:3B:FD:E0
   factory FbpBluetoothDevice.fromRemoteId(String remoteId) {
     return FbpBluetoothDevice._(BluetoothDevice.fromId(remoteId));
   }
@@ -34,14 +44,19 @@ class FbpBluetoothDevice extends UnlockdBluetoothDevice {
   Stream<UnlockdBluetoothConnectionState> get connectionState =>
       _device.connectionState.map((event) {
         switch (event) {
+          // ignore: deprecated_member_use
           case BluetoothConnectionState.disconnecting:
           case BluetoothConnectionState.disconnected:
             return UnlockdBluetoothConnectionState.disconnected;
+          // ignore: deprecated_member_use
           case BluetoothConnectionState.connecting:
           case BluetoothConnectionState.connected:
             return UnlockdBluetoothConnectionState.connected;
         }
       });
+
+  @override
+  bool get isConnected => _device.isConnected;
 
   @override
   List<UnlockdBluetoothService> get servicesList =>

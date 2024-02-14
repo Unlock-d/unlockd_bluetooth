@@ -6,6 +6,12 @@ packages:
   - example
 
 scripts:
+  pub-get:
+    run: flutter pub get
+    description: Run Dart tests for all packages in the project.
+    exec:
+      concurrency: 1
+
   test:
     run: flutter test --test-randomize-ordering-seed=random
     description: Run Dart tests for all packages in the project.
