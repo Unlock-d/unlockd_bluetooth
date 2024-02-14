@@ -2,7 +2,11 @@ import 'dart:async';
 
 import 'package:unlockd_bluetooth_core/src/domain/domain.dart';
 
+/// Abstract class that defines the methods that
+/// a Bluetooth provider must implement.
 abstract class UnlockdBluetoothProvider {
+  UnlockdBluetoothDevice fromRemoteId(String remoteId);
+
   Future<void> turnOn();
 
   Future<void> turnOff();
@@ -13,15 +17,30 @@ abstract class UnlockdBluetoothProvider {
 
   Stream<bool> isScanning();
 
+  /// Start a scan, and return a stream of results
+  /// Note: scan filters use an "or" behavior. i.e. if you set
+  /// `withServices` & `withNames` we return all the advertisements that match
+  /// any of the specified services *or* any of the specified names.
+  ///   - [withServices] filter by advertised services
+  ///   - [withRemoteIds] filter for known remoteIds
+  ///   (iOS: 128-bit guid, android: 48-bit mac address)
+  ///   - [withNames] filter by advertised names (exact match)
+  ///   - [withKeywords] filter by advertised names (matches any substring)
+  ///   - [withMsd] filter by manufacture specific data
+  ///   - [timeout] calls stopScan after a specified duration
+  ///   - [androidUsesFineLocation] request `ACCESS_FINE_LOCATION`
+  ///   permission at runtime
   Future<void> startScan({
     Duration? timeout,
     bool? androidUsesFineLocation,
+    List<UnlockdGuid>? withServices,
     List<String>? withRemoteIds,
+    List<String>? withNames,
+    List<String>? withKeywords,
+    List<UnlockdMsdFilter>? withMsd,
   });
 
   Future<void> stopScan();
-
-  UnlockdBluetoothDevice fromRemoteId(String remoteId);
 
   Future<List<UnlockdBluetoothDevice>> systemDevices();
 

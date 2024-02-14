@@ -2,9 +2,12 @@ import 'dart:async';
 
 import 'package:unlockd_bluetooth_core/unlockd_bluetooth.dart';
 
+/// General controller of different Bluetooth providers.
 class UnlockdBluetooth implements UnlockdBluetoothProvider {
   UnlockdBluetooth._(this._provider);
 
+  /// Initializes the [UnlockdBluetooth] instance.
+  /// When [shouldEmulate] is true, [emulationProvider] must be provided.
   factory UnlockdBluetooth.initialize({
     required UnlockdBluetoothProvider provider,
     UnlockdBluetoothProvider? emulationProvider,
@@ -21,6 +24,7 @@ class UnlockdBluetooth implements UnlockdBluetoothProvider {
     return instance;
   }
 
+  /// Returns the [UnlockdBluetooth] instance.
   static UnlockdBluetooth get instance {
     assert(
       _instance != null,
@@ -33,6 +37,7 @@ class UnlockdBluetooth implements UnlockdBluetoothProvider {
   static UnlockdBluetooth? _instance;
   final UnlockdBluetoothProvider _provider;
 
+  /// Returns a [UnlockdBluetoothDevice] from a [remoteId].
   static UnlockdBluetoothDevice fromProvider(String remoteId) =>
       instance.fromRemoteId(remoteId);
 
@@ -64,12 +69,20 @@ class UnlockdBluetooth implements UnlockdBluetoothProvider {
   Future<void> startScan({
     Duration? timeout,
     bool? androidUsesFineLocation,
+    List<UnlockdGuid>? withServices,
     List<String>? withRemoteIds,
+    List<String>? withNames,
+    List<String>? withKeywords,
+    List<UnlockdMsdFilter>? withMsd,
   }) =>
       _provider.startScan(
         timeout: timeout,
         androidUsesFineLocation: androidUsesFineLocation,
+        withServices: withServices,
         withRemoteIds: withRemoteIds,
+        withNames: withNames,
+        withKeywords: withKeywords,
+        withMsd: withMsd,
       );
 
   @override

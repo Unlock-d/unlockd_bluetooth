@@ -1,5 +1,6 @@
 part of 'isar/isar.dart';
 
+/// A [UnlockdBluetoothProvider] which uses [Isar] as the underlying storage.
 class IsarBluetoothProvider extends UnlockdBluetoothProvider {
   IsarBluetoothProvider._(this._isar);
 
@@ -17,6 +18,8 @@ class IsarBluetoothProvider extends UnlockdBluetoothProvider {
     return _instance!;
   }
 
+  /// Returns the [IsarBluetoothProvider] instance.
+  /// Throws an [AssertionError] if [initialize] has not been called.
   static IsarBluetoothProvider get instance {
     assert(
       _instance != null,
@@ -67,7 +70,11 @@ class IsarBluetoothProvider extends UnlockdBluetoothProvider {
   Future<void> startScan({
     Duration? timeout,
     bool? androidUsesFineLocation,
+    List<UnlockdGuid>? withServices,
     List<String>? withRemoteIds,
+    List<String>? withNames,
+    List<String>? withKeywords,
+    List<UnlockdMsdFilter>? withMsd,
   }) async {
     await _changeConfig((config) => config..isScanningNow = true);
 

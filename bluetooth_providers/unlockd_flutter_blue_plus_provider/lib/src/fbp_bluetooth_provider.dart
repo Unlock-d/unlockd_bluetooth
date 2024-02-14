@@ -4,9 +4,12 @@ import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:unlockd_bluetooth_core/unlockd_bluetooth.dart';
 import 'package:unlockd_flutter_blue_plus_provider/src/fbp/fbp.dart';
 
+/// A [UnlockdBluetoothProvider] which uses [FlutterBluePlus]
+/// to retrieve Bluetooth information.
 class FbpBluetoothProvider extends UnlockdBluetoothProvider {
   FbpBluetoothProvider._();
 
+  /// Returns the [FbpBluetoothProvider] instance.
   static final FbpBluetoothProvider instance = FbpBluetoothProvider._();
 
   @override
@@ -44,12 +47,28 @@ class FbpBluetoothProvider extends UnlockdBluetoothProvider {
   Future<void> startScan({
     Duration? timeout,
     bool? androidUsesFineLocation,
+    List<UnlockdGuid>? withServices,
     List<String>? withRemoteIds,
+    List<String>? withNames,
+    List<String>? withKeywords,
+    List<UnlockdMsdFilter>? withMsd,
   }) =>
       FlutterBluePlus.startScan(
         timeout: timeout,
         androidUsesFineLocation: androidUsesFineLocation ?? false,
-        withRemoteIds: withRemoteIds ?? const [],
+        withServices:
+            withServices?.map((e) => Guid.fromBytes(e.bytes)).toList() ??
+                const [],
+        withRemoteIds: withRemoteIds = const [],
+        withNames: withNames = const [],
+        withKeywords: withKeywords = const [],
+        withMsd: withMsd
+                ?.map(
+                  (e) =>
+                      MsdFilter(e.manufacturerId, data: e.data, mask: e.mask),
+                )
+                .toList() ??
+            const [],
       );
 
   @override
