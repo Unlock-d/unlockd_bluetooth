@@ -18,6 +18,8 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # of the product and file versions while build-number is used as the build suffix.
 version: 1.0.0+1
 
+unlockd_bluetooth_version: &unlockd_bluetooth_version v2.1.0
+
 environment:
   sdk: '>=3.0.6 <4.0.0'
 
@@ -34,17 +36,17 @@ dependencies:
     git:
       url: git@github.com:Unlock-d/unlockd_bluetooth.git
       path: unlockd_bluetooth_core
-      ref: v2.0.0
+      ref: *unlockd_bluetooth_version
   unlockd_flutter_blue_plus_provider:
     git:
       url: git@github.com:Unlock-d/unlockd_bluetooth.git
       path: bluetooth_providers/unlockd_flutter_blue_plus_provider
-      ref: v2.0.0
+      ref: *unlockd_bluetooth_version
   unlockd_isar_provider:
     git:
       url: git@github.com:Unlock-d/unlockd_bluetooth.git
       path: bluetooth_providers/unlockd_isar_provider
-      ref: v2.0.0
+      ref: *unlockd_bluetooth_version
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

@@ -21,7 +21,8 @@ const IsarBluetoothCharacteristicSchema = CollectionSchema(
     r'characteristicUuid': PropertySchema(
       id: 0,
       name: r'characteristicUuid',
-      type: IsarType.string,
+      type: IsarType.object,
+      target: r'IsarGuid',
     ),
     r'contents': PropertySchema(
       id: 1,
@@ -67,7 +68,8 @@ const IsarBluetoothCharacteristicSchema = CollectionSchema(
     )
   },
   embeddedSchemas: {
-    r'IsarCharacteristicProperties': IsarCharacteristicPropertiesSchema
+    r'IsarCharacteristicProperties': IsarCharacteristicPropertiesSchema,
+    r'IsarGuid': IsarGuidSchema
   },
   getId: _isarBluetoothCharacteristicGetId,
   getLinks: _isarBluetoothCharacteristicGetLinks,
@@ -81,7 +83,9 @@ int _isarBluetoothCharacteristicEstimateSize(
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
-  bytesCount += 3 + object.characteristicUuid.length * 3;
+  bytesCount += 3 +
+      IsarGuidSchema.estimateSize(
+          object.characteristicUuid, allOffsets[IsarGuid]!, allOffsets);
   bytesCount += 3 + object.contents.length * 8;
   bytesCount += 3 + object.lastValue.length * 8;
   bytesCount += 3 +
@@ -96,7 +100,12 @@ void _isarBluetoothCharacteristicSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeString(offsets[0], object.characteristicUuid);
+  writer.writeObject<IsarGuid>(
+    offsets[0],
+    allOffsets,
+    IsarGuidSchema.serialize,
+    object.characteristicUuid,
+  );
   writer.writeLongList(offsets[1], object.contents);
   writer.writeBool(offsets[2], object.isNotifying);
   writer.writeLongList(offsets[3], object.lastValue);
@@ -115,7 +124,12 @@ IsarBluetoothCharacteristic _isarBluetoothCharacteristicDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = IsarBluetoothCharacteristic();
-  object.characteristicUuid = reader.readString(offsets[0]);
+  object.characteristicUuid = reader.readObjectOrNull<IsarGuid>(
+        offsets[0],
+        IsarGuidSchema.deserialize,
+        allOffsets,
+      ) ??
+      IsarGuid();
   object.contents = reader.readLongList(offsets[1]) ?? [];
   object.id = id;
   object.isNotifying = reader.readBool(offsets[2]);
@@ -136,7 +150,12 @@ P _isarBluetoothCharacteristicDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readString(offset)) as P;
+      return (reader.readObjectOrNull<IsarGuid>(
+            offset,
+            IsarGuidSchema.deserialize,
+            allOffsets,
+          ) ??
+          IsarGuid()) as P;
     case 1:
       return (reader.readLongList(offset) ?? []) as P;
     case 2:
@@ -258,144 +277,6 @@ extension IsarBluetoothCharacteristicQueryFilter on QueryBuilder<
     IsarBluetoothCharacteristic,
     IsarBluetoothCharacteristic,
     QFilterCondition> {
-  QueryBuilder<IsarBluetoothCharacteristic, IsarBluetoothCharacteristic,
-      QAfterFilterCondition> characteristicUuidEqualTo(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'characteristicUuid',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<IsarBluetoothCharacteristic, IsarBluetoothCharacteristic,
-      QAfterFilterCondition> characteristicUuidGreaterThan(
-    String value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'characteristicUuid',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<IsarBluetoothCharacteristic, IsarBluetoothCharacteristic,
-      QAfterFilterCondition> characteristicUuidLessThan(
-    String value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'characteristicUuid',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<IsarBluetoothCharacteristic, IsarBluetoothCharacteristic,
-      QAfterFilterCondition> characteristicUuidBetween(
-    String lower,
-    String upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'characteristicUuid',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<IsarBluetoothCharacteristic, IsarBluetoothCharacteristic,
-      QAfterFilterCondition> characteristicUuidStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'characteristicUuid',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<IsarBluetoothCharacteristic, IsarBluetoothCharacteristic,
-      QAfterFilterCondition> characteristicUuidEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'characteristicUuid',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<IsarBluetoothCharacteristic, IsarBluetoothCharacteristic,
-          QAfterFilterCondition>
-      characteristicUuidContains(String value, {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'characteristicUuid',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<IsarBluetoothCharacteristic, IsarBluetoothCharacteristic,
-          QAfterFilterCondition>
-      characteristicUuidMatches(String pattern, {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'characteristicUuid',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<IsarBluetoothCharacteristic, IsarBluetoothCharacteristic,
-      QAfterFilterCondition> characteristicUuidIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'characteristicUuid',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<IsarBluetoothCharacteristic, IsarBluetoothCharacteristic,
-      QAfterFilterCondition> characteristicUuidIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'characteristicUuid',
-        value: '',
-      ));
-    });
-  }
-
   QueryBuilder<IsarBluetoothCharacteristic, IsarBluetoothCharacteristic,
       QAfterFilterCondition> contentsElementEqualTo(int value) {
     return QueryBuilder.apply(this, (query) {
@@ -758,6 +639,13 @@ extension IsarBluetoothCharacteristicQueryObject on QueryBuilder<
     IsarBluetoothCharacteristic,
     QFilterCondition> {
   QueryBuilder<IsarBluetoothCharacteristic, IsarBluetoothCharacteristic,
+      QAfterFilterCondition> characteristicUuid(FilterQuery<IsarGuid> q) {
+    return QueryBuilder.apply(this, (query) {
+      return query.object(q, r'characteristicUuid');
+    });
+  }
+
+  QueryBuilder<IsarBluetoothCharacteristic, IsarBluetoothCharacteristic,
           QAfterFilterCondition>
       properties(FilterQuery<IsarCharacteristicProperties> q) {
     return QueryBuilder.apply(this, (query) {
@@ -851,20 +739,6 @@ extension IsarBluetoothCharacteristicQueryLinks on QueryBuilder<
 extension IsarBluetoothCharacteristicQuerySortBy on QueryBuilder<
     IsarBluetoothCharacteristic, IsarBluetoothCharacteristic, QSortBy> {
   QueryBuilder<IsarBluetoothCharacteristic, IsarBluetoothCharacteristic,
-      QAfterSortBy> sortByCharacteristicUuid() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'characteristicUuid', Sort.asc);
-    });
-  }
-
-  QueryBuilder<IsarBluetoothCharacteristic, IsarBluetoothCharacteristic,
-      QAfterSortBy> sortByCharacteristicUuidDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'characteristicUuid', Sort.desc);
-    });
-  }
-
-  QueryBuilder<IsarBluetoothCharacteristic, IsarBluetoothCharacteristic,
       QAfterSortBy> sortByIsNotifying() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isNotifying', Sort.asc);
@@ -881,20 +755,6 @@ extension IsarBluetoothCharacteristicQuerySortBy on QueryBuilder<
 
 extension IsarBluetoothCharacteristicQuerySortThenBy on QueryBuilder<
     IsarBluetoothCharacteristic, IsarBluetoothCharacteristic, QSortThenBy> {
-  QueryBuilder<IsarBluetoothCharacteristic, IsarBluetoothCharacteristic,
-      QAfterSortBy> thenByCharacteristicUuid() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'characteristicUuid', Sort.asc);
-    });
-  }
-
-  QueryBuilder<IsarBluetoothCharacteristic, IsarBluetoothCharacteristic,
-      QAfterSortBy> thenByCharacteristicUuidDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'characteristicUuid', Sort.desc);
-    });
-  }
-
   QueryBuilder<IsarBluetoothCharacteristic, IsarBluetoothCharacteristic,
       QAfterSortBy> thenById() {
     return QueryBuilder.apply(this, (query) {
@@ -927,14 +787,6 @@ extension IsarBluetoothCharacteristicQuerySortThenBy on QueryBuilder<
 extension IsarBluetoothCharacteristicQueryWhereDistinct on QueryBuilder<
     IsarBluetoothCharacteristic, IsarBluetoothCharacteristic, QDistinct> {
   QueryBuilder<IsarBluetoothCharacteristic, IsarBluetoothCharacteristic,
-      QDistinct> distinctByCharacteristicUuid({bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'characteristicUuid',
-          caseSensitive: caseSensitive);
-    });
-  }
-
-  QueryBuilder<IsarBluetoothCharacteristic, IsarBluetoothCharacteristic,
       QDistinct> distinctByContents() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'contents');
@@ -965,7 +817,7 @@ extension IsarBluetoothCharacteristicQueryProperty on QueryBuilder<
     });
   }
 
-  QueryBuilder<IsarBluetoothCharacteristic, String, QQueryOperations>
+  QueryBuilder<IsarBluetoothCharacteristic, IsarGuid, QQueryOperations>
       characteristicUuidProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'characteristicUuid');
@@ -1612,7 +1464,8 @@ const IsarBluetoothDescriptorSchema = CollectionSchema(
     r'descriptorUuid': PropertySchema(
       id: 1,
       name: r'descriptorUuid',
-      type: IsarType.string,
+      type: IsarType.object,
+      target: r'IsarGuid',
     ),
     r'lastValue': PropertySchema(
       id: 2,
@@ -1635,7 +1488,7 @@ const IsarBluetoothDescriptorSchema = CollectionSchema(
       linkName: r'isarDescriptors',
     )
   },
-  embeddedSchemas: {},
+  embeddedSchemas: {r'IsarGuid': IsarGuidSchema},
   getId: _isarBluetoothDescriptorGetId,
   getLinks: _isarBluetoothDescriptorGetLinks,
   attach: _isarBluetoothDescriptorAttach,
@@ -1649,7 +1502,9 @@ int _isarBluetoothDescriptorEstimateSize(
 ) {
   var bytesCount = offsets.last;
   bytesCount += 3 + object.contents.length * 8;
-  bytesCount += 3 + object.descriptorUuid.length * 3;
+  bytesCount += 3 +
+      IsarGuidSchema.estimateSize(
+          object.descriptorUuid, allOffsets[IsarGuid]!, allOffsets);
   bytesCount += 3 + object.lastValue.length * 8;
   return bytesCount;
 }
@@ -1661,7 +1516,12 @@ void _isarBluetoothDescriptorSerialize(
   Map<Type, List<int>> allOffsets,
 ) {
   writer.writeLongList(offsets[0], object.contents);
-  writer.writeString(offsets[1], object.descriptorUuid);
+  writer.writeObject<IsarGuid>(
+    offsets[1],
+    allOffsets,
+    IsarGuidSchema.serialize,
+    object.descriptorUuid,
+  );
   writer.writeLongList(offsets[2], object.lastValue);
 }
 
@@ -1673,7 +1533,12 @@ IsarBluetoothDescriptor _isarBluetoothDescriptorDeserialize(
 ) {
   final object = IsarBluetoothDescriptor();
   object.contents = reader.readLongList(offsets[0]) ?? [];
-  object.descriptorUuid = reader.readString(offsets[1]);
+  object.descriptorUuid = reader.readObjectOrNull<IsarGuid>(
+        offsets[1],
+        IsarGuidSchema.deserialize,
+        allOffsets,
+      ) ??
+      IsarGuid();
   object.id = id;
   return object;
 }
@@ -1688,7 +1553,12 @@ P _isarBluetoothDescriptorDeserializeProp<P>(
     case 0:
       return (reader.readLongList(offset) ?? []) as P;
     case 1:
-      return (reader.readString(offset)) as P;
+      return (reader.readObjectOrNull<IsarGuid>(
+            offset,
+            IsarGuidSchema.deserialize,
+            allOffsets,
+          ) ??
+          IsarGuid()) as P;
     case 2:
       return (reader.readLongList(offset) ?? []) as P;
     default:
@@ -1944,144 +1814,6 @@ extension IsarBluetoothDescriptorQueryFilter on QueryBuilder<
   }
 
   QueryBuilder<IsarBluetoothDescriptor, IsarBluetoothDescriptor,
-      QAfterFilterCondition> descriptorUuidEqualTo(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'descriptorUuid',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<IsarBluetoothDescriptor, IsarBluetoothDescriptor,
-      QAfterFilterCondition> descriptorUuidGreaterThan(
-    String value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'descriptorUuid',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<IsarBluetoothDescriptor, IsarBluetoothDescriptor,
-      QAfterFilterCondition> descriptorUuidLessThan(
-    String value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'descriptorUuid',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<IsarBluetoothDescriptor, IsarBluetoothDescriptor,
-      QAfterFilterCondition> descriptorUuidBetween(
-    String lower,
-    String upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'descriptorUuid',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<IsarBluetoothDescriptor, IsarBluetoothDescriptor,
-      QAfterFilterCondition> descriptorUuidStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'descriptorUuid',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<IsarBluetoothDescriptor, IsarBluetoothDescriptor,
-      QAfterFilterCondition> descriptorUuidEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'descriptorUuid',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<IsarBluetoothDescriptor, IsarBluetoothDescriptor,
-          QAfterFilterCondition>
-      descriptorUuidContains(String value, {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'descriptorUuid',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<IsarBluetoothDescriptor, IsarBluetoothDescriptor,
-          QAfterFilterCondition>
-      descriptorUuidMatches(String pattern, {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'descriptorUuid',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<IsarBluetoothDescriptor, IsarBluetoothDescriptor,
-      QAfterFilterCondition> descriptorUuidIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'descriptorUuid',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<IsarBluetoothDescriptor, IsarBluetoothDescriptor,
-      QAfterFilterCondition> descriptorUuidIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'descriptorUuid',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<IsarBluetoothDescriptor, IsarBluetoothDescriptor,
       QAfterFilterCondition> idEqualTo(Id value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -2284,7 +2016,14 @@ extension IsarBluetoothDescriptorQueryFilter on QueryBuilder<
 }
 
 extension IsarBluetoothDescriptorQueryObject on QueryBuilder<
-    IsarBluetoothDescriptor, IsarBluetoothDescriptor, QFilterCondition> {}
+    IsarBluetoothDescriptor, IsarBluetoothDescriptor, QFilterCondition> {
+  QueryBuilder<IsarBluetoothDescriptor, IsarBluetoothDescriptor,
+      QAfterFilterCondition> descriptorUuid(FilterQuery<IsarGuid> q) {
+    return QueryBuilder.apply(this, (query) {
+      return query.object(q, r'descriptorUuid');
+    });
+  }
+}
 
 extension IsarBluetoothDescriptorQueryLinks on QueryBuilder<
     IsarBluetoothDescriptor, IsarBluetoothDescriptor, QFilterCondition> {
@@ -2304,39 +2043,11 @@ extension IsarBluetoothDescriptorQueryLinks on QueryBuilder<
   }
 }
 
-extension IsarBluetoothDescriptorQuerySortBy
-    on QueryBuilder<IsarBluetoothDescriptor, IsarBluetoothDescriptor, QSortBy> {
-  QueryBuilder<IsarBluetoothDescriptor, IsarBluetoothDescriptor, QAfterSortBy>
-      sortByDescriptorUuid() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'descriptorUuid', Sort.asc);
-    });
-  }
-
-  QueryBuilder<IsarBluetoothDescriptor, IsarBluetoothDescriptor, QAfterSortBy>
-      sortByDescriptorUuidDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'descriptorUuid', Sort.desc);
-    });
-  }
-}
+extension IsarBluetoothDescriptorQuerySortBy on QueryBuilder<
+    IsarBluetoothDescriptor, IsarBluetoothDescriptor, QSortBy> {}
 
 extension IsarBluetoothDescriptorQuerySortThenBy on QueryBuilder<
     IsarBluetoothDescriptor, IsarBluetoothDescriptor, QSortThenBy> {
-  QueryBuilder<IsarBluetoothDescriptor, IsarBluetoothDescriptor, QAfterSortBy>
-      thenByDescriptorUuid() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'descriptorUuid', Sort.asc);
-    });
-  }
-
-  QueryBuilder<IsarBluetoothDescriptor, IsarBluetoothDescriptor, QAfterSortBy>
-      thenByDescriptorUuidDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'descriptorUuid', Sort.desc);
-    });
-  }
-
   QueryBuilder<IsarBluetoothDescriptor, IsarBluetoothDescriptor, QAfterSortBy>
       thenById() {
     return QueryBuilder.apply(this, (query) {
@@ -2358,14 +2069,6 @@ extension IsarBluetoothDescriptorQueryWhereDistinct on QueryBuilder<
       distinctByContents() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'contents');
-    });
-  }
-
-  QueryBuilder<IsarBluetoothDescriptor, IsarBluetoothDescriptor, QDistinct>
-      distinctByDescriptorUuid({bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'descriptorUuid',
-          caseSensitive: caseSensitive);
     });
   }
 
@@ -2392,7 +2095,7 @@ extension IsarBluetoothDescriptorQueryProperty on QueryBuilder<
     });
   }
 
-  QueryBuilder<IsarBluetoothDescriptor, String, QQueryOperations>
+  QueryBuilder<IsarBluetoothDescriptor, IsarGuid, QQueryOperations>
       descriptorUuidProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'descriptorUuid');
@@ -3699,7 +3402,8 @@ const IsarBluetoothServiceSchema = CollectionSchema(
     r'serviceUuid': PropertySchema(
       id: 0,
       name: r'serviceUuid',
-      type: IsarType.string,
+      type: IsarType.object,
+      target: r'IsarGuid',
     )
   },
   estimateSize: _isarBluetoothServiceEstimateSize,
@@ -3723,7 +3427,7 @@ const IsarBluetoothServiceSchema = CollectionSchema(
       single: false,
     )
   },
-  embeddedSchemas: {},
+  embeddedSchemas: {r'IsarGuid': IsarGuidSchema},
   getId: _isarBluetoothServiceGetId,
   getLinks: _isarBluetoothServiceGetLinks,
   attach: _isarBluetoothServiceAttach,
@@ -3736,7 +3440,9 @@ int _isarBluetoothServiceEstimateSize(
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
-  bytesCount += 3 + object.serviceUuid.length * 3;
+  bytesCount += 3 +
+      IsarGuidSchema.estimateSize(
+          object.serviceUuid, allOffsets[IsarGuid]!, allOffsets);
   return bytesCount;
 }
 
@@ -3746,7 +3452,12 @@ void _isarBluetoothServiceSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeString(offsets[0], object.serviceUuid);
+  writer.writeObject<IsarGuid>(
+    offsets[0],
+    allOffsets,
+    IsarGuidSchema.serialize,
+    object.serviceUuid,
+  );
 }
 
 IsarBluetoothService _isarBluetoothServiceDeserialize(
@@ -3757,7 +3468,12 @@ IsarBluetoothService _isarBluetoothServiceDeserialize(
 ) {
   final object = IsarBluetoothService();
   object.id = id;
-  object.serviceUuid = reader.readString(offsets[0]);
+  object.serviceUuid = reader.readObjectOrNull<IsarGuid>(
+        offsets[0],
+        IsarGuidSchema.deserialize,
+        allOffsets,
+      ) ??
+      IsarGuid();
   return object;
 }
 
@@ -3769,7 +3485,12 @@ P _isarBluetoothServiceDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readString(offset)) as P;
+      return (reader.readObjectOrNull<IsarGuid>(
+            offset,
+            IsarGuidSchema.deserialize,
+            allOffsets,
+          ) ??
+          IsarGuid()) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -3934,148 +3655,17 @@ extension IsarBluetoothServiceQueryFilter on QueryBuilder<IsarBluetoothService,
       ));
     });
   }
-
-  QueryBuilder<IsarBluetoothService, IsarBluetoothService,
-      QAfterFilterCondition> serviceUuidEqualTo(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'serviceUuid',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<IsarBluetoothService, IsarBluetoothService,
-      QAfterFilterCondition> serviceUuidGreaterThan(
-    String value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'serviceUuid',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<IsarBluetoothService, IsarBluetoothService,
-      QAfterFilterCondition> serviceUuidLessThan(
-    String value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'serviceUuid',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<IsarBluetoothService, IsarBluetoothService,
-      QAfterFilterCondition> serviceUuidBetween(
-    String lower,
-    String upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'serviceUuid',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<IsarBluetoothService, IsarBluetoothService,
-      QAfterFilterCondition> serviceUuidStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'serviceUuid',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<IsarBluetoothService, IsarBluetoothService,
-      QAfterFilterCondition> serviceUuidEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'serviceUuid',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<IsarBluetoothService, IsarBluetoothService,
-          QAfterFilterCondition>
-      serviceUuidContains(String value, {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'serviceUuid',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<IsarBluetoothService, IsarBluetoothService,
-          QAfterFilterCondition>
-      serviceUuidMatches(String pattern, {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'serviceUuid',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<IsarBluetoothService, IsarBluetoothService,
-      QAfterFilterCondition> serviceUuidIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'serviceUuid',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<IsarBluetoothService, IsarBluetoothService,
-      QAfterFilterCondition> serviceUuidIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'serviceUuid',
-        value: '',
-      ));
-    });
-  }
 }
 
 extension IsarBluetoothServiceQueryObject on QueryBuilder<IsarBluetoothService,
-    IsarBluetoothService, QFilterCondition> {}
+    IsarBluetoothService, QFilterCondition> {
+  QueryBuilder<IsarBluetoothService, IsarBluetoothService,
+      QAfterFilterCondition> serviceUuid(FilterQuery<IsarGuid> q) {
+    return QueryBuilder.apply(this, (query) {
+      return query.object(q, r'serviceUuid');
+    });
+  }
+}
 
 extension IsarBluetoothServiceQueryLinks on QueryBuilder<IsarBluetoothService,
     IsarBluetoothService, QFilterCondition> {
@@ -4159,21 +3749,7 @@ extension IsarBluetoothServiceQueryLinks on QueryBuilder<IsarBluetoothService,
 }
 
 extension IsarBluetoothServiceQuerySortBy
-    on QueryBuilder<IsarBluetoothService, IsarBluetoothService, QSortBy> {
-  QueryBuilder<IsarBluetoothService, IsarBluetoothService, QAfterSortBy>
-      sortByServiceUuid() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'serviceUuid', Sort.asc);
-    });
-  }
-
-  QueryBuilder<IsarBluetoothService, IsarBluetoothService, QAfterSortBy>
-      sortByServiceUuidDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'serviceUuid', Sort.desc);
-    });
-  }
-}
+    on QueryBuilder<IsarBluetoothService, IsarBluetoothService, QSortBy> {}
 
 extension IsarBluetoothServiceQuerySortThenBy
     on QueryBuilder<IsarBluetoothService, IsarBluetoothService, QSortThenBy> {
@@ -4190,31 +3766,10 @@ extension IsarBluetoothServiceQuerySortThenBy
       return query.addSortBy(r'id', Sort.desc);
     });
   }
-
-  QueryBuilder<IsarBluetoothService, IsarBluetoothService, QAfterSortBy>
-      thenByServiceUuid() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'serviceUuid', Sort.asc);
-    });
-  }
-
-  QueryBuilder<IsarBluetoothService, IsarBluetoothService, QAfterSortBy>
-      thenByServiceUuidDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'serviceUuid', Sort.desc);
-    });
-  }
 }
 
 extension IsarBluetoothServiceQueryWhereDistinct
-    on QueryBuilder<IsarBluetoothService, IsarBluetoothService, QDistinct> {
-  QueryBuilder<IsarBluetoothService, IsarBluetoothService, QDistinct>
-      distinctByServiceUuid({bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'serviceUuid', caseSensitive: caseSensitive);
-    });
-  }
-}
+    on QueryBuilder<IsarBluetoothService, IsarBluetoothService, QDistinct> {}
 
 extension IsarBluetoothServiceQueryProperty on QueryBuilder<
     IsarBluetoothService, IsarBluetoothService, QQueryProperty> {
@@ -4224,7 +3779,7 @@ extension IsarBluetoothServiceQueryProperty on QueryBuilder<
     });
   }
 
-  QueryBuilder<IsarBluetoothService, String, QQueryOperations>
+  QueryBuilder<IsarBluetoothService, IsarGuid, QQueryOperations>
       serviceUuidProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'serviceUuid');
@@ -4278,7 +3833,8 @@ const IsarScanResultSchema = CollectionSchema(
   embeddedSchemas: {
     r'IsarAdvertisementData': IsarAdvertisementDataSchema,
     r'IsarManufacturerData': IsarManufacturerDataSchema,
-    r'IsarServiceData': IsarServiceDataSchema
+    r'IsarServiceData': IsarServiceDataSchema,
+    r'IsarGuid': IsarGuidSchema
   },
   getId: _isarScanResultGetId,
   getLinks: _isarScanResultGetLinks,
@@ -5756,6 +5312,214 @@ extension IsarCharacteristicPropertiesQueryObject on QueryBuilder<
 // coverage:ignore-file
 // ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types
 
+const IsarGuidSchema = Schema(
+  name: r'IsarGuid',
+  id: -7727150471371360216,
+  properties: {
+    r'bytes': PropertySchema(
+      id: 0,
+      name: r'bytes',
+      type: IsarType.longList,
+    )
+  },
+  estimateSize: _isarGuidEstimateSize,
+  serialize: _isarGuidSerialize,
+  deserialize: _isarGuidDeserialize,
+  deserializeProp: _isarGuidDeserializeProp,
+);
+
+int _isarGuidEstimateSize(
+  IsarGuid object,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  var bytesCount = offsets.last;
+  bytesCount += 3 + object.bytes.length * 8;
+  return bytesCount;
+}
+
+void _isarGuidSerialize(
+  IsarGuid object,
+  IsarWriter writer,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  writer.writeLongList(offsets[0], object.bytes);
+}
+
+IsarGuid _isarGuidDeserialize(
+  Id id,
+  IsarReader reader,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  final object = IsarGuid();
+  object.bytes = reader.readLongList(offsets[0]) ?? [];
+  return object;
+}
+
+P _isarGuidDeserializeProp<P>(
+  IsarReader reader,
+  int propertyId,
+  int offset,
+  Map<Type, List<int>> allOffsets,
+) {
+  switch (propertyId) {
+    case 0:
+      return (reader.readLongList(offset) ?? []) as P;
+    default:
+      throw IsarError('Unknown property with id $propertyId');
+  }
+}
+
+extension IsarGuidQueryFilter
+    on QueryBuilder<IsarGuid, IsarGuid, QFilterCondition> {
+  QueryBuilder<IsarGuid, IsarGuid, QAfterFilterCondition> bytesElementEqualTo(
+      int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'bytes',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<IsarGuid, IsarGuid, QAfterFilterCondition>
+      bytesElementGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'bytes',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<IsarGuid, IsarGuid, QAfterFilterCondition> bytesElementLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'bytes',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<IsarGuid, IsarGuid, QAfterFilterCondition> bytesElementBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'bytes',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<IsarGuid, IsarGuid, QAfterFilterCondition> bytesLengthEqualTo(
+      int length) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'bytes',
+        length,
+        true,
+        length,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<IsarGuid, IsarGuid, QAfterFilterCondition> bytesIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'bytes',
+        0,
+        true,
+        0,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<IsarGuid, IsarGuid, QAfterFilterCondition> bytesIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'bytes',
+        0,
+        false,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<IsarGuid, IsarGuid, QAfterFilterCondition> bytesLengthLessThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'bytes',
+        0,
+        true,
+        length,
+        include,
+      );
+    });
+  }
+
+  QueryBuilder<IsarGuid, IsarGuid, QAfterFilterCondition>
+      bytesLengthGreaterThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'bytes',
+        length,
+        include,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<IsarGuid, IsarGuid, QAfterFilterCondition> bytesLengthBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'bytes',
+        lower,
+        includeLower,
+        upper,
+        includeUpper,
+      );
+    });
+  }
+}
+
+extension IsarGuidQueryObject
+    on QueryBuilder<IsarGuid, IsarGuid, QFilterCondition> {}
+
+// coverage:ignore-file
+// ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types
+
 const IsarManufacturerDataSchema = Schema(
   name: r'IsarManufacturerData',
   id: 5940548335174185571,
@@ -6042,7 +5806,8 @@ const IsarServiceDataSchema = Schema(
     r'serviceGuid': PropertySchema(
       id: 0,
       name: r'serviceGuid',
-      type: IsarType.string,
+      type: IsarType.object,
+      target: r'IsarGuid',
     ),
     r'value': PropertySchema(
       id: 1,
@@ -6062,7 +5827,9 @@ int _isarServiceDataEstimateSize(
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
-  bytesCount += 3 + object.serviceGuid.length * 3;
+  bytesCount += 3 +
+      IsarGuidSchema.estimateSize(
+          object.serviceGuid, allOffsets[IsarGuid]!, allOffsets);
   bytesCount += 3 + object.value.length * 8;
   return bytesCount;
 }
@@ -6073,7 +5840,12 @@ void _isarServiceDataSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeString(offsets[0], object.serviceGuid);
+  writer.writeObject<IsarGuid>(
+    offsets[0],
+    allOffsets,
+    IsarGuidSchema.serialize,
+    object.serviceGuid,
+  );
   writer.writeLongList(offsets[1], object.value);
 }
 
@@ -6084,7 +5856,12 @@ IsarServiceData _isarServiceDataDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = IsarServiceData();
-  object.serviceGuid = reader.readString(offsets[0]);
+  object.serviceGuid = reader.readObjectOrNull<IsarGuid>(
+        offsets[0],
+        IsarGuidSchema.deserialize,
+        allOffsets,
+      ) ??
+      IsarGuid();
   object.value = reader.readLongList(offsets[1]) ?? [];
   return object;
 }
@@ -6097,7 +5874,12 @@ P _isarServiceDataDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readString(offset)) as P;
+      return (reader.readObjectOrNull<IsarGuid>(
+            offset,
+            IsarGuidSchema.deserialize,
+            allOffsets,
+          ) ??
+          IsarGuid()) as P;
     case 1:
       return (reader.readLongList(offset) ?? []) as P;
     default:
@@ -6107,142 +5889,6 @@ P _isarServiceDataDeserializeProp<P>(
 
 extension IsarServiceDataQueryFilter
     on QueryBuilder<IsarServiceData, IsarServiceData, QFilterCondition> {
-  QueryBuilder<IsarServiceData, IsarServiceData, QAfterFilterCondition>
-      serviceGuidEqualTo(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'serviceGuid',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<IsarServiceData, IsarServiceData, QAfterFilterCondition>
-      serviceGuidGreaterThan(
-    String value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'serviceGuid',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<IsarServiceData, IsarServiceData, QAfterFilterCondition>
-      serviceGuidLessThan(
-    String value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'serviceGuid',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<IsarServiceData, IsarServiceData, QAfterFilterCondition>
-      serviceGuidBetween(
-    String lower,
-    String upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'serviceGuid',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<IsarServiceData, IsarServiceData, QAfterFilterCondition>
-      serviceGuidStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'serviceGuid',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<IsarServiceData, IsarServiceData, QAfterFilterCondition>
-      serviceGuidEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'serviceGuid',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<IsarServiceData, IsarServiceData, QAfterFilterCondition>
-      serviceGuidContains(String value, {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'serviceGuid',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<IsarServiceData, IsarServiceData, QAfterFilterCondition>
-      serviceGuidMatches(String pattern, {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'serviceGuid',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<IsarServiceData, IsarServiceData, QAfterFilterCondition>
-      serviceGuidIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'serviceGuid',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<IsarServiceData, IsarServiceData, QAfterFilterCondition>
-      serviceGuidIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'serviceGuid',
-        value: '',
-      ));
-    });
-  }
-
   QueryBuilder<IsarServiceData, IsarServiceData, QAfterFilterCondition>
       valueElementEqualTo(int value) {
     return QueryBuilder.apply(this, (query) {
@@ -6390,4 +6036,11 @@ extension IsarServiceDataQueryFilter
 }
 
 extension IsarServiceDataQueryObject
-    on QueryBuilder<IsarServiceData, IsarServiceData, QFilterCondition> {}
+    on QueryBuilder<IsarServiceData, IsarServiceData, QFilterCondition> {
+  QueryBuilder<IsarServiceData, IsarServiceData, QAfterFilterCondition>
+      serviceGuid(FilterQuery<IsarGuid> q) {
+    return QueryBuilder.apply(this, (query) {
+      return query.object(q, r'serviceGuid');
+    });
+  }
+}

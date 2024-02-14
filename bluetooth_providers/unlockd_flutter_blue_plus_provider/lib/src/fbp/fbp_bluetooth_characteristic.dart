@@ -2,9 +2,12 @@ import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:unlockd_bluetooth_core/unlockd_bluetooth.dart';
 import 'package:unlockd_flutter_blue_plus_provider/src/fbp/fbp.dart';
 
+/// [UnlockdBluetoothCharacteristic] which uses [FlutterBluePlus]
+/// to retrieve characteristic information.
 class FbpBluetoothCharacteristic extends UnlockdBluetoothCharacteristic {
   FbpBluetoothCharacteristic._(this._characteristic);
 
+  /// Create a [FbpBluetoothCharacteristic] from a [BluetoothCharacteristic]
   factory FbpBluetoothCharacteristic.fromFbp(
     BluetoothCharacteristic characteristic,
   ) {
@@ -21,7 +24,8 @@ class FbpBluetoothCharacteristic extends UnlockdBluetoothCharacteristic {
   bool get isNotifying => _characteristic.isNotifying;
 
   @override
-  String get characteristicUuid => _characteristic.characteristicUuid.str128;
+  UnlockdGuid get characteristicUuid =>
+      UnlockdGuid.fromBytes(_characteristic.characteristicUuid.bytes);
 
   @override
   Stream<List<int>> get onValueReceived => _characteristic.onValueReceived;
@@ -31,9 +35,7 @@ class FbpBluetoothCharacteristic extends UnlockdBluetoothCharacteristic {
 
   @override
   List<UnlockdBluetoothDescriptor> get descriptors =>
-      _characteristic.descriptors
-          .map((d) => FbpBluetoothDescriptor.fromFbp(d))
-          .toList();
+      _characteristic.descriptors.map(FbpBluetoothDescriptor.fromFbp).toList();
 
   @override
   Future<List<int>> read() => _characteristic.read();
@@ -43,6 +45,6 @@ class FbpBluetoothCharacteristic extends UnlockdBluetoothCharacteristic {
       _characteristic.write(value, withoutResponse: withoutResponse ?? false);
 
   @override
-  Future<bool> setNotifyValue(bool value) =>
+  Future<bool> setNotifyValue({required bool value}) =>
       _characteristic.setNotifyValue(value);
 }

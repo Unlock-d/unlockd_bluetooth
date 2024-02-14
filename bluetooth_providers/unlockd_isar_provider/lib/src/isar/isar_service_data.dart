@@ -2,7 +2,7 @@ part of 'isar.dart';
 
 @embedded
 class IsarServiceData {
-  String serviceGuid = '';
+  IsarGuid serviceGuid = IsarGuid();
 
   List<int> value = [];
 }

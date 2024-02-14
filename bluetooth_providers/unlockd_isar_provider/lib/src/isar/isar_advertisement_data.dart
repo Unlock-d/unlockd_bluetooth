@@ -25,6 +25,6 @@ class IsarAdvertisementData extends UnlockdAdvertisementData {
 
   @ignore
   @override
-  Map<String, List<int>> get serviceData =>
+  Map<IsarGuid, List<int>> get serviceData =>
       {for (final e in isarServiceData) e.serviceGuid: e.value};
 }

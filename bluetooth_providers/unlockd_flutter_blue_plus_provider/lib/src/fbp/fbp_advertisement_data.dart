@@ -21,8 +21,8 @@ class FbpAdvertisementData extends UnlockdAdvertisementData {
       _advertisementData.manufacturerData;
 
   @override
-  Map<String, List<int>> get serviceData => _advertisementData.serviceData
-      .map((key, value) => MapEntry(key.str128, value));
+  Map<UnlockdGuid, List<int>> get serviceData => _advertisementData.serviceData
+      .map((key, value) => MapEntry(UnlockdGuid.fromBytes(key.bytes), value));
 
   @override
   List<String> get serviceUuids =>

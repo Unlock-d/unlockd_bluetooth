@@ -427,7 +427,7 @@ class DeviceScreen extends StatelessWidget {
                         String op = c.isNotifying == false
                             ? "Subscribe"
                             : "Unsubscribe";
-                        await c.setNotifyValue(c.isNotifying == false);
+                        await c.setNotifyValue(value: c.isNotifying == false);
                         final snackBar = snackBarGood("$op : Success");
                         snackBarKeyC.currentState?.removeCurrentSnackBar();
                         snackBarKeyC.currentState?.showSnackBar(snackBar);

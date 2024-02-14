@@ -9,7 +9,7 @@ abstract class UnlockdAdvertisementData {
 
   Map<int, List<int>> get manufacturerData;
 
-  Map<String, List<int>> get serviceData;
+  Map<UnlockdGuid, List<int>> get serviceData;
 
   List<String> get serviceUuids;
 }

@@ -20,7 +20,7 @@ class IsarBluetoothCharacteristic extends UnlockdBluetoothCharacteristic {
   bool isNotifying = false;
 
   @override
-  String characteristicUuid = '';
+  IsarGuid characteristicUuid = IsarGuid();
 
   @ignore
   @override
@@ -44,7 +44,7 @@ class IsarBluetoothCharacteristic extends UnlockdBluetoothCharacteristic {
   }
 
   @override
-  Future<bool> setNotifyValue(bool value) async {
+  Future<bool> setNotifyValue({required bool value}) async {
     final updatedChar = this..isNotifying = value;
 
     await _writeChar(updatedChar);

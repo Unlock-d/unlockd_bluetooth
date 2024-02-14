@@ -11,7 +11,8 @@ class FbpBluetoothDescriptor extends UnlockdBluetoothDescriptor {
   final BluetoothDescriptor _descriptor;
 
   @override
-  String get descriptorUuid => _descriptor.descriptorUuid.str128;
+  UnlockdGuid get descriptorUuid =>
+      UnlockdGuid.fromBytes(_descriptor.descriptorUuid.bytes);
 
   @override
   List<int> get lastValue => _descriptor.lastValue;

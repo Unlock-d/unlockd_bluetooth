@@ -8,7 +8,7 @@ class UnlockdGuid extends Equatable {
   UnlockdGuid(String input) : bytes = _fromString(input);
 
   /// Creates a '00000000-0000-0000-0000-000000000000' GUID.
-  UnlockdGuid.empty() : bytes = List.filled(16, 0);
+  UnlockdGuid.empty() : bytes = List.filled(16, 0, growable: true);
 
   /// Creates a GUID from a list of bytes.
   /// GUID must be 16, 32, or 128 bit.

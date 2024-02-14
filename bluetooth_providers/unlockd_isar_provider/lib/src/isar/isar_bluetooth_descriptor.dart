@@ -13,7 +13,7 @@ class IsarBluetoothDescriptor extends UnlockdBluetoothDescriptor {
   final IsarLink<IsarBluetoothCharacteristic> characteristic = IsarLink();
 
   @override
-  String descriptorUuid = '';
+  IsarGuid descriptorUuid = IsarGuid();
 
   @override
   List<int> get lastValue => contents;

@@ -1,7 +1,7 @@
 part of 'domain.dart';
 
 abstract class UnlockdBluetoothDescriptor {
-  String get descriptorUuid;
+  UnlockdGuid get descriptorUuid;
 
   Stream<List<int>> get onValueReceived;
 

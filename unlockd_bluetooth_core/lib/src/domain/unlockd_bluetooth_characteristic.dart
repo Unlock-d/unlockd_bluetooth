@@ -1,5 +1,6 @@
 part of 'domain.dart';
 
+/// An abstract class representing a Bluetooth characteristic.
 abstract class UnlockdBluetoothCharacteristic {
   /// Get Properties from known services
   UnlockdCharacteristicProperties get properties;
@@ -11,7 +12,8 @@ abstract class UnlockdBluetoothCharacteristic {
   /// Get Descriptors from known services
   List<UnlockdBluetoothDescriptor> get descriptors;
 
-  String get characteristicUuid;
+  /// Characteristic Bluetooth GUID
+  UnlockdGuid get characteristicUuid;
 
   Stream<List<int>> get onValueReceived;
 
@@ -34,6 +36,5 @@ abstract class UnlockdBluetoothCharacteristic {
   /// Sets notifications or indications for the characteristic.
   ///   - If a characteristic supports both notifications and indications,
   ///     we use notifications. This is a limitation of CoreBluetooth on iOS.
-  ///   - [forceIndications] Android Only. force indications to be used instead of notifications.
-  Future<bool> setNotifyValue(bool value);
+  Future<bool> setNotifyValue({required bool value});
 }

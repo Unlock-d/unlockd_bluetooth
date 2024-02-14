@@ -12,6 +12,7 @@ part 'isar_bluetooth_descriptor.dart';
 part 'isar_bluetooth_device.dart';
 part 'isar_bluetooth_service.dart';
 part 'isar_characteristic_properties.dart';
+part 'isar_guid.dart';
 part 'isar_manufacturer_data.dart';
 part 'isar_scan_result.dart';
 part 'isar_service_data.dart';
