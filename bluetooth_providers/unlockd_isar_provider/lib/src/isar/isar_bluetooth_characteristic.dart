@@ -3,11 +3,49 @@ part of 'isar.dart';
 /// A class representing a Bluetooth characteristic in Isar.
 @Collection(inheritance: false)
 class IsarBluetoothCharacteristic extends UnlockdBluetoothCharacteristic {
+  /// Default constructor needed for [Isar]
+  IsarBluetoothCharacteristic();
+
+  /// Create a [IsarBluetoothCharacteristic] with the given [contents].
+  factory IsarBluetoothCharacteristic.withContents(
+    List<int> contents, {
+    bool? broadcast,
+    bool? read,
+    bool? writeWithoutResponse,
+    bool? write,
+    bool? notify,
+    bool? indicate,
+    bool? authenticatedSignedWrites,
+    bool? extendedProperties,
+    bool? notifyEncryptionRequired,
+    bool? indicateEncryptionRequired,
+  }) {
+    final properties = IsarCharacteristicProperties.withValues(
+      broadcast: broadcast,
+      read: read,
+      writeWithoutResponse: writeWithoutResponse,
+      write: write,
+      notify: notify,
+      indicate: indicate,
+      authenticatedSignedWrites: authenticatedSignedWrites,
+      extendedProperties: extendedProperties,
+      notifyEncryptionRequired: notifyEncryptionRequired,
+      indicateEncryptionRequired: indicateEncryptionRequired,
+    );
+
+    return IsarBluetoothCharacteristic()
+      ..contents = contents
+      ..properties = properties;
+  }
+
+  /// Internal [Isar] id.
   Id id = Isar.autoIncrement;
 
+  /// [Backlink] to [IsarBluetoothService].
   @Backlink(to: 'isarCharacteristics')
   final IsarLink<IsarBluetoothService> service = IsarLink();
 
+  /// [IsarLinks] to [IsarBluetoothDescriptor].
   final IsarLinks<IsarBluetoothDescriptor> isarDescriptors = IsarLinks();
 
   /// The contents of the characteristic.

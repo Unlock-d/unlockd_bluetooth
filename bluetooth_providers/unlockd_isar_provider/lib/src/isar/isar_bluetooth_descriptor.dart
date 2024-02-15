@@ -3,12 +3,13 @@ part of 'isar.dart';
 /// A [UnlockdBluetoothDescriptor] implementation for Isar.
 @Collection(inheritance: false)
 class IsarBluetoothDescriptor extends UnlockdBluetoothDescriptor {
+  /// Internal [Isar] id.
   Id id = Isar.autoIncrement;
 
   /// The contents of the descriptor.
   List<int> contents = [];
 
-  /// The characteristic that this descriptor belongs to.
+  /// [Backlink] to [IsarBluetoothCharacteristic].
   @Backlink(to: 'isarDescriptors')
   final IsarLink<IsarBluetoothCharacteristic> characteristic = IsarLink();
 
