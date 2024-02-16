@@ -15,6 +15,10 @@
 *.iws
 .idea/
 
+*.isar
+*.isar.lock
+libisar.so
+
 # VSCode related
 .vscode/
 

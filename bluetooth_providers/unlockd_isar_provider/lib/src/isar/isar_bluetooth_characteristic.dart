@@ -48,7 +48,7 @@ class IsarBluetoothCharacteristic extends UnlockdBluetoothCharacteristic {
   /// [IsarLinks] to [IsarBluetoothDescriptor].
   final IsarLinks<IsarBluetoothDescriptor> isarDescriptors = IsarLinks();
 
-  /// The contents of the characteristic.
+  /// The contents of the characteristic used internally.
   List<int> contents = [];
 
   @override
@@ -62,7 +62,14 @@ class IsarBluetoothCharacteristic extends UnlockdBluetoothCharacteristic {
 
   @ignore
   @override
-  Stream<List<int>> get onValueReceived => Stream.value(contents);
+  Stream<List<int>> get onValueReceived =>
+      IsarBluetoothProvider.instance._isar.isarBluetoothCharacteristics
+          .filter()
+          .characteristicUuid(
+            (q) => q.isarGuidEqualTo(characteristicUuid.isarGuid),
+          )
+          .watch(fireImmediately: true)
+          .map((chars) => chars.isNotEmpty ? chars[0].contents : []);
 
   @override
   List<int> get lastValue => contents;

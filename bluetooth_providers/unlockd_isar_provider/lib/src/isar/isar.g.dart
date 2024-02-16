@@ -2159,7 +2159,21 @@ const IsarBluetoothDeviceSchema = CollectionSchema(
   deserialize: _isarBluetoothDeviceDeserialize,
   deserializeProp: _isarBluetoothDeviceDeserializeProp,
   idName: r'id',
-  indexes: {},
+  indexes: {
+    r'remoteId': IndexSchema(
+      id: 6301175856541681032,
+      name: r'remoteId',
+      unique: true,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'remoteId',
+          type: IndexType.hash,
+          caseSensitive: true,
+        )
+      ],
+    )
+  },
   links: {
     r'config': LinkSchema(
       id: -1767006862236188093,
@@ -2292,6 +2306,62 @@ void _isarBluetoothDeviceAttach(
       id);
 }
 
+extension IsarBluetoothDeviceByIndex on IsarCollection<IsarBluetoothDevice> {
+  Future<IsarBluetoothDevice?> getByRemoteId(String remoteId) {
+    return getByIndex(r'remoteId', [remoteId]);
+  }
+
+  IsarBluetoothDevice? getByRemoteIdSync(String remoteId) {
+    return getByIndexSync(r'remoteId', [remoteId]);
+  }
+
+  Future<bool> deleteByRemoteId(String remoteId) {
+    return deleteByIndex(r'remoteId', [remoteId]);
+  }
+
+  bool deleteByRemoteIdSync(String remoteId) {
+    return deleteByIndexSync(r'remoteId', [remoteId]);
+  }
+
+  Future<List<IsarBluetoothDevice?>> getAllByRemoteId(
+      List<String> remoteIdValues) {
+    final values = remoteIdValues.map((e) => [e]).toList();
+    return getAllByIndex(r'remoteId', values);
+  }
+
+  List<IsarBluetoothDevice?> getAllByRemoteIdSync(List<String> remoteIdValues) {
+    final values = remoteIdValues.map((e) => [e]).toList();
+    return getAllByIndexSync(r'remoteId', values);
+  }
+
+  Future<int> deleteAllByRemoteId(List<String> remoteIdValues) {
+    final values = remoteIdValues.map((e) => [e]).toList();
+    return deleteAllByIndex(r'remoteId', values);
+  }
+
+  int deleteAllByRemoteIdSync(List<String> remoteIdValues) {
+    final values = remoteIdValues.map((e) => [e]).toList();
+    return deleteAllByIndexSync(r'remoteId', values);
+  }
+
+  Future<Id> putByRemoteId(IsarBluetoothDevice object) {
+    return putByIndex(r'remoteId', object);
+  }
+
+  Id putByRemoteIdSync(IsarBluetoothDevice object, {bool saveLinks = true}) {
+    return putByIndexSync(r'remoteId', object, saveLinks: saveLinks);
+  }
+
+  Future<List<Id>> putAllByRemoteId(List<IsarBluetoothDevice> objects) {
+    return putAllByIndex(r'remoteId', objects);
+  }
+
+  List<Id> putAllByRemoteIdSync(List<IsarBluetoothDevice> objects,
+      {bool saveLinks = true}) {
+    return putAllByIndexSync(r'remoteId', objects, saveLinks: saveLinks);
+  }
+}
+
 extension IsarBluetoothDeviceQueryWhereSort
     on QueryBuilder<IsarBluetoothDevice, IsarBluetoothDevice, QWhere> {
   QueryBuilder<IsarBluetoothDevice, IsarBluetoothDevice, QAfterWhere> anyId() {
@@ -2368,6 +2438,51 @@ extension IsarBluetoothDeviceQueryWhere
         upper: upperId,
         includeUpper: includeUpper,
       ));
+    });
+  }
+
+  QueryBuilder<IsarBluetoothDevice, IsarBluetoothDevice, QAfterWhereClause>
+      remoteIdEqualTo(String remoteId) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'remoteId',
+        value: [remoteId],
+      ));
+    });
+  }
+
+  QueryBuilder<IsarBluetoothDevice, IsarBluetoothDevice, QAfterWhereClause>
+      remoteIdNotEqualTo(String remoteId) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'remoteId',
+              lower: [],
+              upper: [remoteId],
+              includeUpper: false,
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'remoteId',
+              lower: [remoteId],
+              includeLower: false,
+              upper: [],
+            ));
+      } else {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'remoteId',
+              lower: [remoteId],
+              includeLower: false,
+              upper: [],
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'remoteId',
+              lower: [],
+              upper: [remoteId],
+              includeUpper: false,
+            ));
+      }
     });
   }
 }
@@ -5316,10 +5431,10 @@ const IsarGuidSchema = Schema(
   name: r'IsarGuid',
   id: -7727150471371360216,
   properties: {
-    r'bytes': PropertySchema(
+    r'isarGuid': PropertySchema(
       id: 0,
-      name: r'bytes',
-      type: IsarType.longList,
+      name: r'isarGuid',
+      type: IsarType.string,
     )
   },
   estimateSize: _isarGuidEstimateSize,
@@ -5334,7 +5449,7 @@ int _isarGuidEstimateSize(
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
-  bytesCount += 3 + object.bytes.length * 8;
+  bytesCount += 3 + object.isarGuid.length * 3;
   return bytesCount;
 }
 
@@ -5344,7 +5459,7 @@ void _isarGuidSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeLongList(offsets[0], object.bytes);
+  writer.writeString(offsets[0], object.isarGuid);
 }
 
 IsarGuid _isarGuidDeserialize(
@@ -5354,7 +5469,7 @@ IsarGuid _isarGuidDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = IsarGuid();
-  object.bytes = reader.readLongList(offsets[0]) ?? [];
+  object.isarGuid = reader.readString(offsets[0]);
   return object;
 }
 
@@ -5366,7 +5481,7 @@ P _isarGuidDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readLongList(offset) ?? []) as P;
+      return (reader.readString(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -5374,142 +5489,133 @@ P _isarGuidDeserializeProp<P>(
 
 extension IsarGuidQueryFilter
     on QueryBuilder<IsarGuid, IsarGuid, QFilterCondition> {
-  QueryBuilder<IsarGuid, IsarGuid, QAfterFilterCondition> bytesElementEqualTo(
-      int value) {
+  QueryBuilder<IsarGuid, IsarGuid, QAfterFilterCondition> isarGuidEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'bytes',
+        property: r'isarGuid',
         value: value,
+        caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<IsarGuid, IsarGuid, QAfterFilterCondition>
-      bytesElementGreaterThan(
-    int value, {
+  QueryBuilder<IsarGuid, IsarGuid, QAfterFilterCondition> isarGuidGreaterThan(
+    String value, {
     bool include = false,
+    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
-        property: r'bytes',
+        property: r'isarGuid',
         value: value,
+        caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<IsarGuid, IsarGuid, QAfterFilterCondition> bytesElementLessThan(
-    int value, {
+  QueryBuilder<IsarGuid, IsarGuid, QAfterFilterCondition> isarGuidLessThan(
+    String value, {
     bool include = false,
+    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
-        property: r'bytes',
+        property: r'isarGuid',
         value: value,
+        caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<IsarGuid, IsarGuid, QAfterFilterCondition> bytesElementBetween(
-    int lower,
-    int upper, {
+  QueryBuilder<IsarGuid, IsarGuid, QAfterFilterCondition> isarGuidBetween(
+    String lower,
+    String upper, {
     bool includeLower = true,
     bool includeUpper = true,
+    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
-        property: r'bytes',
+        property: r'isarGuid',
         lower: lower,
         includeLower: includeLower,
         upper: upper,
         includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<IsarGuid, IsarGuid, QAfterFilterCondition> bytesLengthEqualTo(
-      int length) {
-    return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'bytes',
-        length,
-        true,
-        length,
-        true,
-      );
-    });
-  }
-
-  QueryBuilder<IsarGuid, IsarGuid, QAfterFilterCondition> bytesIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'bytes',
-        0,
-        true,
-        0,
-        true,
-      );
-    });
-  }
-
-  QueryBuilder<IsarGuid, IsarGuid, QAfterFilterCondition> bytesIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'bytes',
-        0,
-        false,
-        999999,
-        true,
-      );
-    });
-  }
-
-  QueryBuilder<IsarGuid, IsarGuid, QAfterFilterCondition> bytesLengthLessThan(
-    int length, {
-    bool include = false,
+  QueryBuilder<IsarGuid, IsarGuid, QAfterFilterCondition> isarGuidStartsWith(
+    String value, {
+    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'bytes',
-        0,
-        true,
-        length,
-        include,
-      );
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'isarGuid',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
-  QueryBuilder<IsarGuid, IsarGuid, QAfterFilterCondition>
-      bytesLengthGreaterThan(
-    int length, {
-    bool include = false,
+  QueryBuilder<IsarGuid, IsarGuid, QAfterFilterCondition> isarGuidEndsWith(
+    String value, {
+    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'bytes',
-        length,
-        include,
-        999999,
-        true,
-      );
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'isarGuid',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
-  QueryBuilder<IsarGuid, IsarGuid, QAfterFilterCondition> bytesLengthBetween(
-    int lower,
-    int upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
+  QueryBuilder<IsarGuid, IsarGuid, QAfterFilterCondition> isarGuidContains(
+      String value,
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'bytes',
-        lower,
-        includeLower,
-        upper,
-        includeUpper,
-      );
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'isarGuid',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<IsarGuid, IsarGuid, QAfterFilterCondition> isarGuidMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'isarGuid',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<IsarGuid, IsarGuid, QAfterFilterCondition> isarGuidIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'isarGuid',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<IsarGuid, IsarGuid, QAfterFilterCondition> isarGuidIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'isarGuid',
+        value: '',
+      ));
     });
   }
 }

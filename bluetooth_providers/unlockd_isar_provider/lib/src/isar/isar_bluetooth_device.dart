@@ -18,7 +18,8 @@ class IsarBluetoothDevice extends UnlockdBluetoothDevice {
       IsarLinks<IsarBluetoothService>();
 
   @override
-  String remoteId = '';
+  @Index(unique: true)
+  late final String remoteId;
 
   @override
   String platformName = '';
@@ -39,12 +40,18 @@ class IsarBluetoothDevice extends UnlockdBluetoothDevice {
 
   @ignore
   @override
-  Stream<int> get mtu => Stream.value(mtuNow);
+  Stream<int> get mtu => _remoteIdQuery
+      .watch(fireImmediately: true)
+      .map((devices) => devices.isNotEmpty ? devices[0].mtuNow : 0);
 
   @ignore
   @override
   Stream<UnlockdBluetoothConnectionState> get connectionState =>
-      Stream.value(isarConnectionState);
+      _remoteIdQuery.watch(fireImmediately: true).map(
+            (devices) => devices.isNotEmpty
+                ? devices[0].isarConnectionState
+                : UnlockdBluetoothConnectionState.disconnected,
+          );
 
   @ignore
   @override
@@ -130,5 +137,12 @@ class IsarBluetoothDevice extends UnlockdBluetoothDevice {
         updatedDevice,
       ),
     );
+  }
+
+  QueryBuilder<IsarBluetoothDevice, IsarBluetoothDevice, QAfterFilterCondition>
+      get _remoteIdQuery {
+    return IsarBluetoothProvider.instance._isar.isarBluetoothDevices
+        .filter()
+        .remoteIdEqualTo(remoteId);
   }
 }
