@@ -15,22 +15,24 @@ abstract class UnlockdBluetoothCharacteristic {
   /// Characteristic Bluetooth GUID
   UnlockdGuid get characteristicUuid;
 
+  /// This stream emits values:
+  ///   - anytime `read()` is called
+  ///   - anytime a notification arrives (if subscribed)
   Stream<List<int>> get onValueReceived;
 
+  /// this variable is updated:
+  ///   - anytime `read()` is called
+  ///   - anytime `write()` is called
+  ///   - anytime a notification arrives (if subscribed)
+  ///   - when the device is disconnected it is cleared
   List<int> get lastValue;
 
   /// Read a characteristic
   Future<List<int>> read();
 
   /// Writes a characteristic.
-  ///  - [withoutResponse]: the write is not guaranteed and always returns immediately with success.
-  ///  - [withResponse]: the write returns error on failure
-  ///  - [allowLongWrite]: if set, larger writes > MTU are allowed (up to 512 bytes).
-  ///       This should be used with caution.
-  ///         1. it can only be used *with* response
-  ///         2. the peripheral device must support the 'long write' ble protocol.
-  ///         3. Interrupted transfers can leave the characteristic in a partially written state
-  ///         4. If the mtu is small, it is very very slow.
+  ///  - [withoutResponse]: the write is not guaranteed and
+  ///  always returns immediately with success.
   Future<void> write(List<int> value, {bool? withoutResponse});
 
   /// Sets notifications or indications for the characteristic.
