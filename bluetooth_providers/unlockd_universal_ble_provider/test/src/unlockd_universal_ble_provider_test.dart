@@ -6,7 +6,7 @@ import 'package:unlockd_universal_ble_provider/unlockd_universal_ble_provider.da
 void main() {
   group('$UniversalBleProvider', () {
     test('can be instantiated', () {
-      expect(UniversalBleProvider(), isNotNull);
+      expect(UniversalBleProvider.instance, isNotNull);
     });
   });
 }

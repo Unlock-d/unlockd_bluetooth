@@ -6,9 +6,41 @@ import 'package:unlockd_bluetooth_core/unlockd_bluetooth.dart';
 /// A [UnlockdBluetoothProvider] which uses [UniversalBle]
 /// to retrieve Bluetooth information.
 class UniversalBleProvider extends UnlockdBluetoothProvider {
+  UniversalBleProvider._();
+
+  /// Returns the [UniversalBleProvider] instance.
+  static final UniversalBleProvider instance = UniversalBleProvider._();
+
   @override
   Stream<UnlockdBluetoothAdapterState> adapterState() {
-    throw UnimplementedError();
+    final controller =
+        StreamController<UnlockdBluetoothAdapterState>.broadcast();
+    _currentAdapterState.then(controller.add);
+
+    UniversalBle.onAvailabilityChange = (state) {
+      final adapterState = _availabilityToAdapterState(state);
+      controller.add(adapterState);
+    };
+
+    return controller.stream;
+  }
+
+  Future<UnlockdBluetoothAdapterState> get _currentAdapterState =>
+      UniversalBle.getBluetoothAvailabilityState()
+          .then(_availabilityToAdapterState);
+
+  UnlockdBluetoothAdapterState _availabilityToAdapterState(
+    AvailabilityState state,
+  ) {
+    return switch (state) {
+      AvailabilityState.unknown => UnlockdBluetoothAdapterState.unknown,
+      AvailabilityState.resetting => UnlockdBluetoothAdapterState.unavailable,
+      AvailabilityState.unsupported => UnlockdBluetoothAdapterState.unavailable,
+      AvailabilityState.unauthorized =>
+        UnlockdBluetoothAdapterState.unauthorized,
+      AvailabilityState.poweredOff => UnlockdBluetoothAdapterState.off,
+      AvailabilityState.poweredOn => UnlockdBluetoothAdapterState.on,
+    };
   }
 
   @override
