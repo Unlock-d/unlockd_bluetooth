@@ -44,8 +44,14 @@ abstract class UnlockdBluetoothProvider {
 
   Future<List<UnlockdBluetoothDevice>> systemDevices();
 
+  /// a stream of scan results
+  /// - if you re-listen to the stream it re-emits the previous results
+  /// - the list contains all the results since the scan started
+  /// - the returned stream is never closed.
   Stream<List<UnlockdScanResult>> scanResults();
 
+  /// This is the same as scanResults, except:
+  /// - it *does not* re-emit previous results after scanning stops.
   Stream<List<UnlockdScanResult>> onScanResults();
 
   void cancelWhenScanComplete<T>(StreamSubscription<T> subscription);
