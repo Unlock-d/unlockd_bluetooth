@@ -102,7 +102,5 @@ class UniversalBleProvider extends UnlockdBluetoothProvider {
   }
 
   @override
-  Future<void> turnOn() {
-    throw UnimplementedError();
-  }
+  Future<void> turnOn() => UniversalBle.enableBluetooth();
 }
