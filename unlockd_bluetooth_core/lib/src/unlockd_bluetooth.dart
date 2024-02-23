@@ -60,7 +60,7 @@ class UnlockdBluetooth implements UnlockdBluetoothProvider {
   Stream<bool> isScanning() => _provider.isScanning();
 
   @override
-  FutureOr<bool> isScanningNow() => _provider.isScanningNow();
+  bool isScanningNow() => _provider.isScanningNow();
 
   @override
   Stream<List<UnlockdScanResult>> onScanResults() => _provider.onScanResults();

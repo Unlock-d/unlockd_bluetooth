@@ -47,9 +47,7 @@ class FakeBluetoothProvider extends UnlockdBluetoothProvider {
   Stream<UnlockdBluetoothAdapterState> adapterState() => _adapterStream;
 
   @override
-  FutureOr<bool> isScanningNow() async {
-    return _isScanningNow;
-  }
+  bool isScanningNow() => _isScanningNow;
 
   @override
   Stream<bool> isScanning() {

@@ -63,7 +63,7 @@ class IsarBluetoothProvider extends UnlockdBluetoothProvider {
       _configStream.map((config) => config.adapterState);
 
   @override
-  FutureOr<bool> isScanningNow() async => (await _config).isScanningNow;
+  bool isScanningNow() => _configSync.isScanningNow;
 
   @override
   Stream<bool> isScanning() =>
@@ -123,6 +123,10 @@ class IsarBluetoothProvider extends UnlockdBluetoothProvider {
 
   Future<IsarBluetoothConfig> get _config async =>
       (await _isar.isarBluetoothConfigs.get(isarBluetoothConfigId)) ??
+      IsarBluetoothConfig();
+
+  IsarBluetoothConfig get _configSync =>
+      (_isar.isarBluetoothConfigs.getSync(isarBluetoothConfigId)) ??
       IsarBluetoothConfig();
 
   Stream<IsarBluetoothConfig> get _configStream => _isar.isarBluetoothConfigs

@@ -1,6 +1,6 @@
 name: unlockd_fake_provider
 description: A Unlock'd Flutter package created by Unlock'd.
-version: 0.0.1
+version: 0.0.2
 publish_to: none
 
 environment:

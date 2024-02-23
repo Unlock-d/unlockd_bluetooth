@@ -43,7 +43,7 @@ class FbpBluetoothProvider extends UnlockdBluetoothProvider {
   }
 
   @override
-  FutureOr<bool> isScanningNow() => FlutterBluePlus.isScanningNow;
+  bool isScanningNow() => FlutterBluePlus.isScanningNow;
 
   @override
   Stream<bool> isScanning() => FlutterBluePlus.isScanning;

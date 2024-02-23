@@ -16,7 +16,7 @@ abstract class UnlockdBluetoothProvider {
 
   Stream<UnlockdBluetoothAdapterState> adapterState();
 
-  FutureOr<bool> isScanningNow();
+  bool isScanningNow();
 
   Stream<bool> isScanning();
 
