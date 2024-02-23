@@ -13,6 +13,11 @@ class FbpBluetoothProvider extends UnlockdBluetoothProvider {
   static final FbpBluetoothProvider instance = FbpBluetoothProvider._();
 
   @override
+  Future<void> close() async {
+    // Nothing to do here.
+  }
+
+  @override
   Future<void> turnOn() => FlutterBluePlus.turnOn();
 
   @override

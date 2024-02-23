@@ -42,6 +42,9 @@ class UnlockdBluetooth implements UnlockdBluetoothProvider {
       instance.fromRemoteId(remoteId);
 
   @override
+  Future<void> close() async => _provider.close();
+
+  @override
   Stream<UnlockdBluetoothAdapterState> adapterState() =>
       _provider.adapterState();
 

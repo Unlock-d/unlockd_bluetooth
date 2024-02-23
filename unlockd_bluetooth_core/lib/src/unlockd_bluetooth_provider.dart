@@ -5,6 +5,9 @@ import 'package:unlockd_bluetooth_core/src/domain/domain.dart';
 /// Abstract class that defines the methods that
 /// a Bluetooth provider must implement.
 abstract class UnlockdBluetoothProvider {
+  /// Method to cleanup the resources used by the provider.
+  Future<void> close();
+
   UnlockdBluetoothDevice fromRemoteId(String remoteId);
 
   Future<void> turnOn();

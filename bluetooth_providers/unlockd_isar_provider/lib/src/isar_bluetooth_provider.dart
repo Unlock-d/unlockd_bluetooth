@@ -33,6 +33,9 @@ class IsarBluetoothProvider extends UnlockdBluetoothProvider {
   final Isar _isar;
 
   @override
+  Future<void> close() async => _isar.close();
+
+  @override
   Future<void> turnOn() async {
     await _changeConfig(
       (config) => config..adapterState = UnlockdBluetoothAdapterState.turningOn,

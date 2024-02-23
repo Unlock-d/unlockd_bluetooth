@@ -30,6 +30,12 @@ class FakeBluetoothProvider extends UnlockdBluetoothProvider {
       _adapterStateController.stream;
 
   @override
+  Future<void> close() async {
+    await _adapterStateController.close();
+    await _scanController.close();
+  }
+
+  @override
   Future<void> turnOn() async =>
       _adapterStateController.add(UnlockdBluetoothAdapterState.on);
 
