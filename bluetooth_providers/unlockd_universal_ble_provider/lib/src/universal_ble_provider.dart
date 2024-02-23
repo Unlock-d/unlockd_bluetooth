@@ -1,33 +1,68 @@
-import 'dart:async';
-
-import 'package:universal_ble/universal_ble.dart';
-import 'package:unlockd_bluetooth_core/unlockd_bluetooth.dart';
+part of 'universal_ble/universal_ble.dart';
 
 /// A [UnlockdBluetoothProvider] which uses [UniversalBle]
 /// to retrieve Bluetooth information.
 class UniversalBleProvider extends UnlockdBluetoothProvider {
-  UniversalBleProvider._();
+  UniversalBleProvider._(this._bleWrapper);
+
+  /// Initializes singleton instance of [UniversalBleProvider].
+  factory UniversalBleProvider.initialize({
+    UniversalBleWrapper? wrapper,
+  }) {
+    _instance = UniversalBleProvider._(wrapper ?? UnlockdUniversalBle.instance);
+    return _instance!;
+  }
 
   /// Returns the [UniversalBleProvider] instance.
-  static final UniversalBleProvider instance = UniversalBleProvider._();
+  /// Throws an [AssertionError] if [UniversalBleProvider.initialize] has
+  /// not been called.
+  static UniversalBleProvider get instance {
+    assert(
+      _instance != null,
+      '$UniversalBleProvider has not been initialized. '
+      'Call ${UniversalBleProvider.initialize} first.',
+    );
+    return _instance!;
+  }
+
+  static UniversalBleProvider? _instance;
+  final UniversalBleWrapper _bleWrapper;
+
+  StreamController<UnlockdBluetoothAdapterState>?
+      _internalAdapterStateController;
+  StreamController<List<UnlockdScanResult>>? _internalScanController;
+  Timer? _stopScanTimer;
+
+  StreamController<UnlockdBluetoothAdapterState> get _adapterStateController {
+    if (_internalAdapterStateController == null ||
+        _internalAdapterStateController!.isClosed) {
+      _internalAdapterStateController = StreamController.broadcast();
+    }
+    return _internalAdapterStateController!;
+  }
+
+  StreamController<List<UnlockdScanResult>> get _scanController {
+    if (_internalScanController == null || _internalScanController!.isClosed) {
+      _internalScanController = StreamController.broadcast(sync: true);
+    }
+    return _internalScanController!;
+  }
+
+  @override
+  Future<void> close() async {
+    await _internalAdapterStateController?.close();
+    await _internalScanController?.close();
+    _stopScanTimer?.cancel();
+  }
 
   @override
   Stream<UnlockdBluetoothAdapterState> adapterState() {
-    final controller =
-        StreamController<UnlockdBluetoothAdapterState>.broadcast();
-    _currentAdapterState.then(controller.add);
-
-    UniversalBle.onAvailabilityChange = (state) {
-      final adapterState = _availabilityToAdapterState(state);
-      controller.add(adapterState);
+    _bleWrapper.onAvailabilityChange = (state) {
+      _adapterStateController.add(_availabilityToAdapterState(state));
     };
 
-    return controller.stream;
+    return _adapterStateController.stream;
   }
-
-  Future<UnlockdBluetoothAdapterState> get _currentAdapterState =>
-      UniversalBle.getBluetoothAvailabilityState()
-          .then(_availabilityToAdapterState);
 
   UnlockdBluetoothAdapterState _availabilityToAdapterState(
     AvailabilityState state,
@@ -50,27 +85,48 @@ class UniversalBleProvider extends UnlockdBluetoothProvider {
 
   @override
   UnlockdBluetoothDevice fromRemoteId(String remoteId) {
-    throw UnimplementedError();
+    return UniversalBleBluetoothDevice.fromRemoteId(remoteId);
   }
 
   @override
   Stream<bool> isScanning() {
-    throw UnimplementedError();
+    return _scanController.stream.transform(
+      StreamTransformer.fromHandlers(
+        handleData: (data, sink) {
+          sink.add(true);
+        },
+        handleDone: (sink) {
+          sink
+            ..add(false)
+            ..close();
+        },
+      ),
+    );
   }
 
   @override
-  FutureOr<bool> isScanningNow() {
+  bool isScanningNow() => !_scanController.isClosed;
+
+  @override
+  Stream<List<UnlockdScanResult>> scanResults() {
     throw UnimplementedError();
   }
 
   @override
   Stream<List<UnlockdScanResult>> onScanResults() {
-    throw UnimplementedError();
-  }
+    final scans = StreamController<UnlockdScanResult>();
+    final scanResults = <UnlockdScanResult>{};
 
-  @override
-  Stream<List<UnlockdScanResult>> scanResults() {
-    throw UnimplementedError();
+    _bleWrapper.onScanResult = (result) {
+      scans.add(UniversalBleScanResult.fromUniversalBle(result));
+    };
+
+    scans.stream
+        .debounceBuffer(const Duration(milliseconds: 200))
+        .map((results) => scanResults..addAll(results))
+        .listen((event) => _scanController.add(event.toList()));
+
+    return _scanController.stream;
   }
 
   @override
@@ -82,13 +138,21 @@ class UniversalBleProvider extends UnlockdBluetoothProvider {
     List<String>? withNames,
     List<String>? withKeywords,
     List<UnlockdMsdFilter>? withMsd,
-  }) {
-    throw UnimplementedError();
+  }) async {
+    if (timeout != null) {
+      _stopScanTimer = Timer(timeout, stopScan);
+    }
+
+    return _bleWrapper.startScan();
   }
 
   @override
   Future<void> stopScan() {
-    throw UnimplementedError();
+    _bleWrapper.onScanResult = null;
+    _scanController.close();
+    _stopScanTimer?.cancel();
+
+    return _bleWrapper.stopScan();
   }
 
   @override
@@ -102,5 +166,5 @@ class UniversalBleProvider extends UnlockdBluetoothProvider {
   }
 
   @override
-  Future<void> turnOn() => UniversalBle.enableBluetooth();
+  Future<void> turnOn() => _bleWrapper.enableBluetooth();
 }
