@@ -16,7 +16,7 @@ void main() {
       scanController = StreamController.broadcast(sync: true);
 
       provider = UniversalBleProvider.initialize(
-        wrapper: FakeUniversalBle(
+        universalBle: FakeUniversalBle(
           scanController: scanController,
         ),
       );

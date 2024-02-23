@@ -3,13 +3,17 @@ part of 'universal_ble/universal_ble.dart';
 /// A [UnlockdBluetoothProvider] which uses [UniversalBle]
 /// to retrieve Bluetooth information.
 class UniversalBleProvider extends UnlockdBluetoothProvider {
-  UniversalBleProvider._(this._bleWrapper);
+  UniversalBleProvider._();
 
   /// Initializes singleton instance of [UniversalBleProvider].
   factory UniversalBleProvider.initialize({
-    UniversalBleWrapper? wrapper,
+    UniversalBlePlatform? universalBle,
   }) {
-    _instance = UniversalBleProvider._(wrapper ?? UnlockdUniversalBle.instance);
+    if (universalBle != null) {
+      UniversalBle.setInstance(universalBle);
+    }
+
+    _instance = UniversalBleProvider._();
     return _instance!;
   }
 
@@ -26,7 +30,6 @@ class UniversalBleProvider extends UnlockdBluetoothProvider {
   }
 
   static UniversalBleProvider? _instance;
-  final UniversalBleWrapper _bleWrapper;
 
   StreamController<UnlockdBluetoothAdapterState>?
       _internalAdapterStateController;
@@ -58,7 +61,7 @@ class UniversalBleProvider extends UnlockdBluetoothProvider {
 
   @override
   Stream<UnlockdBluetoothAdapterState> adapterState() {
-    _bleWrapper.onAvailabilityChange = (state) {
+    UniversalBle.onAvailabilityChange = (state) {
       _adapterStateController.add(_availabilityToAdapterState(state));
     };
 
@@ -81,6 +84,7 @@ class UniversalBleProvider extends UnlockdBluetoothProvider {
 
   @override
   void cancelWhenScanComplete<T>(StreamSubscription<T> subscription) {
+    // TODO(PJ): implement connect
     throw UnimplementedError();
   }
 
@@ -110,6 +114,7 @@ class UniversalBleProvider extends UnlockdBluetoothProvider {
 
   @override
   Stream<List<UnlockdScanResult>> scanResults() {
+    // TODO(PJ): implement connect
     throw UnimplementedError();
   }
 
@@ -118,7 +123,7 @@ class UniversalBleProvider extends UnlockdBluetoothProvider {
     final scans = StreamController<UnlockdScanResult>();
     final scanResults = <UnlockdScanResult>{};
 
-    _bleWrapper.onScanResult = (result) {
+    UniversalBle.onScanResult = (result) {
       scans.add(UniversalBleScanResult.fromUniversalBle(result));
     };
 
@@ -153,28 +158,30 @@ class UniversalBleProvider extends UnlockdBluetoothProvider {
       withMsd: withMsd,
     );
 
-    return _bleWrapper.startScan();
+    return UniversalBle.startScan();
   }
 
   @override
   Future<void> stopScan() {
-    _bleWrapper.onScanResult = null;
+    UniversalBle.onScanResult = null;
     _scanController.close();
     _stopScanTimer?.cancel();
 
-    return _bleWrapper.stopScan();
+    return UniversalBle.stopScan();
   }
 
   @override
   Future<List<UnlockdBluetoothDevice>> systemDevices() {
+    // TODO(PJ): implement connect
     throw UnimplementedError();
   }
 
   @override
   Future<void> turnOff() {
+    // TODO(PJ): implement connect
     throw UnimplementedError();
   }
 
   @override
-  Future<void> turnOn() => _bleWrapper.enableBluetooth();
+  Future<void> turnOn() => UniversalBle.enableBluetooth();
 }
