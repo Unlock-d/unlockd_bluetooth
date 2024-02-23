@@ -32,6 +32,7 @@ class UniversalBleProvider extends UnlockdBluetoothProvider {
       _internalAdapterStateController;
   StreamController<List<UnlockdScanResult>>? _internalScanController;
   Timer? _stopScanTimer;
+  ScanFilters? _scanFilters;
 
   StreamController<UnlockdBluetoothAdapterState> get _adapterStateController {
     if (_internalAdapterStateController == null ||
@@ -122,6 +123,7 @@ class UniversalBleProvider extends UnlockdBluetoothProvider {
     };
 
     scans.stream
+        .where((result) => _scanFilters?.filter(result) ?? true)
         .debounceBuffer(const Duration(milliseconds: 200))
         .map((results) => scanResults..addAll(results))
         .listen((event) => _scanController.add(event.toList()));
@@ -142,6 +144,14 @@ class UniversalBleProvider extends UnlockdBluetoothProvider {
     if (timeout != null) {
       _stopScanTimer = Timer(timeout, stopScan);
     }
+
+    _scanFilters = ScanFilters(
+      withServices: withServices,
+      withRemoteIds: withRemoteIds,
+      withNames: withNames,
+      withKeywords: withKeywords,
+      withMsd: withMsd,
+    );
 
     return _bleWrapper.startScan();
   }
