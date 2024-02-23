@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:universal_ble/universal_ble.dart';
 import 'package:unlockd_universal_ble_provider/src/universal_ble/universal_ble.dart';
 
@@ -28,9 +29,9 @@ void main() {
     });
 
     test('Scanning multiple devices should emit these results', () async {
-      final scan1 = bleScanResult();
+      final scan1 = bleScanResult(deviceId: '1');
       final scan2 = bleScanResult(deviceId: '2');
-      final scan1SecondTime = bleScanResult();
+      final scan1SecondTime = bleScanResult(deviceId: '1');
       final scan3 = bleScanResult(deviceId: '3');
 
       unawaited(
@@ -50,9 +51,9 @@ void main() {
     });
 
     test('Multiple listens should not mess with results', () async {
-      final scan1 = bleScanResult();
+      final scan1 = bleScanResult(deviceId: '1');
       final scan2 = bleScanResult(deviceId: '2');
-      final scan1SecondTime = bleScanResult();
+      final scan1SecondTime = bleScanResult(deviceId: '1');
       final scan3 = bleScanResult(deviceId: '3');
 
       unawaited(
@@ -87,13 +88,106 @@ void main() {
         ..add(scan1SecondTime)
         ..add(scan3);
     });
+
+    group(
+      'Scanning with filters',
+      () {
+        test('Filtering names', () async {
+          final scan1 = bleScanResult(name: 'Moon (17)', deviceId: '1');
+          final scan2 = bleScanResult(name: 'Random', deviceId: '2');
+
+          await provider.startScan(withNames: ['Moon']);
+
+          unawaited(
+            expectLater(
+              provider.onScanResults(),
+              emitsInOrder([
+                [scanResult(scan1)],
+              ]),
+            ),
+          );
+
+          scanController
+            ..add(scan1)
+            ..add(scan2);
+        });
+
+        test('Filtering remoteId', () async {
+          final scan1 = bleScanResult(name: 'Moon (17)', deviceId: '1');
+          final scan2 = bleScanResult(name: 'Random', deviceId: '2');
+
+          await provider.startScan(withRemoteIds: ['2']);
+
+          unawaited(
+            expectLater(
+              provider.onScanResults(),
+              emitsInOrder([
+                [scanResult(scan2)],
+              ]),
+            ),
+          );
+
+          scanController
+            ..add(scan1)
+            ..add(scan2);
+        });
+
+        test('Multiple filters should work as a logical *or*', () async {
+          final scan1 = bleScanResult(name: 'Moon (17)', deviceId: '1');
+          final scan2 = bleScanResult(name: 'Random', deviceId: '2');
+
+          await provider.startScan(
+            withRemoteIds: ['2'],
+            withNames: ['Moon'],
+          );
+
+          unawaited(
+            expectLater(
+              provider.onScanResults(),
+              emitsInOrder([
+                [scanResult(scan1), scanResult(scan2)],
+              ]),
+            ),
+          );
+
+          scanController
+            ..add(scan1)
+            ..add(scan2);
+        });
+      },
+    );
+  });
+
+  group('startScan', () {
+    late MockUniversalBle universalBle;
+
+    setUp(() {
+      universalBle = MockUniversalBle();
+
+      provider = UniversalBleProvider.initialize(
+        universalBle: universalBle,
+      );
+    });
+
+    test('Starting a scan while already scanning will stop the scan', () async {
+      when(() => universalBle.startScan()).thenAnswer((_) async {});
+      when(() => universalBle.stopScan()).thenAnswer((_) async {});
+
+      await provider.startScan();
+      await provider.startScan();
+
+      verify(() => universalBle.stopScan()).called(1);
+    });
   });
 }
 
 UniversalBleScanResult scanResult(BleScanResult scan1) =>
     UniversalBleScanResult.fromUniversalBle(scan1);
 
-BleScanResult bleScanResult({String deviceId = '1'}) => BleScanResult(
-      name: 'device$deviceId',
-      deviceId: deviceId,
-    );
+BleScanResult bleScanResult({String? name, String? deviceId}) {
+  final id = deviceId ?? '1';
+  return BleScanResult(
+    name: name ?? 'device$id',
+    deviceId: id,
+  );
+}

@@ -10,6 +10,7 @@ class ScanFilters {
     this.withKeywords,
     this.withMsd,
   })  : assert(withServices == null, 'withServices is not supported yet'),
+        assert(withKeywords == null, 'withKeywords is not supported yet'),
         assert(withMsd == null, 'withMsd is not supported yet');
 
   /// Filter by advertised services
@@ -29,25 +30,20 @@ class ScanFilters {
 
   /// Returns true if the scan result matches any of the filters
   bool filter(UnlockdScanResult scanResult) {
-    return _hasName(scanResult) ||
-        _hasId(scanResult) ||
-        _containsKeyword(scanResult);
+    return _containsName(scanResult) || _hasId(scanResult);
   }
 
-  bool _hasName(UnlockdScanResult scanResult) {
-    return withNames?.any((name) => scanResult.device.advName == name) ?? true;
+  bool _containsName(UnlockdScanResult scanResult) {
+    return withNames?.any(
+          (name) => scanResult.device.advName
+              .toLowerCase()
+              .contains(name.toLowerCase()),
+        ) ??
+        false;
   }
 
   bool _hasId(UnlockdScanResult scanResult) {
-    return withRemoteIds?.any((id) => scanResult.device.remoteId == id) ?? true;
-  }
-
-  bool _containsKeyword(UnlockdScanResult scanResult) {
-    return withKeywords?.any(
-          (keyword) => scanResult.device.advName
-              .toLowerCase()
-              .contains(keyword.toLowerCase()),
-        ) ??
-        true;
+    return withRemoteIds?.any((id) => scanResult.device.remoteId == id) ??
+        false;
   }
 }

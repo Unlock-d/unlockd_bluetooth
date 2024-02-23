@@ -36,6 +36,7 @@ class UniversalBleProvider extends UnlockdBluetoothProvider {
   StreamController<List<UnlockdScanResult>>? _internalScanController;
   Timer? _stopScanTimer;
   ScanFilters? _scanFilters;
+  var _isScanning = false;
 
   StreamController<UnlockdBluetoothAdapterState> get _adapterStateController {
     if (_internalAdapterStateController == null ||
@@ -110,7 +111,7 @@ class UniversalBleProvider extends UnlockdBluetoothProvider {
   }
 
   @override
-  bool isScanningNow() => !_scanController.isClosed;
+  bool isScanningNow() => _isScanning;
 
   @override
   Stream<List<UnlockdScanResult>> scanResults() {
@@ -150,6 +151,10 @@ class UniversalBleProvider extends UnlockdBluetoothProvider {
       _stopScanTimer = Timer(timeout, stopScan);
     }
 
+    if (isScanningNow()) {
+      await stopScan();
+    }
+
     _scanFilters = ScanFilters(
       withServices: withServices,
       withRemoteIds: withRemoteIds,
@@ -158,16 +163,18 @@ class UniversalBleProvider extends UnlockdBluetoothProvider {
       withMsd: withMsd,
     );
 
-    return UniversalBle.startScan();
+    await UniversalBle.startScan();
+    _isScanning = true;
   }
 
   @override
-  Future<void> stopScan() {
+  Future<void> stopScan() async {
     UniversalBle.onScanResult = null;
-    _scanController.close();
+    await _scanController.close();
     _stopScanTimer?.cancel();
 
-    return UniversalBle.stopScan();
+    await UniversalBle.stopScan();
+    _isScanning = false;
   }
 
   @override
