@@ -159,7 +159,7 @@ void main() {
   });
 
   group('startScan', () {
-    late MockUniversalBle universalBle;
+    late UniversalBlePlatform universalBle;
 
     setUp(() {
       universalBle = MockUniversalBle();
@@ -177,6 +177,53 @@ void main() {
       await provider.startScan();
 
       verify(() => universalBle.stopScan()).called(1);
+    });
+  });
+
+  group('isScanning', () {
+    late UniversalBlePlatform universalBle;
+
+    setUp(() {
+      universalBle = FakeUniversalBle();
+
+      provider = UniversalBleProvider.initialize(
+        universalBle: universalBle,
+      );
+    });
+
+    test('Should emit the correct scanning state', () async {
+      await provider.startScan(timeout: const Duration(milliseconds: 100));
+      expect(provider.isScanningNow(), isTrue);
+
+      final isScanningStream = provider.isScanning();
+
+      unawaited(
+        expectLater(
+          isScanningStream,
+          emitsInOrder([
+            true,
+            false,
+          ]),
+          reason: 'Should emit true when scanning and false when not',
+        ),
+      );
+
+      await Future<void>.delayed(const Duration(milliseconds: 200));
+      expect(provider.isScanningNow(), isFalse);
+
+      unawaited(
+        expectLater(
+          isScanningStream,
+          emitsInOrder([
+            true,
+            false,
+          ]),
+          reason: 'Should emit the correct state when starting a scan again',
+        ),
+      );
+
+      await provider.startScan(timeout: const Duration(milliseconds: 100));
+      expect(provider.isScanningNow(), isTrue);
     });
   });
 }

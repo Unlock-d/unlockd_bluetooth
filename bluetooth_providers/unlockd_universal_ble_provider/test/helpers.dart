@@ -2,6 +2,7 @@
 
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:universal_ble/universal_ble.dart';
@@ -25,5 +26,12 @@ class FakeUniversalBle extends Fake implements UniversalBlePlatform {
   @override
   Future<void> startScan({
     WebRequestOptionsBuilder? webRequestOptions,
-  }) async {}
+  }) async {
+    debugPrint('startScan');
+  }
+
+  @override
+  Future<void> stopScan() async {
+    debugPrint('stopScan');
+  }
 }
