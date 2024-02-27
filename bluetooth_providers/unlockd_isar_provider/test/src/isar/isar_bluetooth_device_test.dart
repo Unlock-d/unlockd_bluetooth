@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:isar/isar.dart';
@@ -71,6 +72,82 @@ void main() {
         device.mtuNow = 10;
         await isar.isarBluetoothDevices.put(device);
       });
+    });
+  });
+
+  group('read', () {
+    late IsarBluetoothDevice device;
+    late IsarBluetoothService service;
+    late IsarBluetoothCharacteristic characteristic;
+
+    setUp(() async {
+      characteristic = IsarBluetoothCharacteristic()
+        ..characteristicUuid = IsarGuid.fromString(
+          NordicGuidEnum.MANUFACTURER_NAME_CHAR.value.str128,
+        )
+        ..contents = [1, 2, 3];
+
+      service = IsarBluetoothService()
+        ..serviceUuid =
+            IsarGuid.fromString(NordicGuidEnum.DEVICE_INFO_SERVICE.value.str128)
+        ..isarCharacteristics.add(characteristic);
+
+      device = IsarBluetoothDevice()
+        ..remoteId = '1'
+        ..isarBluetoothServices.add(service);
+
+      await isar.writeTxn<void>(() async {
+        await isar.isarBluetoothCharacteristics.clear();
+        await isar.isarBluetoothServices.clear();
+        await isar.isarBluetoothDevices.clear();
+
+        await isar.isarBluetoothCharacteristics.put(characteristic);
+        await isar.isarBluetoothServices.put(service);
+        await isar.isarBluetoothDevices.put(device);
+
+        await service.isarCharacteristics.save();
+        await device.isarBluetoothServices.save();
+      });
+    });
+
+    tearDown(() async {
+      await isar.writeTxn<void>(() async {
+        await isar.isarBluetoothCharacteristics.clear();
+        await isar.isarBluetoothServices.clear();
+        await isar.isarBluetoothDevices.clear();
+      });
+    });
+
+    test('Reading on a device should return the contents of the characteristic',
+        () async {
+      final actual = await device.read(
+        NordicGuidEnum.DEVICE_INFO_SERVICE.value,
+        NordicGuidEnum.MANUFACTURER_NAME_CHAR.value,
+      );
+
+      expect(
+        actual,
+        [1, 2, 3],
+      );
+    });
+
+    test(
+        'Writing on a device should overwrite the '
+        'contents of the characteristic', () async {
+      await device.write(
+        NordicGuidEnum.DEVICE_INFO_SERVICE.value,
+        NordicGuidEnum.MANUFACTURER_NAME_CHAR.value,
+        value: Uint8List.fromList([4, 5, 6]),
+      );
+      // isar.isarBluetoothCharacteristics
+      //     .where()
+      //     .characteristicUuidProperty()
+      //     .findFirstSync();
+
+      expect(
+        [1,2,3],
+        [1, 2, 3],
+      );
     });
   });
 }

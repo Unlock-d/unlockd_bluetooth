@@ -409,7 +409,7 @@ class DeviceScreen extends StatelessWidget {
                     },
                     onWritePressed: () async {
                       try {
-                        await c.write(_getRandomBytes(),
+                        await c.write(Uint8List.fromList(_getRandomBytes()),
                             withoutResponse: c.properties.writeWithoutResponse);
                         final snackBar = snackBarGood("Write: Success");
                         snackBarKeyC.currentState?.removeCurrentSnackBar();

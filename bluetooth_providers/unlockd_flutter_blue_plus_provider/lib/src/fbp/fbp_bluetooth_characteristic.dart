@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:unlockd_bluetooth_core/unlockd_bluetooth.dart';
 import 'package:unlockd_flutter_blue_plus_provider/src/fbp/fbp.dart';
@@ -28,7 +30,8 @@ class FbpBluetoothCharacteristic extends UnlockdBluetoothCharacteristic {
       UnlockdGuid.fromBytes(_characteristic.characteristicUuid.bytes);
 
   @override
-  Stream<List<int>> get onValueReceived => _characteristic.onValueReceived;
+  Stream<Uint8List> get onValueReceived =>
+      _characteristic.onValueReceived.map(Uint8List.fromList);
 
   @override
   List<int> get lastValue => _characteristic.lastValue;
@@ -38,10 +41,10 @@ class FbpBluetoothCharacteristic extends UnlockdBluetoothCharacteristic {
       _characteristic.descriptors.map(FbpBluetoothDescriptor.fromFbp).toList();
 
   @override
-  Future<List<int>> read() => _characteristic.read();
+  Future<Uint8List> read() => _characteristic.read().then(Uint8List.fromList);
 
   @override
-  Future<void> write(List<int> value, {bool? withoutResponse}) =>
+  Future<void> write(Uint8List value, {bool? withoutResponse}) =>
       _characteristic.write(value, withoutResponse: withoutResponse ?? false);
 
   @override

@@ -27,6 +27,14 @@ void main() {
       throwsA(isA<FormatException>()),
     );
   });
+
+  test('Two GUIDs are the same', () {
+    expect(
+      NordicGuidEnum.DEVICE_INFO_SERVICE.value ==
+          NordicGuidEnum.DEVICE_INFO_SERVICE.value,
+      isTrue,
+    );
+  });
 }
 
 List<int> _nullBytes(int length) => List<int>.filled(length, 0x00);

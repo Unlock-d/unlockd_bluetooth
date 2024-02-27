@@ -18,7 +18,7 @@ abstract class UnlockdBluetoothCharacteristic {
   /// This stream emits values:
   ///   - anytime `read()` is called
   ///   - anytime a notification arrives (if subscribed)
-  Stream<List<int>> get onValueReceived;
+  Stream<Uint8List> get onValueReceived;
 
   /// this variable is updated:
   ///   - anytime `read()` is called
@@ -28,12 +28,12 @@ abstract class UnlockdBluetoothCharacteristic {
   List<int> get lastValue;
 
   /// Read a characteristic
-  Future<List<int>> read();
+  Future<Uint8List> read();
 
   /// Writes a characteristic.
   ///  - [withoutResponse]: the write is not guaranteed and
   ///  always returns immediately with success.
-  Future<void> write(List<int> value, {bool? withoutResponse});
+  Future<void> write(Uint8List value, {bool? withoutResponse});
 
   /// Sets notifications or indications for the characteristic.
   ///   - If a characteristic supports both notifications and indications,

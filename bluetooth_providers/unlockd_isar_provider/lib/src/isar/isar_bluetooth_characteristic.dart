@@ -1,6 +1,6 @@
 part of 'isar.dart';
 
-/// A class representing a Bluetooth characteristic in Isar.
+/// [IsarBluetoothCharacteristic] which uses [Isar] as the underlying storage.
 @Collection(inheritance: false)
 class IsarBluetoothCharacteristic extends UnlockdBluetoothCharacteristic {
   /// Default constructor needed for [Isar]
@@ -62,14 +62,15 @@ class IsarBluetoothCharacteristic extends UnlockdBluetoothCharacteristic {
 
   @ignore
   @override
-  Stream<List<int>> get onValueReceived =>
+  Stream<Uint8List> get onValueReceived =>
       IsarBluetoothProvider.instance._isar.isarBluetoothCharacteristics
           .filter()
           .characteristicUuid(
             (q) => q.isarGuidEqualTo(characteristicUuid.isarGuid),
           )
           .watch(fireImmediately: true)
-          .map((chars) => chars.isNotEmpty ? chars[0].contents : []);
+          .map((chars) => chars.isNotEmpty ? chars[0].contents : <int>[])
+          .map(Uint8List.fromList);
 
   @override
   List<int> get lastValue => contents;
@@ -79,10 +80,10 @@ class IsarBluetoothCharacteristic extends UnlockdBluetoothCharacteristic {
   List<IsarBluetoothDescriptor> get descriptors => isarDescriptors.toList();
 
   @override
-  Future<List<int>> read() async => contents;
+  Future<Uint8List> read() async => Uint8List.fromList(contents);
 
   @override
-  Future<void> write(List<int> value, {bool? withoutResponse}) async {
+  Future<void> write(Uint8List value, {bool? withoutResponse}) async {
     final updatedChar = this..contents = value;
 
     await _writeChar(updatedChar);

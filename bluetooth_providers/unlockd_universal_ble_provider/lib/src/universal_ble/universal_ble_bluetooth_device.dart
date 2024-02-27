@@ -91,5 +91,30 @@ class UniversalBleBluetoothDevice extends UnlockdBluetoothDevice
   }
 
   @override
+  Future<Uint8List> read(
+    UnlockdGuid serviceUuid,
+    UnlockdGuid characteristicUuid,
+  ) async {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> write(
+    UnlockdGuid serviceUuid,
+    UnlockdGuid characteristicUuid, {
+    required Uint8List value,
+  }) async {
+    throw UnimplementedError();
+  }
+
+  @override
+  Stream<Uint8List> subscribe(
+    UnlockdGuid serviceUuid,
+    UnlockdGuid characteristicUuid,
+  ) async* {
+    throw UnimplementedError();
+  }
+
+  @override
   List<Object?> get props => [remoteId];
 }

@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:equatable/equatable.dart';
 import 'package:logging/logging.dart';
 
 part 'firmware_package.dart';
+part 'nordic_guid_enum.dart';
 part 'unlockd_advertisement_data.dart';
 part 'unlockd_bluetooth_adapter_state.dart';
 part 'unlockd_bluetooth_characteristic.dart';

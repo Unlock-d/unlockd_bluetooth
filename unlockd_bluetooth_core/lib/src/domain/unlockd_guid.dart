@@ -50,12 +50,15 @@ class UnlockdGuid extends Equatable {
   String get str128 {
     if (bytes.length == 2) {
       // 16-bit uuid
-      return '0000${_hexEncode(bytes)}-0000-1000-8000-00805f9b34fb'
+      return NordicGuidEnum.NORDIC_MASK
+          .replaceAll('xxxx', _hexEncode(bytes))
           .toLowerCase();
     }
     if (bytes.length == 4) {
       // 32-bit uuid
-      return '${_hexEncode(bytes)}-0000-1000-8000-00805f9b34fb'.toLowerCase();
+      return NordicGuidEnum.NORDIC_MASK
+          .replaceAll('0000xxxx', _hexEncode(bytes))
+          .toLowerCase();
     }
     // 128-bit uuid
     final one = _hexEncode(bytes.sublist(0, 4));

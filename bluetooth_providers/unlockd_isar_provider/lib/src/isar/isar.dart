@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:typed_data';
 
+import 'package:equatable/equatable.dart';
 import 'package:isar/isar.dart';
 import 'package:unlockd_bluetooth_core/unlockd_bluetooth.dart';
 

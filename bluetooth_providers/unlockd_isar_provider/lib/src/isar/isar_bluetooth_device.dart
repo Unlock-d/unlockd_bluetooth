@@ -89,6 +89,37 @@ class IsarBluetoothDevice extends UnlockdBluetoothDevice {
       isarBluetoothServices.toList();
 
   @override
+  Future<Uint8List> read(
+    UnlockdGuid serviceUuid,
+    UnlockdGuid characteristicUuid,
+  ) async {
+    final characteristic = _findCharacteristic(serviceUuid, characteristicUuid);
+
+    return characteristic.read();
+  }
+
+  @override
+  Future<void> write(
+    UnlockdGuid serviceUuid,
+    UnlockdGuid characteristicUuid, {
+    required Uint8List value,
+  }) async {
+    final characteristic = _findCharacteristic(serviceUuid, characteristicUuid);
+
+    await characteristic.write(value);
+  }
+
+  @override
+  Stream<Uint8List> subscribe(
+    UnlockdGuid serviceUuid,
+    UnlockdGuid characteristicUuid,
+  ) async* {
+    final characteristic = _findCharacteristic(serviceUuid, characteristicUuid);
+
+    yield* characteristic.onValueReceived.map(Uint8List.fromList);
+  }
+
+  @override
   Future<void> performUpdate(
     FirmwarePackage firmwarePackage, {
     required ProgressCallback onProgressChanged,
@@ -119,6 +150,24 @@ class IsarBluetoothDevice extends UnlockdBluetoothDevice {
         counter--;
       }
     });
+  }
+
+  IsarBluetoothCharacteristic _findCharacteristic(
+    UnlockdGuid serviceUuid,
+    UnlockdGuid characteristicUuid,
+  ) {
+    final service = isarBluetoothServices.firstWhere(
+      (element) =>
+          element.serviceUuid == IsarGuid.fromString(serviceUuid.str128),
+    );
+
+    final characteristic = service.isarCharacteristics.firstWhere(
+      (element) =>
+          element.characteristicUuid ==
+          IsarGuid.fromString(characteristicUuid.str128),
+    );
+
+    return characteristic;
   }
 
   Future<void> _writeDevice(IsarBluetoothDevice updatedDevice) async {

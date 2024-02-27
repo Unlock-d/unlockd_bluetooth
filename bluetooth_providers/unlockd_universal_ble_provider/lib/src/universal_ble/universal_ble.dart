@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:core';
+import 'dart:typed_data';
 
 import 'package:equatable/equatable.dart';
 import 'package:stream_transform/stream_transform.dart';

@@ -81,6 +81,25 @@ abstract class UnlockdBluetoothDevice {
   /// Discover services, characteristics, and descriptors of the remote device
   Future<List<UnlockdBluetoothService>> discoverServices();
 
+  /// Read a value of a characteristic
+  Future<Uint8List> read(
+    UnlockdGuid serviceUuid,
+    UnlockdGuid characteristicUuid,
+  );
+
+  /// Write a value to a characteristic
+  Future<void> write(
+    UnlockdGuid serviceUuid,
+    UnlockdGuid characteristicUuid, {
+    required Uint8List value,
+  });
+
+  /// Subscribe to a characteristic
+  Stream<Uint8List> subscribe(
+    UnlockdGuid serviceUuid,
+    UnlockdGuid characteristicUuid,
+  );
+
   /// Start the DFU Process.
   /// Required:
   /// [firmwarePackage] zip file path

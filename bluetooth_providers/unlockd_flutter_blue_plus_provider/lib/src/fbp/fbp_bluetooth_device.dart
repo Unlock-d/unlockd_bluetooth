@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:unlockd_bluetooth_core/unlockd_bluetooth.dart';
 import 'package:unlockd_flutter_blue_plus_provider/unlockd_flutter_blue_plus_provider.dart';
@@ -79,6 +81,42 @@ class FbpBluetoothDevice extends UnlockdBluetoothDevice {
   }
 
   @override
+  Future<Uint8List> read(
+    UnlockdGuid serviceUuid,
+    UnlockdGuid characteristicUuid,
+  ) async {
+    final characteristic =
+        await _findCharacteristic(serviceUuid, characteristicUuid);
+
+    return characteristic.read();
+  }
+
+  @override
+  Future<void> write(
+    UnlockdGuid serviceUuid,
+    UnlockdGuid characteristicUuid, {
+    required Uint8List value,
+  }) async {
+    final characteristic =
+        await _findCharacteristic(serviceUuid, characteristicUuid);
+
+    await characteristic.write(value);
+  }
+
+  @override
+  Stream<Uint8List> subscribe(
+    UnlockdGuid serviceUuid,
+    UnlockdGuid characteristicUuid,
+  ) async* {
+    final characteristic =
+        await _findCharacteristic(serviceUuid, characteristicUuid);
+
+    await characteristic.setNotifyValue(value: true);
+
+    yield* characteristic.onValueReceived.map(Uint8List.fromList);
+  }
+
+  @override
   Future<void> performUpdate(
     FirmwarePackage firmwarePackage, {
     required ProgressCallback onProgressChanged,
@@ -105,5 +143,23 @@ class FbpBluetoothDevice extends UnlockdBluetoothDevice {
       onProcessStarted: onProcessStarted,
       onProcessStarting: onProcessStarting,
     );
+  }
+
+  Future<UnlockdBluetoothCharacteristic> _findCharacteristic(
+    UnlockdGuid serviceUuid,
+    UnlockdGuid characteristicUuid,
+  ) async {
+    final service = await discoverServices().then(
+      (services) => services.firstWhere(
+        (service) => service.serviceUuid == serviceUuid,
+      ),
+    );
+
+    final characteristic = service.characteristics.firstWhere(
+      (characteristic) =>
+          characteristic.characteristicUuid == characteristicUuid,
+    );
+
+    return characteristic;
   }
 }
