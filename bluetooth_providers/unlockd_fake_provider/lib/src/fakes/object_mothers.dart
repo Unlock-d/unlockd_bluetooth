@@ -25,8 +25,14 @@ UnlockdScanResult scanResult({
   );
 }
 
-UnlockdBluetoothDevice bluetoothDevice() {
-  return FakeBluetoothDevice();
+UnlockdBluetoothDevice bluetoothDevice({
+  String? remoteId,
+  String? advName,
+}) {
+  return FakeBluetoothDevice(
+    remoteId: remoteId ?? 'fake_remote_id',
+    advName: advName ?? 'fake_adv_name',
+  );
 }
 
 FirmwarePackage firmwarePackage() {
