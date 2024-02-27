@@ -35,7 +35,7 @@ class ScanFilters {
 
   bool _containsName(UnlockdScanResult scanResult) {
     return withNames?.any(
-          (name) => scanResult.device.advName
+          (name) => scanResult.device.platformName
               .toLowerCase()
               .contains(name.toLowerCase()),
         ) ??

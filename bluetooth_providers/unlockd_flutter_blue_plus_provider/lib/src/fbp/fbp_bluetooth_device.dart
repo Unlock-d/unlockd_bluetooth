@@ -32,9 +32,6 @@ class FbpBluetoothDevice extends UnlockdBluetoothDevice {
   String get platformName => _device.platformName;
 
   @override
-  String get advName => _device.advName;
-
-  @override
   int get mtuNow => _device.mtuNow;
 
   @override
@@ -57,10 +54,6 @@ class FbpBluetoothDevice extends UnlockdBluetoothDevice {
 
   @override
   bool get isConnected => _device.isConnected;
-
-  @override
-  List<UnlockdBluetoothService> get servicesList =>
-      _device.servicesList.map(FbpBluetoothService.fromFbp).toList();
 
   @override
   Future<void> connect({

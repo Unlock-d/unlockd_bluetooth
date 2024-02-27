@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:isar/isar.dart';
-import 'package:unlockd_bluetooth_core/unlockd_bluetooth.dart';
 import 'package:unlockd_isar_provider/src/isar/isar.dart';
 
 void main() {

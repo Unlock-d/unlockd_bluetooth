@@ -383,7 +383,9 @@ class DeviceScreen extends StatelessWidget {
   }
 
   List<Widget> _buildServiceTiles(
-      BuildContext context, List<UnlockdBluetoothService> services) {
+    BuildContext context,
+    List<UnlockdBluetoothService> services,
+  ) {
     return services
         .map(
           (s) => ServiceTile(
@@ -661,7 +663,7 @@ class DeviceScreen extends StatelessWidget {
                       }),
                 ),
               ),
-              ..._buildServiceTiles(context, device.servicesList),
+              // ..._buildServiceTiles(context, device.servicesList),
             ],
           ),
         ),

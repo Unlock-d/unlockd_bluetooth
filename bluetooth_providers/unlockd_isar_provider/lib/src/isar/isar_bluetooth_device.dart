@@ -25,9 +25,6 @@ class IsarBluetoothDevice extends UnlockdBluetoothDevice {
   String platformName = '';
 
   @override
-  String advName = '';
-
-  @override
   int mtuNow = 0;
 
   /// Internal [Isar] rssi.
@@ -52,11 +49,6 @@ class IsarBluetoothDevice extends UnlockdBluetoothDevice {
                 ? devices[0].isarConnectionState
                 : UnlockdBluetoothConnectionState.disconnected,
           );
-
-  @ignore
-  @override
-  List<UnlockdBluetoothService> get servicesList =>
-      isarBluetoothServices.toList();
 
   @ignore
   @override
@@ -93,9 +85,8 @@ class IsarBluetoothDevice extends UnlockdBluetoothDevice {
   Future<int> readRssi() async => isarRssi;
 
   @override
-  Future<List<UnlockdBluetoothService>> discoverServices() async {
-    return servicesList;
-  }
+  Future<List<UnlockdBluetoothService>> discoverServices() async =>
+      isarBluetoothServices.toList();
 
   @override
   Future<void> performUpdate(

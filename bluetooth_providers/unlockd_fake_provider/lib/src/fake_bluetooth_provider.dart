@@ -90,6 +90,9 @@ class FakeBluetoothProvider extends UnlockdBluetoothProvider {
 
   @override
   UnlockdBluetoothDevice fromRemoteId(String remoteId) {
-    return FakeBluetoothDevice(remoteId: remoteId);
+    return FakeBluetoothDevice(
+      remoteId: remoteId,
+      platformName: 'Fake Device',
+    );
   }
 }

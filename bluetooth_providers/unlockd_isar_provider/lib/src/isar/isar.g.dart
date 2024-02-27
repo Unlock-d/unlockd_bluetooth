@@ -2122,34 +2122,29 @@ const IsarBluetoothDeviceSchema = CollectionSchema(
   name: r'IsarBluetoothDevice',
   id: -5441148380203195866,
   properties: {
-    r'advName': PropertySchema(
-      id: 0,
-      name: r'advName',
-      type: IsarType.string,
-    ),
     r'isarConnectionState': PropertySchema(
-      id: 1,
+      id: 0,
       name: r'isarConnectionState',
       type: IsarType.byte,
       enumMap: _IsarBluetoothDeviceisarConnectionStateEnumValueMap,
     ),
     r'isarRssi': PropertySchema(
-      id: 2,
+      id: 1,
       name: r'isarRssi',
       type: IsarType.long,
     ),
     r'mtuNow': PropertySchema(
-      id: 3,
+      id: 2,
       name: r'mtuNow',
       type: IsarType.long,
     ),
     r'platformName': PropertySchema(
-      id: 4,
+      id: 3,
       name: r'platformName',
       type: IsarType.string,
     ),
     r'remoteId': PropertySchema(
-      id: 5,
+      id: 4,
       name: r'remoteId',
       type: IsarType.string,
     )
@@ -2208,7 +2203,6 @@ int _isarBluetoothDeviceEstimateSize(
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
-  bytesCount += 3 + object.advName.length * 3;
   bytesCount += 3 + object.platformName.length * 3;
   bytesCount += 3 + object.remoteId.length * 3;
   return bytesCount;
@@ -2220,12 +2214,11 @@ void _isarBluetoothDeviceSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeString(offsets[0], object.advName);
-  writer.writeByte(offsets[1], object.isarConnectionState.index);
-  writer.writeLong(offsets[2], object.isarRssi);
-  writer.writeLong(offsets[3], object.mtuNow);
-  writer.writeString(offsets[4], object.platformName);
-  writer.writeString(offsets[5], object.remoteId);
+  writer.writeByte(offsets[0], object.isarConnectionState.index);
+  writer.writeLong(offsets[1], object.isarRssi);
+  writer.writeLong(offsets[2], object.mtuNow);
+  writer.writeString(offsets[3], object.platformName);
+  writer.writeString(offsets[4], object.remoteId);
 }
 
 IsarBluetoothDevice _isarBluetoothDeviceDeserialize(
@@ -2235,16 +2228,15 @@ IsarBluetoothDevice _isarBluetoothDeviceDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = IsarBluetoothDevice();
-  object.advName = reader.readString(offsets[0]);
   object.id = id;
   object.isarConnectionState =
       _IsarBluetoothDeviceisarConnectionStateValueEnumMap[
-              reader.readByteOrNull(offsets[1])] ??
+              reader.readByteOrNull(offsets[0])] ??
           UnlockdBluetoothConnectionState.disconnected;
-  object.isarRssi = reader.readLong(offsets[2]);
-  object.mtuNow = reader.readLong(offsets[3]);
-  object.platformName = reader.readString(offsets[4]);
-  object.remoteId = reader.readString(offsets[5]);
+  object.isarRssi = reader.readLong(offsets[1]);
+  object.mtuNow = reader.readLong(offsets[2]);
+  object.platformName = reader.readString(offsets[3]);
+  object.remoteId = reader.readString(offsets[4]);
   return object;
 }
 
@@ -2256,18 +2248,16 @@ P _isarBluetoothDeviceDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readString(offset)) as P;
-    case 1:
       return (_IsarBluetoothDeviceisarConnectionStateValueEnumMap[
               reader.readByteOrNull(offset)] ??
           UnlockdBluetoothConnectionState.disconnected) as P;
+    case 1:
+      return (reader.readLong(offset)) as P;
     case 2:
       return (reader.readLong(offset)) as P;
     case 3:
-      return (reader.readLong(offset)) as P;
-    case 4:
       return (reader.readString(offset)) as P;
-    case 5:
+    case 4:
       return (reader.readString(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -2489,142 +2479,6 @@ extension IsarBluetoothDeviceQueryWhere
 
 extension IsarBluetoothDeviceQueryFilter on QueryBuilder<IsarBluetoothDevice,
     IsarBluetoothDevice, QFilterCondition> {
-  QueryBuilder<IsarBluetoothDevice, IsarBluetoothDevice, QAfterFilterCondition>
-      advNameEqualTo(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'advName',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<IsarBluetoothDevice, IsarBluetoothDevice, QAfterFilterCondition>
-      advNameGreaterThan(
-    String value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'advName',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<IsarBluetoothDevice, IsarBluetoothDevice, QAfterFilterCondition>
-      advNameLessThan(
-    String value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'advName',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<IsarBluetoothDevice, IsarBluetoothDevice, QAfterFilterCondition>
-      advNameBetween(
-    String lower,
-    String upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'advName',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<IsarBluetoothDevice, IsarBluetoothDevice, QAfterFilterCondition>
-      advNameStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'advName',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<IsarBluetoothDevice, IsarBluetoothDevice, QAfterFilterCondition>
-      advNameEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'advName',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<IsarBluetoothDevice, IsarBluetoothDevice, QAfterFilterCondition>
-      advNameContains(String value, {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'advName',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<IsarBluetoothDevice, IsarBluetoothDevice, QAfterFilterCondition>
-      advNameMatches(String pattern, {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'advName',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<IsarBluetoothDevice, IsarBluetoothDevice, QAfterFilterCondition>
-      advNameIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'advName',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<IsarBluetoothDevice, IsarBluetoothDevice, QAfterFilterCondition>
-      advNameIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'advName',
-        value: '',
-      ));
-    });
-  }
-
   QueryBuilder<IsarBluetoothDevice, IsarBluetoothDevice, QAfterFilterCondition>
       idEqualTo(Id value) {
     return QueryBuilder.apply(this, (query) {
@@ -3223,20 +3077,6 @@ extension IsarBluetoothDeviceQueryLinks on QueryBuilder<IsarBluetoothDevice,
 extension IsarBluetoothDeviceQuerySortBy
     on QueryBuilder<IsarBluetoothDevice, IsarBluetoothDevice, QSortBy> {
   QueryBuilder<IsarBluetoothDevice, IsarBluetoothDevice, QAfterSortBy>
-      sortByAdvName() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'advName', Sort.asc);
-    });
-  }
-
-  QueryBuilder<IsarBluetoothDevice, IsarBluetoothDevice, QAfterSortBy>
-      sortByAdvNameDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'advName', Sort.desc);
-    });
-  }
-
-  QueryBuilder<IsarBluetoothDevice, IsarBluetoothDevice, QAfterSortBy>
       sortByIsarConnectionState() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isarConnectionState', Sort.asc);
@@ -3309,20 +3149,6 @@ extension IsarBluetoothDeviceQuerySortBy
 
 extension IsarBluetoothDeviceQuerySortThenBy
     on QueryBuilder<IsarBluetoothDevice, IsarBluetoothDevice, QSortThenBy> {
-  QueryBuilder<IsarBluetoothDevice, IsarBluetoothDevice, QAfterSortBy>
-      thenByAdvName() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'advName', Sort.asc);
-    });
-  }
-
-  QueryBuilder<IsarBluetoothDevice, IsarBluetoothDevice, QAfterSortBy>
-      thenByAdvNameDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'advName', Sort.desc);
-    });
-  }
-
   QueryBuilder<IsarBluetoothDevice, IsarBluetoothDevice, QAfterSortBy>
       thenById() {
     return QueryBuilder.apply(this, (query) {
@@ -3411,13 +3237,6 @@ extension IsarBluetoothDeviceQuerySortThenBy
 extension IsarBluetoothDeviceQueryWhereDistinct
     on QueryBuilder<IsarBluetoothDevice, IsarBluetoothDevice, QDistinct> {
   QueryBuilder<IsarBluetoothDevice, IsarBluetoothDevice, QDistinct>
-      distinctByAdvName({bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'advName', caseSensitive: caseSensitive);
-    });
-  }
-
-  QueryBuilder<IsarBluetoothDevice, IsarBluetoothDevice, QDistinct>
       distinctByIsarConnectionState() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'isarConnectionState');
@@ -3458,13 +3277,6 @@ extension IsarBluetoothDeviceQueryProperty
   QueryBuilder<IsarBluetoothDevice, int, QQueryOperations> idProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'id');
-    });
-  }
-
-  QueryBuilder<IsarBluetoothDevice, String, QQueryOperations>
-      advNameProperty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'advName');
     });
   }
 

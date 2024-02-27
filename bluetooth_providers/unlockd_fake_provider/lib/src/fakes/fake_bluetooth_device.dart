@@ -5,8 +5,8 @@ class FakeBluetoothDevice extends Fake implements UnlockdBluetoothDevice {
   /// Creates a [FakeBluetoothDevice] with the given [initialConnectionState]
   /// and [connectionController].
   FakeBluetoothDevice({
-    this.remoteId = 'fake_remote_id',
-    this.advName = 'fake_adv_name',
+    required this.remoteId,
+    required this.platformName,
     UnlockdBluetoothConnectionState? initialConnectionState,
     StreamController<UnlockdBluetoothConnectionState>? connectionController,
   })  : _connectionController =
@@ -20,7 +20,7 @@ class FakeBluetoothDevice extends Fake implements UnlockdBluetoothDevice {
   final String remoteId;
 
   @override
-  final String advName;
+  final String platformName;
 
   @override
   bool get isConnected =>

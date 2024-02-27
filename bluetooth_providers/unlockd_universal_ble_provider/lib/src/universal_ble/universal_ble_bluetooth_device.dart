@@ -33,7 +33,7 @@ class UniversalBleBluetoothDevice extends UnlockdBluetoothDevice
   final String remoteId;
 
   @override
-  String get advName => _name ?? 'unknown_adv_name';
+  String get platformName => _name ?? 'unknown_adv_name';
 
   @override
   Future<void> connect({required Duration timeout, bool autoConnect = false}) {
@@ -81,9 +81,6 @@ class UniversalBleBluetoothDevice extends UnlockdBluetoothDevice
   }
 
   @override
-  String get platformName => throw UnimplementedError();
-
-  @override
   Future<int> readRssi() {
     throw UnimplementedError();
   }
@@ -92,9 +89,6 @@ class UniversalBleBluetoothDevice extends UnlockdBluetoothDevice
   Future<void> requestMtu(int mtu) {
     throw UnimplementedError();
   }
-
-  @override
-  List<UnlockdBluetoothService> get servicesList => throw UnimplementedError();
 
   @override
   List<Object?> get props => [remoteId];

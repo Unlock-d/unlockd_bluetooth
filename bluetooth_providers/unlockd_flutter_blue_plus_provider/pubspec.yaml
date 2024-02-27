@@ -1,6 +1,6 @@
 name: unlockd_flutter_blue_plus_provider
 description: A Unlock'd Flutter package created by Unlock'd.
-version: 0.0.2
+version: 0.1.0
 publish_to: none
 
 environment:
@@ -15,7 +15,7 @@ dependencies:
     git:
       url: git@github.com:Unlock-d/unlockd_bluetooth.git
       path: unlockd_bluetooth_core
-      ref: v2.1.0
+      ref: v2.3.0
 
 dev_dependencies:
   flutter_test:
