@@ -75,7 +75,7 @@ void main() {
     });
   });
 
-  group('read', () {
+  group('Read/Write/Subscribe', () {
     late IsarBluetoothDevice device;
     late IsarBluetoothService service;
     late IsarBluetoothCharacteristic characteristic;
@@ -132,22 +132,47 @@ void main() {
     });
 
     test(
-        'Writing on a device should overwrite the '
-        'contents of the characteristic', () async {
-      await device.write(
+      'Writing on a device should overwrite the '
+      'contents of the characteristic',
+      () async {
+        await device.write(
+          NordicGuidEnum.DEVICE_INFO_SERVICE.value,
+          NordicGuidEnum.MANUFACTURER_NAME_CHAR.value,
+          value: Uint8List.fromList([4, 5, 6]),
+        );
+
+        expect(
+          characteristic.contents,
+          [4, 5, 6],
+        );
+      },
+    );
+
+    test('Subscribing to device should emit changes', () async {
+      final subscription = device.subscribe(
         NordicGuidEnum.DEVICE_INFO_SERVICE.value,
         NordicGuidEnum.MANUFACTURER_NAME_CHAR.value,
-        value: Uint8List.fromList([4, 5, 6]),
       );
-      // isar.isarBluetoothCharacteristics
-      //     .where()
-      //     .characteristicUuidProperty()
-      //     .findFirstSync();
 
-      expect(
-        [1,2,3],
-        [1, 2, 3],
+      unawaited(
+        expectLater(
+          subscription,
+          emitsInOrder([
+            [1, 2, 3],
+            [4, 5, 6],
+            [7, 8, 9],
+          ]),
+        ),
       );
+
+      await isar.writeTxn<void>(() async {
+        characteristic.contents = [4, 5, 6];
+        await isar.isarBluetoothCharacteristics.put(characteristic);
+      });
+      await isar.writeTxn<void>(() async {
+        characteristic.contents = [7, 8, 9];
+        await isar.isarBluetoothCharacteristics.put(characteristic);
+      });
     });
   });
 }

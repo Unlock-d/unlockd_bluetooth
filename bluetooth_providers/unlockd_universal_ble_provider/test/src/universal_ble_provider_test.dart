@@ -13,6 +13,11 @@ void main() {
   group('onScanResults', () {
     late StreamController<BleScanResult> scanController;
 
+    final scan1 = bleScanResult(deviceId: '1');
+    final scan2 = bleScanResult(deviceId: '2');
+    final scan1SecondTime = bleScanResult(deviceId: '1');
+    final scan3 = bleScanResult(deviceId: '3');
+
     setUp(() {
       scanController = StreamController.broadcast(sync: true);
 
@@ -29,11 +34,6 @@ void main() {
     });
 
     test('Scanning multiple devices should emit these results', () async {
-      final scan1 = bleScanResult(deviceId: '1');
-      final scan2 = bleScanResult(deviceId: '2');
-      final scan1SecondTime = bleScanResult(deviceId: '1');
-      final scan3 = bleScanResult(deviceId: '3');
-
       unawaited(
         expectLater(
           provider.onScanResults(),
@@ -51,11 +51,6 @@ void main() {
     });
 
     test('Multiple listens should not mess with results', () async {
-      final scan1 = bleScanResult(deviceId: '1');
-      final scan2 = bleScanResult(deviceId: '2');
-      final scan1SecondTime = bleScanResult(deviceId: '1');
-      final scan3 = bleScanResult(deviceId: '3');
-
       unawaited(
         expectLater(
           provider.onScanResults(),
@@ -92,10 +87,10 @@ void main() {
     group(
       'Scanning with filters',
       () {
-        test('Filtering names', () async {
-          final scan1 = bleScanResult(name: 'Moon (17)', deviceId: '1');
-          final scan2 = bleScanResult(name: 'Random', deviceId: '2');
+        final scan1 = bleScanResult(name: 'Moon (17)', deviceId: '1');
+        final scan2 = bleScanResult(name: 'Random', deviceId: '2');
 
+        test('Filtering names', () async {
           await provider.startScan(withNames: ['Moon']);
 
           unawaited(
@@ -113,9 +108,6 @@ void main() {
         });
 
         test('Filtering remoteId', () async {
-          final scan1 = bleScanResult(name: 'Moon (17)', deviceId: '1');
-          final scan2 = bleScanResult(name: 'Random', deviceId: '2');
-
           await provider.startScan(withRemoteIds: ['2']);
 
           unawaited(
@@ -133,9 +125,6 @@ void main() {
         });
 
         test('Multiple filters should work as a logical *or*', () async {
-          final scan1 = bleScanResult(name: 'Moon (17)', deviceId: '1');
-          final scan2 = bleScanResult(name: 'Random', deviceId: '2');
-
           await provider.startScan(
             withRemoteIds: ['2'],
             withNames: ['Moon'],

@@ -113,10 +113,10 @@ class IsarBluetoothDevice extends UnlockdBluetoothDevice {
   Stream<Uint8List> subscribe(
     UnlockdGuid serviceUuid,
     UnlockdGuid characteristicUuid,
-  ) async* {
+  ) {
     final characteristic = _findCharacteristic(serviceUuid, characteristicUuid);
 
-    yield* characteristic.onValueReceived.map(Uint8List.fromList);
+    return characteristic.onValueReceived.map(Uint8List.fromList);
   }
 
   @override

@@ -28,6 +28,15 @@ class UniversalBleBluetoothDevice extends UnlockdBluetoothDevice
   }
 
   final String? _name;
+  StreamController<Uint8List>? _internalCharValueController;
+
+  StreamController<Uint8List> get _charValueController {
+    if (_internalCharValueController == null ||
+        _internalCharValueController!.isClosed) {
+      _internalCharValueController = StreamController.broadcast();
+    }
+    return _internalCharValueController!;
+  }
 
   @override
   final String remoteId;
@@ -94,25 +103,47 @@ class UniversalBleBluetoothDevice extends UnlockdBluetoothDevice
   Future<Uint8List> read(
     UnlockdGuid serviceUuid,
     UnlockdGuid characteristicUuid,
-  ) async {
-    throw UnimplementedError();
-  }
+  ) =>
+      UniversalBle.readValue(
+        remoteId,
+        serviceUuid.str128,
+        characteristicUuid.str128,
+      );
 
   @override
   Future<void> write(
     UnlockdGuid serviceUuid,
     UnlockdGuid characteristicUuid, {
     required Uint8List value,
-  }) async {
-    throw UnimplementedError();
-  }
+  }) =>
+      UniversalBle.writeValue(
+        remoteId,
+        serviceUuid.str128,
+        characteristicUuid.str128,
+        value,
+        BleOutputProperty.withoutResponse,
+      );
 
   @override
   Stream<Uint8List> subscribe(
     UnlockdGuid serviceUuid,
     UnlockdGuid characteristicUuid,
-  ) async* {
-    throw UnimplementedError();
+  ) {
+    UniversalBle.setNotifiable(
+      remoteId,
+      serviceUuid.str128,
+      characteristicUuid.str128,
+      BleInputProperty.notification,
+    );
+
+    UniversalBle.onValueChanged = (deviceId, characteristicId, value) {
+      if (deviceId == remoteId &&
+          characteristicId == characteristicUuid.str128) {
+        _charValueController.add(value);
+      }
+    };
+
+    return _charValueController.stream;
   }
 
   @override
