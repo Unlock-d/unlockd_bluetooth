@@ -15,7 +15,7 @@ dependencies:
     git:
       url: git@github.com:Unlock-d/unlockd_bluetooth.git
       path: unlockd_bluetooth_core
-      ref: v2.3.2
+      ref: v2.3.3
 
 dev_dependencies:
   flutter_test:

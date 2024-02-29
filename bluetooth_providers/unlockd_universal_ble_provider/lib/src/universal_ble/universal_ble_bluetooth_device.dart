@@ -56,7 +56,11 @@ class UniversalBleBluetoothDevice extends UnlockdBluetoothDevice
   String get platformName => _name ?? 'unknown_adv_name';
 
   @override
-  Future<void> connect({required Duration timeout, bool autoConnect = false}) =>
+  Future<void> connect({
+    required Duration timeout,
+    bool autoConnect = false,
+    int? mtu,
+  }) =>
       UniversalBle.connect(remoteId, connectionTimeout: timeout);
 
   @override
@@ -139,6 +143,7 @@ class UniversalBleBluetoothDevice extends UnlockdBluetoothDevice
     UnlockdGuid characteristicUuid, {
     required Uint8List value,
     bool? withoutResponse,
+    bool? allowLongWrite,
   }) =>
       UniversalBle.writeValue(
         remoteId,

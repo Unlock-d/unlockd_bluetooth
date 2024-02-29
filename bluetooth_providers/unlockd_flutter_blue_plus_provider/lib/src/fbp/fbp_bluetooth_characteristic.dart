@@ -44,8 +44,16 @@ class FbpBluetoothCharacteristic extends UnlockdBluetoothCharacteristic {
   Future<Uint8List> read() => _characteristic.read().then(Uint8List.fromList);
 
   @override
-  Future<void> write(Uint8List value, {bool? withoutResponse}) =>
-      _characteristic.write(value, withoutResponse: withoutResponse ?? false);
+  Future<void> write(
+    Uint8List value, {
+    bool? withoutResponse,
+    bool? allowLongWrite,
+  }) =>
+      _characteristic.write(
+        value,
+        withoutResponse: withoutResponse ?? false,
+        allowLongWrite: allowLongWrite ?? false,
+      );
 
   @override
   Future<bool> setNotifyValue({required bool value}) =>
