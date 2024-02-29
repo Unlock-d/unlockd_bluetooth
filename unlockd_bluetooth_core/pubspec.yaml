@@ -1,6 +1,6 @@
 name: unlockd_bluetooth_core
 description: The core package for the unlockd bluetooth.
-version: 2.3.1
+version: 2.3.2
 publish_to: none
 
 environment:

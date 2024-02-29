@@ -100,11 +100,12 @@ class FbpBluetoothDevice extends UnlockdBluetoothDevice {
     UnlockdGuid serviceUuid,
     UnlockdGuid characteristicUuid, {
     required Uint8List value,
+    bool? withoutResponse,
   }) async {
     final characteristic =
         await _findCharacteristic(serviceUuid, characteristicUuid);
 
-    await characteristic.write(value);
+    await characteristic.write(value, withoutResponse: withoutResponse);
   }
 
   @override

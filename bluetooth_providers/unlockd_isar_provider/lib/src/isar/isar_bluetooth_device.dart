@@ -103,6 +103,7 @@ class IsarBluetoothDevice extends UnlockdBluetoothDevice {
     UnlockdGuid serviceUuid,
     UnlockdGuid characteristicUuid, {
     required Uint8List value,
+    bool? withoutResponse,
   }) async {
     final characteristic = _findCharacteristic(serviceUuid, characteristicUuid);
 

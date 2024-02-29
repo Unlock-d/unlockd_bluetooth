@@ -43,6 +43,7 @@ class FakeBluetoothDevice extends Fake implements UnlockdBluetoothDevice {
     UnlockdGuid serviceUuid,
     UnlockdGuid characteristicUuid, {
     required Uint8List value,
+    bool? withoutResponse,
   }) async {}
 
   @override

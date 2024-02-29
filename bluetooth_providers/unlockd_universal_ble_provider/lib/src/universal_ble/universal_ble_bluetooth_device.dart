@@ -138,13 +138,16 @@ class UniversalBleBluetoothDevice extends UnlockdBluetoothDevice
     UnlockdGuid serviceUuid,
     UnlockdGuid characteristicUuid, {
     required Uint8List value,
+    bool? withoutResponse,
   }) =>
       UniversalBle.writeValue(
         remoteId,
         serviceUuid.str128,
         characteristicUuid.str128,
         value,
-        BleOutputProperty.withoutResponse,
+        withoutResponse ?? true
+            ? BleOutputProperty.withoutResponse
+            : BleOutputProperty.withResponse,
       );
 
   @override

@@ -92,6 +92,7 @@ abstract class UnlockdBluetoothDevice {
     UnlockdGuid serviceUuid,
     UnlockdGuid characteristicUuid, {
     required Uint8List value,
+    bool? withoutResponse,
   });
 
   /// Subscribe to a characteristic
