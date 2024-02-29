@@ -62,7 +62,11 @@ class FbpBluetoothDevice extends UnlockdBluetoothDevice {
     required Duration timeout,
     bool autoConnect = false,
   }) =>
-      _device.connect(timeout: timeout);
+      _device.connect(
+        timeout: timeout,
+        autoConnect: autoConnect,
+        mtu: null,
+      );
 
   @override
   Future<void> disconnect() => _device.disconnect();
