@@ -1,5 +1,8 @@
 // ignore_for_file: public_member_api_docs
 
+import 'dart:async';
+import 'dart:typed_data';
+
 import 'package:unlockd_bluetooth_core/unlockd_bluetooth.dart';
 import 'package:unlockd_fake_provider/unlockd_fake_provider.dart';
 
@@ -28,10 +31,12 @@ UnlockdScanResult scanResult({
 UnlockdBluetoothDevice bluetoothDevice({
   String? remoteId,
   String? platformName,
+  StreamController<Uint8List>? subscriptionController,
 }) {
   return FakeBluetoothDevice(
     remoteId: remoteId ?? 'fake_remote_id',
     platformName: platformName ?? 'fake_adv_name',
+    subscriptionController: subscriptionController,
   );
 }
 

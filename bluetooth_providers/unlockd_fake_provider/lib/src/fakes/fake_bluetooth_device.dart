@@ -9,11 +9,15 @@ class FakeBluetoothDevice extends Fake implements UnlockdBluetoothDevice {
     required this.platformName,
     UnlockdBluetoothConnectionState? initialConnectionState,
     StreamController<UnlockdBluetoothConnectionState>? connectionController,
+    StreamController<Uint8List>? subscriptionController,
   })  : _connectionController =
             connectionController ?? StreamController.broadcast(),
+        _subscriptionController =
+            subscriptionController ?? StreamController.broadcast(),
         _initialConnectionState = initialConnectionState;
 
   final StreamController<UnlockdBluetoothConnectionState> _connectionController;
+  final StreamController<Uint8List> _subscriptionController;
   final UnlockdBluetoothConnectionState? _initialConnectionState;
 
   @override
@@ -33,4 +37,18 @@ class FakeBluetoothDevice extends Fake implements UnlockdBluetoothDevice {
     }
     yield* _connectionController.stream;
   }
+
+  @override
+  Future<void> write(
+    UnlockdGuid serviceUuid,
+    UnlockdGuid characteristicUuid, {
+    required Uint8List value,
+  }) async {}
+
+  @override
+  Stream<Uint8List> subscribe(
+    UnlockdGuid serviceUuid,
+    UnlockdGuid characteristicUuid,
+  ) =>
+      _subscriptionController.stream;
 }
