@@ -100,4 +100,8 @@ class UnlockdBluetooth implements UnlockdBluetoothProvider {
 
   @override
   Future<void> turnOn() => _provider.turnOn();
+
+  @override
+  // TODO: implement name
+  String get name => throw UnimplementedError();
 }

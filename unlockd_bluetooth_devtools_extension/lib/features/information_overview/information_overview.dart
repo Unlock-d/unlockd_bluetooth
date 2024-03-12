@@ -1,0 +1,1 @@
+export 'view/information_overview_view.dart';

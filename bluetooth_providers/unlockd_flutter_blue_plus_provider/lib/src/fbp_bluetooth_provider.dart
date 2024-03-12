@@ -3,11 +3,23 @@ import 'dart:async';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:unlockd_bluetooth_core/unlockd_bluetooth.dart';
 import 'package:unlockd_flutter_blue_plus_provider/src/fbp/fbp.dart';
+import 'package:unlockd_flutter_blue_plus_provider/src/fbp_bluetooth_connect.dart';
 
 /// A [UnlockdBluetoothProvider] which uses [FlutterBluePlus]
 /// to retrieve Bluetooth information.
 class FbpBluetoothProvider extends UnlockdBluetoothProvider {
-  FbpBluetoothProvider._();
+  FbpBluetoothProvider._() {
+    assert(
+      () {
+        print('initialize');
+        if (!UnlockdBluetoothHelper.kIsWeb && UnlockdBluetoothHelper.kIsTest) {
+          FbpBluetoothConnect.initialize(this);
+        }
+        return true;
+      }(),
+      'This should only be called in debug mode',
+    );
+  }
 
   /// Returns the [FbpBluetoothProvider] instance.
   static final FbpBluetoothProvider instance = FbpBluetoothProvider._();
@@ -100,4 +112,7 @@ class FbpBluetoothProvider extends UnlockdBluetoothProvider {
   @override
   void cancelWhenScanComplete<T>(StreamSubscription<T> subscription) =>
       FlutterBluePlus.cancelWhenScanComplete(subscription);
+
+  @override
+  String get name => 'flutter_blue_plus_provider';
 }
