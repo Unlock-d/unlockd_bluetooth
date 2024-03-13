@@ -28,7 +28,8 @@ class UnlockdBluetoothConnectClient {
   Stream<ConnectAdapterStateResponse> get adapterStateChanged =>
       _adapterStateChangedController.stream;
 
-  static Future<UnlockdBluetoothConnectClient> connectVmService(VmService vmService) async {
+  static Future<UnlockdBluetoothConnectClient> connectVmService(
+      VmService vmService) async {
     final isolateId = serviceManager.isolateManager.mainIsolate.value?.id;
 
     assert(isolateId != null);
@@ -87,12 +88,16 @@ class UnlockdBluetoothConnectClient {
 
   Future<void> turnOffAdapter() async {
     var response = await _call(UnlockdBluetoothConnectAction.turnOff);
-    debugPrint('turnOffAdapter response: $response');
+    if (response?['message'] == "Not supported on this platform") {
+      return Future.error("Not supported on this platform");
+    }
   }
 
   Future<void> turnOnAdapter() async {
     var response = await _call(UnlockdBluetoothConnectAction.turnOn);
-    debugPrint('turnOnAdapter response: $response');
+    if (response?['message'] == "Not supported on this platform") {
+      return Future.error("Not supported on this platform");
+    }
   }
 
   Future<List<ConnectedSystemDevice>> listSystemDevices() async {

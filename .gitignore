@@ -44,3 +44,4 @@ app.*.map.json
 
 # Test related
 coverage
+/unlockd_bluetooth_core/extension/devtools/build/

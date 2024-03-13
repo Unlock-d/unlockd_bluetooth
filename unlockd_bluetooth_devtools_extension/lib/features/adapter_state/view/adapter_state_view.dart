@@ -48,9 +48,19 @@ class _AdapterStateViewState extends State<AdapterStateView> {
                     ElevatedButton(
                       onPressed: () {
                         if (response.state == 'on') {
-                          widget.connectClient.turnOffAdapter();
+                          widget.connectClient.turnOffAdapter().catchError(
+                                (error) => onError(
+                                  context,
+                                  error,
+                                ),
+                              );
                         } else {
-                          widget.connectClient.turnOnAdapter();
+                          widget.connectClient.turnOnAdapter().catchError(
+                                (error) => onError(
+                                  context,
+                                  error,
+                                ),
+                              );
                         }
                       },
                       child: const Text('Toggle adapter'),
@@ -65,6 +75,17 @@ class _AdapterStateViewState extends State<AdapterStateView> {
             },
           ),
         ],
+      ),
+    );
+  }
+
+  void onError(
+    BuildContext context,
+    dynamic error,
+  ) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Error: $error'),
       ),
     );
   }
