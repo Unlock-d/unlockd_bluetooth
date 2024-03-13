@@ -24,26 +24,33 @@ class _AdapterStateViewState extends State<AdapterStateView> {
 
   @override
   Widget build(BuildContext context) {
-    return devtools_shared_ui.RoundedOutlinedBorder(
-      child: Column(
-        children: [
-          const devtools_shared_ui.AreaPaneHeader(
-            roundedTopBorder: true,
-            includeTopBorder: true,
-            title: Text('Adapter state'),
-          ),
-          StreamBuilder<ConnectAdapterStateResponse>(
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const devtools_shared_ui.AreaPaneHeader(
+          roundedTopBorder: false,
+          includeTopBorder: true,
+          title: Text('Adapter state'),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(25.0),
+          child: StreamBuilder<ConnectAdapterStateResponse>(
             stream: widget.connectClient.adapterStateChanged,
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 final response = snapshot.data!;
 
                 var state = response.state;
-                return Column(
+                return Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
                       'Adapter state is $state',
-                      style: Theme.of(context).subtleTextStyle, // Shared style
+                      style: Theme.of(context).subtleTextStyle.copyWith(
+                            color: state == 'on' ? Colors.green : Colors.red,
+                          ), // Shared style
                     ),
                     ElevatedButton(
                       onPressed: () {
@@ -63,7 +70,9 @@ class _AdapterStateViewState extends State<AdapterStateView> {
                               );
                         }
                       },
-                      child: const Text('Toggle adapter'),
+                      child: const Text(
+                        'Toggle adapter',
+                      ),
                     ),
                   ],
                 );
@@ -74,8 +83,8 @@ class _AdapterStateViewState extends State<AdapterStateView> {
               );
             },
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 

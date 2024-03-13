@@ -13,24 +13,22 @@ class SystemDevicesView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return devtools_shared_ui.RoundedOutlinedBorder(
-      child: Column(
-        children: [
-          const devtools_shared_ui.AreaPaneHeader(
-            roundedTopBorder: true,
-            includeTopBorder: true,
-            title: Text('System devices'),
-          ),
-          Flexible(
-            child: ListView.builder(
-              itemBuilder: (context, index) => Text(
-                connectedSystemDevices[index].name,
-              ),
-              itemCount: connectedSystemDevices.length,
+    return Column(
+      children: [
+        const devtools_shared_ui.AreaPaneHeader(
+          roundedTopBorder: false,
+          includeTopBorder: true,
+          title: Text('System devices'),
+        ),
+        Flexible(
+          child: ListView.builder(
+            itemBuilder: (context, index) => Text(
+              connectedSystemDevices[index].name,
             ),
+            itemCount: connectedSystemDevices.length,
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

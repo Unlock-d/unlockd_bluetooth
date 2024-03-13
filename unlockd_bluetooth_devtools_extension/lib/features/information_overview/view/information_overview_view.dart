@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
 import 'package:unlockd_bluetooth_core/unlockd_bluetooth.dart';
 import 'package:unlockd_bluetooth_devtools_extension/features/adapter_state/adapter_state.dart';
@@ -23,9 +24,11 @@ class InformationOverviewView extends StatelessWidget {
         InstancesView(
           bluetoothProviderInstances: bluetoothProviderInstances,
         ),
+        const Gap(25),
         AdapterStateView(
           connectClient: connectClient,
         ),
+        const Gap(25),
         Expanded(
           child: FutureBuilder<List<ConnectedSystemDevice>>(
             future: connectClient.listSystemDevices(),

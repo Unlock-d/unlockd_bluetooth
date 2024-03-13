@@ -23,17 +23,24 @@ class _UnlockdBluetoothDevtoolsExtensionState
       items: [
         NavigationBarItem(
           header: const BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          content: const Text("home"),
-        ),
-        NavigationBarItem(
-          header: const BottomNavigationBarItem(
             icon: Icon(Icons.bluetooth),
             label: 'Bluetooth Information',
           ),
           content: const InformationOverviewView(),
+        ),
+        NavigationBarItem(
+          header: const BottomNavigationBarItem(
+            icon: Icon(Icons.info_rounded),
+            label: 'About',
+          ),
+          content: const Column(
+            children: [
+              Text(
+                  "This is a devtools extension for the unlockd_bluetooth package."),
+              Text("It is a work in progress."),
+              Text("It is not yet functional."),
+            ],
+          ),
         ),
       ],
     );
