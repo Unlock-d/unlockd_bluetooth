@@ -66,6 +66,7 @@ abstract class UnlockdBluetoothDevice {
   Future<void> connect({
     required Duration timeout,
     bool autoConnect = false,
+    int? mtu,
   });
 
   /// Cancels connection to the Bluetooth Device
@@ -92,6 +93,8 @@ abstract class UnlockdBluetoothDevice {
     UnlockdGuid serviceUuid,
     UnlockdGuid characteristicUuid, {
     required Uint8List value,
+    bool? withoutResponse,
+    bool? allowLongWrite,
   });
 
   /// Subscribe to a characteristic

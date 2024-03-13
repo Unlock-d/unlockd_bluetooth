@@ -29,6 +29,8 @@ class UniversalBleBluetoothDevice extends UnlockdBluetoothDevice
 
   final String? _name;
   StreamController<Uint8List>? _internalCharValueController;
+  StreamController<UnlockdBluetoothConnectionState>?
+      _internalConnectionStateController;
 
   StreamController<Uint8List> get _charValueController {
     if (_internalCharValueController == null ||
@@ -38,6 +40,15 @@ class UniversalBleBluetoothDevice extends UnlockdBluetoothDevice
     return _internalCharValueController!;
   }
 
+  StreamController<UnlockdBluetoothConnectionState>
+      get _connectionStateController {
+    if (_internalConnectionStateController == null ||
+        _internalConnectionStateController!.isClosed) {
+      _internalConnectionStateController = StreamController.broadcast();
+    }
+    return _internalConnectionStateController!;
+  }
+
   @override
   final String remoteId;
 
@@ -45,23 +56,39 @@ class UniversalBleBluetoothDevice extends UnlockdBluetoothDevice
   String get platformName => _name ?? 'unknown_adv_name';
 
   @override
-  Future<void> connect({required Duration timeout, bool autoConnect = false}) {
-    throw UnimplementedError();
+  Future<void> connect({
+    required Duration timeout,
+    bool autoConnect = false,
+    int? mtu,
+  }) =>
+      UniversalBle.connect(remoteId, connectionTimeout: timeout);
+
+  @override
+  Stream<UnlockdBluetoothConnectionState> get connectionState {
+    UniversalBle.onPairingStateChange = (deviceId, isPaired, error) {
+      if (deviceId == remoteId) {
+        if (isPaired) {
+          _connectionStateController
+              .add(UnlockdBluetoothConnectionState.connected);
+        } else {
+          _connectionStateController
+              .add(UnlockdBluetoothConnectionState.disconnected);
+        }
+      }
+    };
+
+    return _connectionStateController.stream;
   }
 
   @override
-  Stream<UnlockdBluetoothConnectionState> get connectionState =>
-      throw UnimplementedError();
+  Future<void> disconnect() => UniversalBle.disconnect(remoteId);
 
   @override
-  Future<void> disconnect() {
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<List<UnlockdBluetoothService>> discoverServices() {
-    throw UnimplementedError();
-  }
+  Future<List<UnlockdBluetoothService>> discoverServices() =>
+      UniversalBle.discoverServices(remoteId).then(
+        (value) =>
+            value.map(UniversalBleBluetoothService.fromUniversalBle).toList(),
+      );
 
   @override
   bool get isConnected => throw UnimplementedError();
@@ -115,13 +142,17 @@ class UniversalBleBluetoothDevice extends UnlockdBluetoothDevice
     UnlockdGuid serviceUuid,
     UnlockdGuid characteristicUuid, {
     required Uint8List value,
+    bool? withoutResponse,
+    bool? allowLongWrite,
   }) =>
       UniversalBle.writeValue(
         remoteId,
         serviceUuid.str128,
         characteristicUuid.str128,
         value,
-        BleOutputProperty.withoutResponse,
+        withoutResponse ?? true
+            ? BleOutputProperty.withoutResponse
+            : BleOutputProperty.withResponse,
       );
 
   @override

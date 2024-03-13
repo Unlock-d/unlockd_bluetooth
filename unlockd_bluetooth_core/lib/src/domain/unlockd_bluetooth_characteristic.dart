@@ -33,7 +33,11 @@ abstract class UnlockdBluetoothCharacteristic {
   /// Writes a characteristic.
   ///  - [withoutResponse]: the write is not guaranteed and
   ///  always returns immediately with success.
-  Future<void> write(Uint8List value, {bool? withoutResponse});
+  Future<void> write(
+    Uint8List value, {
+    bool? withoutResponse,
+    bool? allowLongWrite,
+  });
 
   /// Sets notifications or indications for the characteristic.
   ///   - If a characteristic supports both notifications and indications,

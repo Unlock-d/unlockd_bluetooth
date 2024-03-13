@@ -83,7 +83,11 @@ class IsarBluetoothCharacteristic extends UnlockdBluetoothCharacteristic {
   Future<Uint8List> read() async => Uint8List.fromList(contents);
 
   @override
-  Future<void> write(Uint8List value, {bool? withoutResponse}) async {
+  Future<void> write(
+    Uint8List value, {
+    bool? withoutResponse,
+    bool? allowLongWrite,
+  }) async {
     final updatedChar = this..contents = value;
 
     await _writeChar(updatedChar);

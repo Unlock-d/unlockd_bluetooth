@@ -59,6 +59,7 @@ class IsarBluetoothDevice extends UnlockdBluetoothDevice {
   Future<void> connect({
     required Duration timeout,
     bool autoConnect = false,
+    int? mtu,
   }) async {
     final updatedDevice = this
       ..isarConnectionState = UnlockdBluetoothConnectionState.connected;
@@ -103,6 +104,8 @@ class IsarBluetoothDevice extends UnlockdBluetoothDevice {
     UnlockdGuid serviceUuid,
     UnlockdGuid characteristicUuid, {
     required Uint8List value,
+    bool? withoutResponse,
+    bool? allowLongWrite,
   }) async {
     final characteristic = _findCharacteristic(serviceUuid, characteristicUuid);
 

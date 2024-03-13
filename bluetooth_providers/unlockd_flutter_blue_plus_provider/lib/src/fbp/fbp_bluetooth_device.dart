@@ -61,8 +61,13 @@ class FbpBluetoothDevice extends UnlockdBluetoothDevice {
   Future<void> connect({
     required Duration timeout,
     bool autoConnect = false,
+    int? mtu,
   }) =>
-      _device.connect(timeout: timeout);
+      _device.connect(
+        timeout: timeout,
+        autoConnect: autoConnect,
+        mtu: mtu,
+      );
 
   @override
   Future<void> disconnect() => _device.disconnect();
@@ -96,11 +101,17 @@ class FbpBluetoothDevice extends UnlockdBluetoothDevice {
     UnlockdGuid serviceUuid,
     UnlockdGuid characteristicUuid, {
     required Uint8List value,
+    bool? withoutResponse,
+    bool? allowLongWrite,
   }) async {
     final characteristic =
         await _findCharacteristic(serviceUuid, characteristicUuid);
 
-    await characteristic.write(value);
+    await characteristic.write(
+      value,
+      withoutResponse: withoutResponse,
+      allowLongWrite: allowLongWrite,
+    );
   }
 
   @override
