@@ -2,7 +2,17 @@ part of 'isar/isar.dart';
 
 /// A [UnlockdBluetoothProvider] which uses [Isar] as the underlying storage.
 class IsarBluetoothProvider extends UnlockdBluetoothProvider {
-  IsarBluetoothProvider._(this._isar);
+  IsarBluetoothProvider._(this._isar) {
+    assert(
+      () {
+        if (!UnlockdBluetoothHelper.kIsWeb && UnlockdBluetoothHelper.kIsTest) {
+          IsarBluetoothConnector().initialize(this);
+        }
+        return true;
+      }(),
+      'This should only be called in debug mode',
+    );
+  }
 
   /// Returns the singleton instance of [IsarBluetoothProvider].
   static Future<IsarBluetoothProvider> initialize({

@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:equatable/equatable.dart';
 import 'package:isar/isar.dart';
 import 'package:unlockd_bluetooth_core/unlockd_bluetooth.dart';
+import 'package:unlockd_isar_provider/src/extension/isar_bluetooth_connector.dart';
 
 part '../isar_bluetooth_provider.dart';
 part 'isar.g.dart';
