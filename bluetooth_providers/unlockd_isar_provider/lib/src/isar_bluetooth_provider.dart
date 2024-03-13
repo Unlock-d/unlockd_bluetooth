@@ -144,4 +144,7 @@ class IsarBluetoothProvider extends UnlockdBluetoothProvider {
       });
     });
   }
+
+  @override
+  String get name => 'Isar adapter';
 }

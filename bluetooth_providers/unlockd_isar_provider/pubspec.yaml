@@ -13,10 +13,11 @@ dependencies:
   isar: ^3.1.0+1
   isar_flutter_libs: ^3.1.0+1
   unlockd_bluetooth_core:
-    git:
-      url: git@github.com:Unlock-d/unlockd_bluetooth.git
-      path: unlockd_bluetooth_core
-      ref: v2.3.1
+    path: ../../unlockd_bluetooth_core
+#    git:
+#      url: git@github.com:Unlock-d/unlockd_bluetooth.git
+#      path: unlockd_bluetooth_core
+#      ref: v2.3.1
 
 dev_dependencies:
   build_runner: any

@@ -5,9 +5,9 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:unlockd_bluetooth_core/unlockd_bluetooth.dart';
-import 'package:unlockd_flutter_blue_plus_provider/unlockd_flutter_blue_plus_provider.dart';
+import 'package:unlockd_isar_provider/src/isar/isar.dart';
 
-class FbpBluetoothConnector extends UnlockdBluetoothConnector {
+class IsarBluetoothConnector extends UnlockdBluetoothConnector {
   static late StreamSubscription<void>? _adapterStateSubscription;
 
   @override
@@ -36,7 +36,7 @@ class FbpBluetoothConnector extends UnlockdBluetoothConnector {
     try {
       //only on android
       if (Platform.isAndroid) {
-        await FbpBluetoothProvider.instance.turnOn();
+        await IsarBluetoothProvider.instance.turnOn();
         return SuccessTurnOnAdapterResponse();
       } else {
         return ErrorTurnOnAdapterResponse(
@@ -57,7 +57,7 @@ class FbpBluetoothConnector extends UnlockdBluetoothConnector {
     try {
       //only on android
       if (Platform.isAndroid) {
-        await FbpBluetoothProvider.instance.turnOff();
+        await IsarBluetoothProvider.instance.turnOff();
         return SuccessTurnOffAdapterResponse();
       } else {
         return ErrorTurnOffAdapterResponse(
@@ -76,7 +76,7 @@ class FbpBluetoothConnector extends UnlockdBluetoothConnector {
     Map<String, dynamic> _,
   ) async {
     final bluetoothDevices =
-        await FbpBluetoothProvider.instance.systemDevices().then(
+        await IsarBluetoothProvider.instance.systemDevices().then(
               (list) => list
                   .map(
                     (e) => ConnectedSystemDevice(
@@ -96,7 +96,7 @@ class FbpBluetoothConnector extends UnlockdBluetoothConnector {
     //await _adapterStateSubscription?.cancel();
 
     _adapterStateSubscription =
-        FbpBluetoothProvider.instance.adapterState().listen((event) {
+        IsarBluetoothProvider.instance.adapterState().listen((event) {
       print('Adapter state changed: $event');
       postEvent(
         UnlockdBluetoothConnectEvent.adapterStateChanged.event,
