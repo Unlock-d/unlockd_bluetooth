@@ -2,7 +2,7 @@ import 'package:devtools_extensions/devtools_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:devtools_app_shared/ui.dart' as devtools_shared_ui;
 import 'package:unlockd_bluetooth_devtools_extension/features/connection/model/instances.dart';
-import 'package:unlockd_bluetooth_devtools_extension/features/connection/services/connect_client.dart';
+import 'package:unlockd_bluetooth_devtools_extension/features/connection/services/unlockd_bluetooth_connect_client.dart';
 import 'package:unlockd_bluetooth_devtools_extension/features/connection/view/connection_view.dart';
 import 'package:unlockd_bluetooth_devtools_extension/features/navigation_bar/model/model.dart';
 import 'package:provider/provider.dart';
@@ -50,7 +50,7 @@ class _NavigationBarViewState extends State<NavigationBarView> {
   }
 
   Scaffold buildLoadedScaffold({
-    required ConnectClient client,
+    required UnlockdBluetoothConnectClient client,
     required BluetoothProviderInstances instances,
   }) {
     return Scaffold(
@@ -62,7 +62,7 @@ class _NavigationBarViewState extends State<NavigationBarView> {
       ),
       body: MultiProvider(
         providers: [
-          Provider<ConnectClient>(
+          Provider<UnlockdBluetoothConnectClient>(
             create: (_) => client,
           ),
           Provider<BluetoothProviderInstances>(

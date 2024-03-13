@@ -11,7 +11,6 @@ class FbpBluetoothProvider extends UnlockdBluetoothProvider {
   FbpBluetoothProvider._() {
     assert(
       () {
-        print('initialize');
         if (!UnlockdBluetoothHelper.kIsWeb && UnlockdBluetoothHelper.kIsTest) {
           FbpBluetoothConnect.initialize(this);
         }

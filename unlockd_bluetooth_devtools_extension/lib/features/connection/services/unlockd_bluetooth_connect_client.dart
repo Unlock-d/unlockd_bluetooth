@@ -9,8 +9,8 @@ import 'package:unlockd_bluetooth_core/unlockd_bluetooth.dart';
 import 'package:unlockd_bluetooth_devtools_extension/features/connection/model/instances.dart';
 import 'package:vm_service/vm_service.dart';
 
-class ConnectClient {
-  ConnectClient(this.vmService, this.isolateId);
+class UnlockdBluetoothConnectClient {
+  UnlockdBluetoothConnectClient(this.vmService, this.isolateId);
 
   static const Duration kNormalTimeout = Duration(seconds: 4);
   static const Duration kLongTimeout = Duration(seconds: 10);
@@ -28,17 +28,18 @@ class ConnectClient {
   Stream<ConnectAdapterStateResponse> get adapterStateChanged =>
       _adapterStateChangedController.stream;
 
-  static Future<ConnectClient> connectVmService(VmService vmService) async {
+  static Future<UnlockdBluetoothConnectClient> connectVmService(VmService vmService) async {
     final isolateId = serviceManager.isolateManager.mainIsolate.value?.id;
 
     assert(isolateId != null);
 
-    final client = ConnectClient(vmService, isolateId!);
+    final client = UnlockdBluetoothConnectClient(vmService, isolateId!);
     final handlers = {
-      ConnectEvent.instancesChanged.event: (_) {
+      UnlockdBluetoothConnectEvent.instancesChanged.event: (_) {
         client._instancesChangedController.add(null);
       },
-      ConnectEvent.adapterStateChanged.event: (Map<String, dynamic> json) {
+      UnlockdBluetoothConnectEvent.adapterStateChanged.event:
+          (Map<String, dynamic> json) {
         final adapterState = ConnectAdapterStateResponse.fromJson(json);
         client._adapterStateChangedController.add(adapterState);
       },
@@ -52,7 +53,7 @@ class ConnectClient {
   }
 
   Future<Map<String, dynamic>?> _call(
-    ConnectAction action, {
+    UnlockdBluetoothConnectAction action, {
     Duration? timeout = kNormalTimeout,
     dynamic param,
   }) async {
@@ -72,30 +73,30 @@ class ConnectClient {
   }
 
   Future<BluetoothProviderInstances> listInstances() async {
-    final json = await _call(ConnectAction.listInstances);
+    final json = await _call(UnlockdBluetoothConnectAction.listInstances);
     var listOfInstances =
-        ConnectInstanceNamesPayload.fromJson(json!).instances.map((e) {
+        ConnectInstanceNamesResponse.fromJson(json!).instances.map((e) {
       return BluetoothProviderInstance(value: e);
     }).toList();
     return BluetoothProviderInstances(instances: listOfInstances);
   }
 
   Future<void> watchAdapterState() async {
-    await _call(ConnectAction.adapterState);
+    await _call(UnlockdBluetoothConnectAction.adapterState);
   }
 
   Future<void> turnOffAdapter() async {
-    var response = await _call(ConnectAction.turnOff);
+    var response = await _call(UnlockdBluetoothConnectAction.turnOff);
     debugPrint('turnOffAdapter response: $response');
   }
 
   Future<void> turnOnAdapter() async {
-    var response = await _call(ConnectAction.turnOn);
+    var response = await _call(UnlockdBluetoothConnectAction.turnOn);
     debugPrint('turnOnAdapter response: $response');
   }
 
   Future<List<ConnectedSystemDevice>> listSystemDevices() async {
-    var json = await _call(ConnectAction.listSystemDevices);
+    var json = await _call(UnlockdBluetoothConnectAction.listSystemDevices);
     var connectSystemDevicesResponse =
         ConnectSystemDevicesResponse.fromJson(json!).bluetoohDevices;
     return connectSystemDevicesResponse;

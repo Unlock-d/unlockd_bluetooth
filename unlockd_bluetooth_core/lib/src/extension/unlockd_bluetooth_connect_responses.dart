@@ -1,47 +1,11 @@
-part of unlockd_bluetooth;
+/// The response for [UnlockdBluetoothConnectEvent.instancesChanged].
+class ConnectInstanceNamesResponse {
+  /// Creates a new [ConnectInstanceNamesResponse].
+  ConnectInstanceNamesResponse(this.instances);
 
-enum ConnectAction {
-  listInstances('ext.unlockd.bluetooth.listInstances'),
-  turnOn('ext.unlockd.bluetooth.turnOn'),
-  turnOff('ext.unlockd.bluetooth.turnOff'),
-  listSystemDevices('ext.unlockd.bluetooth.listSystemDevices'),
-  adapterState('ext.unlockd.bluetooth.adapterState'),
-  isScanningNow('ext.unlockd.bluetooth.isScanningNow'),
-  isScanning('ext.unlockd.bluetooth.isScanning'),
-  startScan('ext.unlockd.bluetooth.startScan'),
-  stopScan('ext.unlockd.bluetooth.stopScan'),
-  systemDevices('ext.unlockd.bluetooth.systemDevices'),
-  scanResults('ext.unlockd.bluetooth.scanResults'),
-  onScanResults('ext.unlockd.bluetooth.onScanResults'),
-  ;
-
-  const ConnectAction(this.method);
-
-  /// The method name to call.
-  final String method;
-}
-
-enum ConnectEvent {
-  instancesChanged('unlockd.bluetooth.instancesChanged'),
-  adapterStateChanged('unlockd.bluetooth.adapterStateChanged'),
-  //queryChanged('isar.queryChanged'),
-  //collectionInfoChanged('isar.collectionInfoChanged'),
-  ;
-
-  const ConnectEvent(this.event);
-
-  /// The event name to listen for.
-  final String event;
-}
-
-/// The payload for [ConnectEvent.instancesChanged].
-class ConnectInstanceNamesPayload {
-  /// Creates a new [ConnectInstanceNamesPayload].
-  ConnectInstanceNamesPayload(this.instances);
-
-  /// Creates a new [ConnectInstanceNamesPayload] from a JSON map.
-  factory ConnectInstanceNamesPayload.fromJson(Map<String, dynamic> json) {
-    return ConnectInstanceNamesPayload(
+  /// Creates a new [ConnectInstanceNamesResponse] from a JSON map.
+  factory ConnectInstanceNamesResponse.fromJson(Map<String, dynamic> json) {
+    return ConnectInstanceNamesResponse(
       (json['instances'] as List).cast<String>(),
     );
   }
@@ -49,7 +13,7 @@ class ConnectInstanceNamesPayload {
   /// The list of instance names.
   final List<String> instances;
 
-  /// Converts this payload to a JSON map.
+  /// Converts this response to a JSON map.
   Map<String, dynamic> toJson() {
     return {'instances': instances};
   }
@@ -173,7 +137,7 @@ class ConnectedSystemDevice {
   }
 }
 
-/// The response for [ConnectEvent.adapterStateChanged].
+/// The response for [UnlockdBluetoothConnectEvent.adapterStateChanged].
 class ConnectAdapterStateResponse {
   /// Creates a new [ConnectAdapterStateResponse].
   ConnectAdapterStateResponse(this.state);

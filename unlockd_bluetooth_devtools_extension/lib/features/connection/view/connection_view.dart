@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:unlockd_bluetooth_devtools_extension/features/connection/model/instances.dart';
-import 'package:unlockd_bluetooth_devtools_extension/features/connection/services/connect_client.dart';
+import 'package:unlockd_bluetooth_devtools_extension/features/connection/services/unlockd_bluetooth_connect_client.dart';
 import 'package:unlockd_bluetooth_devtools_extension/features/connection/widgets/error_screen.dart';
 import 'package:vm_service/vm_service.dart';
 
@@ -15,7 +15,7 @@ class ConnectionView extends StatefulWidget {
 
   final VmService vmService;
   final Widget Function(
-      {required ConnectClient client,
+      {required UnlockdBluetoothConnectClient client,
       required BluetoothProviderInstances instances}) content;
 
   @override
@@ -23,25 +23,25 @@ class ConnectionView extends StatefulWidget {
 }
 
 class _ConnectionPageState extends State<ConnectionView> {
-  late Future<ConnectClient> clientFuture;
+  late Future<UnlockdBluetoothConnectClient> clientFuture;
 
   @override
   void initState() {
-    clientFuture = ConnectClient.connectVmService(widget.vmService);
+    clientFuture = UnlockdBluetoothConnectClient.connectVmService(widget.vmService);
     super.initState();
   }
 
   @override
   void didUpdateWidget(covariant ConnectionView oldWidget) {
     if (oldWidget.vmService != widget.vmService) {
-      clientFuture = ConnectClient.connectVmService(widget.vmService);
+      clientFuture = UnlockdBluetoothConnectClient.connectVmService(widget.vmService);
     }
     super.didUpdateWidget(oldWidget);
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<ConnectClient>(
+    return FutureBuilder<UnlockdBluetoothConnectClient>(
       future: clientFuture,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
@@ -65,9 +65,9 @@ class _InstancesLoader extends StatefulWidget {
     required this.content,
   });
 
-  final ConnectClient client;
+  final UnlockdBluetoothConnectClient client;
   final Widget Function(
-      {required ConnectClient client,
+      {required UnlockdBluetoothConnectClient client,
       required BluetoothProviderInstances instances}) content;
 
   @override

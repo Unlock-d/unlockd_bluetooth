@@ -10,18 +10,18 @@ import 'package:unlockd_bluetooth_core/unlockd_bluetooth.dart';
 
 abstract class FbpBluetoothConnect {
   static const _handlers = {
-    ConnectAction.listInstances: _listInstances,
-    ConnectAction.turnOn: _turnOnAdapter,
-    ConnectAction.turnOff: _turnOffAdapter,
-    ConnectAction.listSystemDevices: _listSystemDevices,
-    ConnectAction.adapterState: _adapterState,
-    ConnectAction.isScanningNow: _notImplemented,
-    ConnectAction.isScanning: _notImplemented,
-    ConnectAction.startScan: _notImplemented,
-    ConnectAction.stopScan: _notImplemented,
-    ConnectAction.systemDevices: _notImplemented,
-    ConnectAction.scanResults: _notImplemented,
-    ConnectAction.onScanResults: _notImplemented,
+    UnlockdBluetoothConnectAction.listInstances: _listInstances,
+    UnlockdBluetoothConnectAction.turnOn: _turnOnAdapter,
+    UnlockdBluetoothConnectAction.turnOff: _turnOffAdapter,
+    UnlockdBluetoothConnectAction.listSystemDevices: _listSystemDevices,
+    UnlockdBluetoothConnectAction.adapterState: _adapterState,
+    UnlockdBluetoothConnectAction.isScanningNow: _notImplemented,
+    UnlockdBluetoothConnectAction.isScanning: _notImplemented,
+    UnlockdBluetoothConnectAction.startScan: _notImplemented,
+    UnlockdBluetoothConnectAction.stopScan: _notImplemented,
+    UnlockdBluetoothConnectAction.systemDevices: _notImplemented,
+    UnlockdBluetoothConnectAction.scanResults: _notImplemented,
+    UnlockdBluetoothConnectAction.onScanResults: _notImplemented,
   };
 
   static final _instances = <String, UnlockdBluetoothProvider>{};
@@ -38,7 +38,7 @@ abstract class FbpBluetoothConnect {
 
     if (!_instances.containsKey(bluetoothProvider.name)) {
       _instances[bluetoothProvider.name] = bluetoothProvider;
-      postEvent(ConnectEvent.instancesChanged.event, {});
+      postEvent(UnlockdBluetoothConnectEvent.instancesChanged.event, {});
     }
   }
 
@@ -99,7 +99,7 @@ abstract class FbpBluetoothConnect {
   static Future<dynamic> _listInstances(
     Map<String, dynamic> _,
   ) async {
-    return ConnectInstanceNamesPayload(_instances.keys.toList());
+    return ConnectInstanceNamesResponse(_instances.keys.toList());
   }
 
   static Future<dynamic> _turnOnAdapter(
@@ -169,7 +169,7 @@ abstract class FbpBluetoothConnect {
     _adapterStateSubscription = FlutterBluePlus.adapterState.listen((event) {
       print('Adapter state changed: $event');
       postEvent(
-        ConnectEvent.adapterStateChanged.event,
+        UnlockdBluetoothConnectEvent.adapterStateChanged.event,
         ConnectAdapterStateResponse(event.name).toJson(),
       );
     });

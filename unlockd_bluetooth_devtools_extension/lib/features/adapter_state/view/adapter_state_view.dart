@@ -1,7 +1,7 @@
 import 'package:devtools_app_shared/ui.dart' as devtools_shared_ui;
 import 'package:flutter/material.dart';
 import 'package:unlockd_bluetooth_core/unlockd_bluetooth.dart';
-import 'package:unlockd_bluetooth_devtools_extension/features/connection/services/connect_client.dart';
+import 'package:unlockd_bluetooth_devtools_extension/features/connection/services/unlockd_bluetooth_connect_client.dart';
 
 class AdapterStateView extends StatefulWidget {
   const AdapterStateView({
@@ -9,7 +9,7 @@ class AdapterStateView extends StatefulWidget {
     required this.connectClient,
   });
 
-  final ConnectClient connectClient;
+  final UnlockdBluetoothConnectClient connectClient;
 
   @override
   State<AdapterStateView> createState() => _AdapterStateViewState();
