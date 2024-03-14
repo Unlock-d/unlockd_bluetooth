@@ -1,7 +1,7 @@
 part of 'isar/isar.dart';
 
-/// A [UnlockdBluetoothProvider] which uses [Isar] as the underlying storage.
-class IsarBluetoothProvider extends UnlockdBluetoothProvider {
+/// A [UnlockdBluetoothAdapter] which uses [Isar] as the underlying storage.
+class IsarBluetoothProvider extends UnlockdBluetoothAdapter {
   IsarBluetoothProvider._(this._isar) {
     assert(
       () {

@@ -6,13 +6,13 @@ import 'package:unlockd_bluetooth_core/unlockd_bluetooth.dart';
 abstract class UnlockdBluetoothConnector {
   Map<UnlockdBluetoothConnectAction, Function> get handlers;
 
-  final Map<String, UnlockdBluetoothProvider> _instances =
-      <String, UnlockdBluetoothProvider>{};
+  final Map<String, UnlockdBluetoothAdapter> _instances =
+      <String, UnlockdBluetoothAdapter>{};
 
-  Map<String, UnlockdBluetoothProvider> get instances => _instances;
+  Map<String, UnlockdBluetoothAdapter> get instances => _instances;
   var _initialized = false;
 
-  void initialize(UnlockdBluetoothProvider bluetoothProvider) {
+  void initialize(UnlockdBluetoothAdapter bluetoothProvider) {
     if (!_initialized) {
       _initialized = true;
       _printConnection();

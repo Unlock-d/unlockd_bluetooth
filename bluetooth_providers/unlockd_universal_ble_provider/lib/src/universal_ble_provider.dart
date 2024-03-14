@@ -1,8 +1,8 @@
 part of 'universal_ble/universal_ble.dart';
 
-/// A [UnlockdBluetoothProvider] which uses [UniversalBle]
+/// A [UnlockdBluetoothAdapter] which uses [UniversalBle]
 /// to retrieve Bluetooth information.
-class UniversalBleProvider extends UnlockdBluetoothProvider {
+class UniversalBleProvider extends UnlockdBluetoothAdapter {
   UniversalBleProvider._();
 
   /// Initializes singleton instance of [UniversalBleProvider].

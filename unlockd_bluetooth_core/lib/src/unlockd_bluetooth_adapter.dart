@@ -3,18 +3,18 @@ import 'dart:async';
 import 'package:unlockd_bluetooth_core/src/domain/domain.dart';
 
 /// Abstract class that defines the methods that
-/// a Bluetooth provider must implement.
-abstract class UnlockdBluetoothProvider {
+/// a [UnlockdBluetoothAdapter] must implement.
+abstract class UnlockdBluetoothAdapter {
   /// The current UnlockdBluetoothProvider version.
   static const String version = '0.0.0-placeholder';
 
   /// The default UnlockdBluetoothProvider instance name.
   static const String defaultName = 'default';
 
-  /// The name of the provider.
+  /// The name of the [UnlockdBluetoothAdapter].
   String get name;
 
-  /// Method to cleanup the resources used by the provider.
+  /// Method to cleanup the resources used by the [UnlockdBluetoothAdapter].
   Future<void> close();
 
   UnlockdBluetoothDevice fromRemoteId(String remoteId);

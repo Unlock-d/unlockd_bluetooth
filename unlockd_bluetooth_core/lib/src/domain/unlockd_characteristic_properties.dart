@@ -1,5 +1,6 @@
 part of 'domain.dart';
 
+/// The properties of a characteristic.
 abstract class UnlockdCharacteristicProperties {
   bool get broadcast;
 

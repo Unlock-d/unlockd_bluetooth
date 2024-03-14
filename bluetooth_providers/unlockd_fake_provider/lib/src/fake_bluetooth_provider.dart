@@ -1,8 +1,8 @@
 part of 'fakes/fakes.dart';
 
-/// A [UnlockdBluetoothProvider] which uses [Fake]s to mock any
+/// A [UnlockdBluetoothAdapter] which uses [Fake]s to mock any
 /// Bluetooth behaviour.
-class FakeBluetoothProvider extends UnlockdBluetoothProvider {
+class FakeBluetoothProvider extends UnlockdBluetoothAdapter {
   /// Create a [FakeBluetoothProvider]
   ///
   /// you can pass in [adapterStateController] and [scanController]

@@ -37,7 +37,7 @@ class DfuService {
 
     await _nordicDfu.startDfu(
       remoteId,
-      firmwarePackage.getPath(),
+      firmwarePackage.path,
       fileInAsset: firmwarePackage is LocalFirmwarePackage,
       onProgressChanged: onProgressChanged,
       onDfuCompleted: onCompleted ?? _defaultCallback,

@@ -44,7 +44,7 @@ Future<void> main() async {
 class BluetoothAdapterStateObserver extends NavigatorObserver {
   BluetoothAdapterStateObserver(this.bluetooth);
 
-  final UnlockdBluetoothProvider bluetooth;
+  final UnlockdBluetoothAdapter bluetooth;
   StreamSubscription<UnlockdBluetoothAdapterState>? _btStateSubscription;
 
   @override
@@ -73,7 +73,7 @@ class BluetoothAdapterStateObserver extends NavigatorObserver {
 class FlutterBlueApp extends StatelessWidget {
   const FlutterBlueApp({Key? key, required this.bluetooth}) : super(key: key);
 
-  final UnlockdBluetoothProvider bluetooth;
+  final UnlockdBluetoothAdapter bluetooth;
 
   @override
   Widget build(BuildContext context) {
@@ -108,7 +108,7 @@ class BluetoothOffScreen extends StatelessWidget {
     required this.bluetooth,
   }) : super(key: key);
 
-  final UnlockdBluetoothProvider bluetooth;
+  final UnlockdBluetoothAdapter bluetooth;
   final UnlockdBluetoothAdapterState? adapterState;
 
   @override
@@ -161,7 +161,7 @@ class FindDevicesScreen extends StatefulWidget {
   const FindDevicesScreen({Key? key, required this.bluetooth})
       : super(key: key);
 
-  final UnlockdBluetoothProvider bluetooth;
+  final UnlockdBluetoothAdapter bluetooth;
 
   @override
   State<FindDevicesScreen> createState() => _FindDevicesScreenState();
