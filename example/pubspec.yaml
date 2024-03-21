@@ -39,8 +39,8 @@ dependencies:
   #      url: git@github.com:Unlock-d/unlockd_bluetooth.git
   #      path: unlockd_bluetooth_core
   #      ref: *unlockd_bluetooth_version
-  unlockd_flutter_blue_plus_provider:
-    path: ../bluetooth_providers/unlockd_flutter_blue_plus_provider
+  unlockd_flutter_blue_plus_adapter:
+    path: ../bluetooth_adapters/unlockd_flutter_blue_plus_provider
   #  unlockd_flutter_blue_plus_provider:
   #    git:
   #      url: git@github.com:Unlock-d/unlockd_bluetooth.git

@@ -11,7 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:unlockd_bluetooth_core/unlockd_bluetooth.dart';
-import 'package:unlockd_flutter_blue_plus_provider/unlockd_flutter_blue_plus_provider.dart';
+import 'package:unlockd_flutter_blue_plus_adapter/unlockd_flutter_blue_plus_adapter.dart';
 
 import 'widgets.dart';
 
@@ -23,7 +23,7 @@ final Map<String, ValueNotifier<bool>> isConnectingOrDisconnecting = {};
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  final bluetooth = FbpBluetoothProvider.instance;
+  final bluetooth = FbpBluetoothAdapter.instance;
 
   if (Platform.isAndroid) {
     [

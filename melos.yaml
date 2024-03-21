@@ -1,7 +1,7 @@
 name: unlockd_bluetooth
 
 packages:
-  - bluetooth_providers/*
+  - bluetooth_adapters/*
   - unlockd_bluetooth_core
   - unlockd_bluetooth_devtools_extension
   - example
