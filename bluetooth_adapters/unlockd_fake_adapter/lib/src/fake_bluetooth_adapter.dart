@@ -5,56 +5,59 @@ part of 'fakes/fakes.dart';
 class FakeBluetoothAdapter extends UnlockdBluetoothAdapter {
   /// Create a [FakeBluetoothAdapter]
   ///
-  /// you can pass in [adapterStateController] and [scanController]
+  /// you can use the [adapterStateController] and [scanController]
   /// to control the state of the adapter and the scan results.
   FakeBluetoothAdapter({
-    StreamController<UnlockdBluetoothAdapterState>? adapterStateController,
-    StreamController<List<UnlockdScanResult>>? scanController,
     bool isScanningNow = false,
   })  : _isScanningNow = isScanningNow,
-        _adapterStateController =
-            adapterStateController ?? StreamController.broadcast(),
-        _scanController = scanController ?? StreamController.broadcast() {
-    if (_isScanningNow) {
-      _scanController.add([mothers.scanResult()]);
-    }
-  }
+        adapterStateController = StreamController.broadcast(),
+        isScanningController = StreamController.broadcast(),
+        scanController = StreamController.broadcast();
 
-  final StreamController<UnlockdBluetoothAdapterState> _adapterStateController;
-  final StreamController<List<UnlockdScanResult>> _scanController;
-  final bool _isScanningNow;
+  /// A [StreamController] to manipulate the adapter state.
+  final StreamController<UnlockdBluetoothAdapterState> adapterStateController;
 
-  Stream<List<UnlockdScanResult>> get _scanStream => _scanController.stream;
+  /// A [StreamController] to manipulate the scan results.
+  final StreamController<List<UnlockdScanResult>> scanController;
 
-  Stream<UnlockdBluetoothAdapterState> get _adapterStream =>
-      _adapterStateController.stream;
+  /// A [StreamController] to manipulate the current isScanning state
+  final StreamController<bool> isScanningController;
+
+  bool _isScanningNow;
+  final _subscriptionsToCancel = <StreamSubscription<dynamic>>[];
 
   @override
   String get name => 'fake_bluetooth_adapter';
 
   @override
   Future<void> close() async {
-    await _adapterStateController.close();
-    await _scanController.close();
+    await adapterStateController.close();
+    await scanController.close();
+    await isScanningController.close();
   }
 
   @override
   Future<void> turnOn() async =>
-      _adapterStateController.add(UnlockdBluetoothAdapterState.on);
+      adapterStateController.add(UnlockdBluetoothAdapterState.on);
 
   @override
   Future<void> turnOff() async =>
-      _adapterStateController.add(UnlockdBluetoothAdapterState.off);
+      adapterStateController.add(UnlockdBluetoothAdapterState.off);
 
   @override
-  Stream<UnlockdBluetoothAdapterState> adapterState() => _adapterStream;
+  Stream<UnlockdBluetoothAdapterState> adapterState() =>
+      adapterStateController.stream;
 
   @override
   bool get isScanningNow => _isScanningNow;
 
+  set isScanningNow(bool value) {
+    isScanningController.add(value);
+  }
+
   @override
   Stream<bool> isScanning() {
-    return _scanStream.map((event) => event.isNotEmpty);
+    return isScanningController.stream.map((event) => _isScanningNow = event);
   }
 
   @override
@@ -66,29 +69,38 @@ class FakeBluetoothAdapter extends UnlockdBluetoothAdapter {
     List<String>? withNames,
     List<String>? withKeywords,
     List<UnlockdMsdFilter>? withMsd,
-  }) async {}
+  }) async {
+    isScanningNow = true;
+  }
 
   @override
-  Future<void> stopScan() async {}
+  Future<void> stopScan() async {
+    for (final subscription in _subscriptionsToCancel) {
+      await subscription.cancel();
+    }
+    isScanningNow = false;
+  }
 
   @override
   Future<List<UnlockdBluetoothDevice>> get systemDevices async {
-    return _scanStream.map((event) => event.map((e) => e.device).toList()).last;
+    return scanController.stream
+        .map((event) => event.map((e) => e.device).toList())
+        .last;
   }
 
   @override
   Stream<List<UnlockdScanResult>> scanResults() {
-    return _scanStream;
+    return scanController.stream;
   }
 
   @override
   Stream<List<UnlockdScanResult>> onScanResults() {
-    return _scanStream;
+    return scanController.stream;
   }
 
   @override
   void cancelWhenScanComplete<T>(StreamSubscription<T> subscription) {
-    subscription.cancel();
+    _subscriptionsToCancel.add(subscription);
   }
 
   @override
