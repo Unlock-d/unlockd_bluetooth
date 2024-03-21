@@ -5,6 +5,9 @@ part of 'universal_ble/universal_ble.dart';
 class UniversalBleProvider extends UnlockdBluetoothAdapter {
   UniversalBleProvider._();
 
+  @override
+  String get name => 'universal_ble';
+
   /// Initializes singleton instance of [UniversalBleProvider].
   factory UniversalBleProvider.initialize({
     UniversalBlePlatform? universalBle,
@@ -115,11 +118,11 @@ class UniversalBleProvider extends UnlockdBluetoothAdapter {
 
   @override
   Stream<bool> isScanning() {
-    return _scanningController.stream.startWith(isScanningNow());
+    return _scanningController.stream.startWith(isScanningNow);
   }
 
   @override
-  bool isScanningNow() => _isScanning;
+  bool get isScanningNow => _isScanning;
 
   @override
   Stream<List<UnlockdScanResult>> scanResults() {
@@ -159,7 +162,7 @@ class UniversalBleProvider extends UnlockdBluetoothAdapter {
       _stopScanTimer = Timer(timeout, stopScan);
     }
 
-    if (isScanningNow()) {
+    if (isScanningNow) {
       await stopScan();
     }
 
@@ -186,7 +189,7 @@ class UniversalBleProvider extends UnlockdBluetoothAdapter {
   }
 
   @override
-  Future<List<UnlockdBluetoothDevice>> systemDevices() {
+  Future<List<UnlockdBluetoothDevice>> get systemDevices {
     // TODO(PJ): implement connect
     throw UnimplementedError();
   }

@@ -76,7 +76,7 @@ class IsarBluetoothConnector extends UnlockdBluetoothConnector {
     Map<String, dynamic> _,
   ) async {
     final bluetoothDevices =
-        await IsarBluetoothProvider.instance.systemDevices().then(
+        await IsarBluetoothProvider.instance.systemDevices.then(
               (list) => list
                   .map(
                     (e) => ConnectedSystemDevice(

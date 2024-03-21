@@ -76,7 +76,7 @@ class FbpBluetoothConnector extends UnlockdBluetoothConnector {
     Map<String, dynamic> _,
   ) async {
     final bluetoothDevices =
-        await FbpBluetoothProvider.instance.systemDevices().then(
+        await FbpBluetoothProvider.instance.systemDevices.then(
               (list) => list
                   .map(
                     (e) => ConnectedSystemDevice(

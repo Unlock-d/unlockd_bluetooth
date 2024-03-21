@@ -182,7 +182,7 @@ void main() {
 
     test('Should emit the correct scanning state', () async {
       await provider.startScan(timeout: const Duration(milliseconds: 100));
-      expect(provider.isScanningNow(), isTrue);
+      expect(provider.isScanningNow, isTrue);
 
       final isScanningStream = provider.isScanning();
 
@@ -198,7 +198,7 @@ void main() {
       );
 
       await Future<void>.delayed(const Duration(milliseconds: 200));
-      expect(provider.isScanningNow(), isFalse);
+      expect(provider.isScanningNow, isFalse);
 
       unawaited(
         expectLater(
@@ -212,7 +212,7 @@ void main() {
       );
 
       await provider.startScan(timeout: const Duration(milliseconds: 100));
-      expect(provider.isScanningNow(), isTrue);
+      expect(provider.isScanningNow, isTrue);
     });
   });
 }

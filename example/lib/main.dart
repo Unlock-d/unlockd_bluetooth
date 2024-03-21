@@ -179,7 +179,7 @@ class _FindDevicesScreenState extends State<FindDevicesScreen> {
         body: RefreshIndicator(
           onRefresh: () {
             setState(() {}); // force refresh of connectedSystemDevices
-            if (widget.bluetooth.isScanningNow() == false) {
+            if (widget.bluetooth.isScanningNow == false) {
               widget.bluetooth.startScan(
                 timeout: const Duration(seconds: 15),
                 androidUsesFineLocation: false,
@@ -193,7 +193,7 @@ class _FindDevicesScreenState extends State<FindDevicesScreen> {
             child: Column(
               children: <Widget>[
                 StreamBuilder<List<UnlockdBluetoothDevice>>(
-                  stream: Stream.fromFuture(widget.bluetooth.systemDevices()),
+                  stream: Stream.fromFuture(widget.bluetooth.systemDevices),
                   initialData: const [],
                   builder: (c, snapshot) => Column(
                     children: (snapshot.data ?? [])

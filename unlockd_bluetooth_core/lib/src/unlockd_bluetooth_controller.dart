@@ -60,7 +60,7 @@ class UnlockdBluetoothController implements UnlockdBluetoothAdapter {
   Stream<bool> isScanning() => _adapter.isScanning();
 
   @override
-  bool isScanningNow() => _adapter.isScanningNow();
+  bool get isScanningNow => _adapter.isScanningNow;
 
   @override
   Stream<List<UnlockdScanResult>> onScanResults() => _adapter.onScanResults();
@@ -92,8 +92,8 @@ class UnlockdBluetoothController implements UnlockdBluetoothAdapter {
   Future<void> stopScan() => _adapter.stopScan();
 
   @override
-  Future<List<UnlockdBluetoothDevice>> systemDevices() =>
-      _adapter.systemDevices();
+  Future<List<UnlockdBluetoothDevice>> get systemDevices =>
+      _adapter.systemDevices;
 
   @override
   Future<void> turnOff() => _adapter.turnOff();

@@ -30,6 +30,9 @@ class FakeBluetoothProvider extends UnlockdBluetoothAdapter {
       _adapterStateController.stream;
 
   @override
+  String get name => 'fake_bluetooth_adapter';
+
+  @override
   Future<void> close() async {
     await _adapterStateController.close();
     await _scanController.close();
@@ -47,7 +50,7 @@ class FakeBluetoothProvider extends UnlockdBluetoothAdapter {
   Stream<UnlockdBluetoothAdapterState> adapterState() => _adapterStream;
 
   @override
-  bool isScanningNow() => _isScanningNow;
+  bool get isScanningNow => _isScanningNow;
 
   @override
   Stream<bool> isScanning() {
@@ -69,7 +72,7 @@ class FakeBluetoothProvider extends UnlockdBluetoothAdapter {
   Future<void> stopScan() async {}
 
   @override
-  Future<List<UnlockdBluetoothDevice>> systemDevices() async {
+  Future<List<UnlockdBluetoothDevice>> get systemDevices async {
     return _scanStream.map((event) => event.map((e) => e.device).toList()).last;
   }
 

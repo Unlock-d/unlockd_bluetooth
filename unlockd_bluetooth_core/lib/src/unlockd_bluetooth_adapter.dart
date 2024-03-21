@@ -25,7 +25,7 @@ abstract class UnlockdBluetoothAdapter {
 
   Stream<UnlockdBluetoothAdapterState> adapterState();
 
-  bool isScanningNow();
+  bool get isScanningNow;
 
   Stream<bool> isScanning();
 
@@ -54,7 +54,7 @@ abstract class UnlockdBluetoothAdapter {
 
   Future<void> stopScan();
 
-  Future<List<UnlockdBluetoothDevice>> systemDevices();
+  Future<List<UnlockdBluetoothDevice>> get systemDevices;
 
   /// a stream of scan results
   /// - if you re-listen to the stream it re-emits the previous results

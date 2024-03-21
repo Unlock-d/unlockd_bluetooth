@@ -54,7 +54,7 @@ class FbpBluetoothProvider extends UnlockdBluetoothAdapter {
   }
 
   @override
-  bool isScanningNow() => FlutterBluePlus.isScanningNow;
+  bool get isScanningNow => FlutterBluePlus.isScanningNow;
 
   @override
   Stream<bool> isScanning() => FlutterBluePlus.isScanning;
@@ -95,7 +95,7 @@ class FbpBluetoothProvider extends UnlockdBluetoothAdapter {
       FbpBluetoothDevice.fromRemoteId(remoteId);
 
   @override
-  Future<List<UnlockdBluetoothDevice>> systemDevices() =>
+  Future<List<UnlockdBluetoothDevice>> get systemDevices =>
       FlutterBluePlus.systemDevices
           .then((list) => list.map(FbpBluetoothDevice.fromFbp).toList());
 
