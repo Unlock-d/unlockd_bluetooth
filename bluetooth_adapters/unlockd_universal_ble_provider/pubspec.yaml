@@ -1,6 +1,6 @@
 name: unlockd_universal_ble_adapter
 description: A Unlock'd Flutter package created by Unlock'd.
-version: 0.1.2
+version: 0.2.0
 publish_to: none
 
 environment:
@@ -17,7 +17,7 @@ dependencies:
     git:
       url: git@github.com:Unlock-d/unlockd_bluetooth.git
       path: unlockd_bluetooth_core
-      ref: v2.3.3
+      ref: v2.4.0
 
 dev_dependencies:
   flutter_test:
