@@ -5,9 +5,9 @@ class IsarBluetoothAdapter extends UnlockdBluetoothAdapter {
   IsarBluetoothAdapter._(this._isar) {
     assert(
       () {
-        if (!UnlockdBluetoothHelper.kIsWeb && UnlockdBluetoothHelper.kIsTest) {
-          IsarBluetoothConnector().initialize(this);
-        }
+        // if (!UnlockdBluetoothHelper.kIsWeb && UnlockdBluetoothHelper.kIsTest) {
+        //   IsarBluetoothConnector().initialize(this);
+        // }
         return true;
       }(),
       'This should only be called in debug mode',
