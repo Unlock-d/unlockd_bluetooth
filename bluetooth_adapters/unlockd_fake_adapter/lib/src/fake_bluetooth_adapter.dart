@@ -23,6 +23,7 @@ class FakeBluetoothAdapter extends UnlockdBluetoothAdapter {
   /// A [StreamController] to manipulate the current isScanning state
   final StreamController<bool> isScanningController;
 
+  Timer? _scanTimer;
   bool _isScanningNow;
   final _subscriptionsToCancel = <StreamSubscription<dynamic>>[];
 
@@ -34,6 +35,7 @@ class FakeBluetoothAdapter extends UnlockdBluetoothAdapter {
     await adapterStateController.close();
     await scanController.close();
     await isScanningController.close();
+    _scanTimer?.cancel();
   }
 
   @override
@@ -52,12 +54,15 @@ class FakeBluetoothAdapter extends UnlockdBluetoothAdapter {
   bool get isScanningNow => _isScanningNow;
 
   set isScanningNow(bool value) {
-    isScanningController.add(value);
+    if (!isScanningController.isClosed) {
+      isScanningController.add(value);
+    }
+    _isScanningNow = value;
   }
 
   @override
   Stream<bool> isScanning() {
-    return isScanningController.stream.map((event) => _isScanningNow = event);
+    return isScanningController.stream;
   }
 
   @override
@@ -71,14 +76,23 @@ class FakeBluetoothAdapter extends UnlockdBluetoothAdapter {
     List<UnlockdMsdFilter>? withMsd,
   }) async {
     isScanningNow = true;
+
+    if (timeout != null) {
+      _scanTimer = Timer(timeout, stopScan);
+    }
   }
 
   @override
   Future<void> stopScan() async {
+    isScanningNow = false;
+
     for (final subscription in _subscriptionsToCancel) {
       await subscription.cancel();
     }
-    isScanningNow = false;
+
+    if (_scanTimer != null && _scanTimer!.isActive) {
+      _scanTimer!.cancel();
+    }
   }
 
   @override
