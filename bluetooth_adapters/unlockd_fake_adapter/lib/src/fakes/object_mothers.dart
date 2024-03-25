@@ -28,10 +28,12 @@ UnlockdScanResult scanResult({
 UnlockdBluetoothDevice bluetoothDevice({
   String? remoteId,
   String? platformName,
+  bool? shouldAbortDfu,
 }) {
   return FakeBluetoothDevice(
     remoteId: remoteId ?? 'fake_remote_id',
     platformName: platformName ?? 'fake_platform_name',
+    shouldAbortDfu: shouldAbortDfu ?? false,
   );
 }
 

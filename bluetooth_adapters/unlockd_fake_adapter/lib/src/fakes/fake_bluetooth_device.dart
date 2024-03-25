@@ -7,10 +7,12 @@ class FakeBluetoothDevice extends Fake implements UnlockdBluetoothDevice {
   FakeBluetoothDevice({
     required this.remoteId,
     required this.platformName,
+    bool shouldAbortDfu = false,
     UnlockdBluetoothConnectionState initialConnectionState =
         UnlockdBluetoothConnectionState.disconnected,
   })  : connectionController = StreamController.broadcast(),
         subscriptionController = StreamController.broadcast(),
+        _shouldAbortDfu = shouldAbortDfu,
         _connectionStateNow = initialConnectionState {
     connectionController.stream.listen((event) {
       _connectionStateNow = event;
@@ -23,6 +25,7 @@ class FakeBluetoothDevice extends Fake implements UnlockdBluetoothDevice {
   /// A [StreamController] to manipulate a subscription.
   final StreamController<Uint8List> subscriptionController;
 
+  final bool _shouldAbortDfu;
   UnlockdBluetoothConnectionState _connectionStateNow;
 
   @override
@@ -69,19 +72,40 @@ class FakeBluetoothDevice extends Fake implements UnlockdBluetoothDevice {
     DeviceCallback? onProcessStarting,
     int timeout = 10,
   }) async {
-    var counter = 3;
+    const initialCounter = 10;
+    var counter = initialCounter;
 
-    Timer.periodic(Duration(seconds: counter), (timer) {
+    onConnecting?.call(remoteId);
+    await Future<void>.delayed(const Duration(milliseconds: 50));
+    onConnected?.call(remoteId);
+
+    Timer.periodic(const Duration(milliseconds: 100), (timer) async {
       if (counter == 0) {
         timer.cancel();
+
+        if (_shouldAbortDfu) {
+          onAborted?.call(remoteId);
+        } else {
+          onCompleted?.call(remoteId);
+        }
+
+        onDisconnecting?.call(remoteId);
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+        onDisconnected?.call(remoteId);
       } else {
+        if (counter == initialCounter) {
+          onProcessStarting?.call(remoteId);
+          await Future<void>.delayed(const Duration(milliseconds: 50));
+          onProcessStarted?.call(remoteId);
+        }
+
         onProgressChanged(
           remoteId,
           timer.tick * 10,
           100,
           33.3,
           timer.tick,
-          counter,
+          initialCounter,
         );
         counter--;
       }
