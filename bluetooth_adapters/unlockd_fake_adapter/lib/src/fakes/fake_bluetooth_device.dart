@@ -7,18 +7,23 @@ class FakeBluetoothDevice extends Fake implements UnlockdBluetoothDevice {
   FakeBluetoothDevice({
     required this.remoteId,
     required this.platformName,
-    UnlockdBluetoothConnectionState? initialConnectionState,
-    StreamController<UnlockdBluetoothConnectionState>? connectionController,
-    StreamController<Uint8List>? subscriptionController,
-  })  : _connectionController =
-            connectionController ?? StreamController.broadcast(),
-        _subscriptionController =
-            subscriptionController ?? StreamController.broadcast(),
-        _initialConnectionState = initialConnectionState;
+    UnlockdBluetoothConnectionState initialConnectionState =
+        UnlockdBluetoothConnectionState.disconnected,
+  })  : connectionController = StreamController.broadcast(),
+        subscriptionController = StreamController.broadcast(),
+        _connectionStateNow = initialConnectionState {
+    connectionController.stream.listen((event) {
+      _connectionStateNow = event;
+    });
+  }
 
-  final StreamController<UnlockdBluetoothConnectionState> _connectionController;
-  final StreamController<Uint8List> _subscriptionController;
-  final UnlockdBluetoothConnectionState? _initialConnectionState;
+  /// A [StreamController] to manipulate the connection state.
+  final StreamController<UnlockdBluetoothConnectionState> connectionController;
+
+  /// A [StreamController] to manipulate a subscription.
+  final StreamController<Uint8List> subscriptionController;
+
+  UnlockdBluetoothConnectionState _connectionStateNow;
 
   @override
   final String remoteId;
@@ -28,15 +33,11 @@ class FakeBluetoothDevice extends Fake implements UnlockdBluetoothDevice {
 
   @override
   bool get isConnected =>
-      _initialConnectionState == UnlockdBluetoothConnectionState.connected;
+      _connectionStateNow == UnlockdBluetoothConnectionState.connected;
 
   @override
-  Stream<UnlockdBluetoothConnectionState> get connectionState async* {
-    if (_initialConnectionState != null) {
-      yield _initialConnectionState!;
-    }
-    yield* _connectionController.stream;
-  }
+  Stream<UnlockdBluetoothConnectionState> get connectionState =>
+      connectionController.stream;
 
   @override
   Future<void> write(
@@ -52,5 +53,38 @@ class FakeBluetoothDevice extends Fake implements UnlockdBluetoothDevice {
     UnlockdGuid serviceUuid,
     UnlockdGuid characteristicUuid,
   ) =>
-      _subscriptionController.stream;
+      subscriptionController.stream;
+
+  @override
+  Future<void> performUpdate(
+    FirmwarePackage firmwarePackage, {
+    required ProgressCallback onProgressChanged,
+    DeviceCallback? onConnected,
+    DeviceCallback? onConnecting,
+    DeviceCallback? onDisconnected,
+    DeviceCallback? onDisconnecting,
+    DeviceCallback? onAborted,
+    DeviceCallback? onCompleted,
+    DeviceCallback? onProcessStarted,
+    DeviceCallback? onProcessStarting,
+    int timeout = 10,
+  }) async {
+    var counter = 3;
+
+    Timer.periodic(Duration(seconds: counter), (timer) {
+      if (counter == 0) {
+        timer.cancel();
+      } else {
+        onProgressChanged(
+          remoteId,
+          timer.tick * 10,
+          100,
+          33.3,
+          timer.tick,
+          counter,
+        );
+        counter--;
+      }
+    });
+  }
 }

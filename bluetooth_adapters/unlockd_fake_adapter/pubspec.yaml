@@ -1,6 +1,6 @@
 name: unlockd_fake_adapter
 description: A Unlock'd Flutter package created by Unlock'd.
-version: 0.2.0
+version: 0.2.1
 publish_to: none
 
 environment:

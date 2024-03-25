@@ -1,8 +1,5 @@
 // ignore_for_file: public_member_api_docs
 
-import 'dart:async';
-import 'dart:typed_data';
-
 import 'package:unlockd_bluetooth_core/unlockd_bluetooth.dart';
 import 'package:unlockd_fake_adapter/unlockd_fake_adapter.dart';
 
@@ -18,7 +15,7 @@ UnlockdScanResult scanResult({
     device: device ?? bluetoothDevice(),
     rssi: rssi,
     advertisementData: FakeAdvertisementData(
-      advName: 'TRP Controller',
+      advName: 'fake_adv_name',
       txPowerLevel: 0,
       connectable: true,
       manufacturerData: {},
@@ -31,12 +28,10 @@ UnlockdScanResult scanResult({
 UnlockdBluetoothDevice bluetoothDevice({
   String? remoteId,
   String? platformName,
-  StreamController<Uint8List>? subscriptionController,
 }) {
   return FakeBluetoothDevice(
     remoteId: remoteId ?? 'fake_remote_id',
-    platformName: platformName ?? 'fake_adv_name',
-    subscriptionController: subscriptionController,
+    platformName: platformName ?? 'fake_platform_name',
   );
 }
 
