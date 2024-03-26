@@ -1,19 +1,54 @@
 part of 'fakes.dart';
 
+/// A configuration class for the DFU Process.
+class DFUProcessConfiguration {
+  /// Creates a [DFUProcessConfiguration],
+  const DFUProcessConfiguration({
+    this.shouldAbortDfu = false,
+    this.updateDuration = const Duration(seconds: 1),
+    this.amountOfProgressSteps = 10,
+  });
+
+  /// Whether the DFU process should be aborted.
+  final bool shouldAbortDfu;
+
+  /// The duration of the update process.
+  final Duration updateDuration;
+
+  /// The amount of times the progress should be updated.
+  final int amountOfProgressSteps;
+}
+
+/// A configuration class for the connection.
+class ConnectionConfiguration {
+  /// Creates a [ConnectionConfiguration].
+  const ConnectionConfiguration({
+    this.initialConnectionState = UnlockdBluetoothConnectionState.disconnected,
+    this.shouldFailConnecting = false,
+    this.shouldTimeout = false,
+  });
+
+  /// The initial connection state.
+  final UnlockdBluetoothConnectionState initialConnectionState;
+
+  /// Whether the connection should fail.
+  final bool shouldFailConnecting;
+
+  /// Whether the connection should timeout.
+  final bool shouldTimeout;
+}
+
 /// A [Fake] implementation of [UnlockdBluetoothDevice].
 class FakeBluetoothDevice extends Fake implements UnlockdBluetoothDevice {
-  /// Creates a [FakeBluetoothDevice] with the given [initialConnectionState]
-  /// and [connectionController].
+  /// Creates a [FakeBluetoothDevice] with the given configuration.
   FakeBluetoothDevice({
     required this.remoteId,
     required this.platformName,
-    bool shouldAbortDfu = false,
-    UnlockdBluetoothConnectionState initialConnectionState =
-        UnlockdBluetoothConnectionState.disconnected,
+    this.dfuProcessConfiguration = const DFUProcessConfiguration(),
+    this.connectionConfiguration = const ConnectionConfiguration(),
   })  : connectionController = StreamController.broadcast(),
         subscriptionController = StreamController.broadcast(),
-        _shouldAbortDfu = shouldAbortDfu,
-        _connectionStateNow = initialConnectionState {
+        _connectionStateNow = connectionConfiguration.initialConnectionState {
     connectionController.stream.listen((event) {
       _connectionStateNow = event;
     });
@@ -25,7 +60,12 @@ class FakeBluetoothDevice extends Fake implements UnlockdBluetoothDevice {
   /// A [StreamController] to manipulate a subscription.
   final StreamController<Uint8List> subscriptionController;
 
-  final bool _shouldAbortDfu;
+  /// The configuration for the DFU process.
+  final DFUProcessConfiguration dfuProcessConfiguration;
+
+  /// The configuration for the connection.
+  final ConnectionConfiguration connectionConfiguration;
+
   UnlockdBluetoothConnectionState _connectionStateNow;
 
   @override
@@ -41,6 +81,27 @@ class FakeBluetoothDevice extends Fake implements UnlockdBluetoothDevice {
   @override
   Stream<UnlockdBluetoothConnectionState> get connectionState =>
       connectionController.stream;
+
+  @override
+  Future<void> connect({
+    required Duration timeout,
+    bool autoConnect = false,
+    int? mtu,
+  }) async {
+    if (!isConnected) {
+      if (connectionConfiguration.shouldFailConnecting) {
+        connectionController.add(UnlockdBluetoothConnectionState.disconnected);
+        throw Exception('Failed to connect');
+      }
+
+      if (connectionConfiguration.shouldTimeout) {
+        await Future<void>.delayed(timeout);
+        throw Exception('Connection timed out');
+      }
+
+      connectionController.add(UnlockdBluetoothConnectionState.connected);
+    }
+  }
 
   @override
   Future<void> write(
@@ -72,18 +133,24 @@ class FakeBluetoothDevice extends Fake implements UnlockdBluetoothDevice {
     DeviceCallback? onProcessStarting,
     int timeout = 10,
   }) async {
-    const initialCounter = 10;
+    final initialCounter = dfuProcessConfiguration.amountOfProgressSteps;
+    final timerInterval = Duration(
+      milliseconds: dfuProcessConfiguration.updateDuration.inMilliseconds ~/
+          initialCounter,
+    );
     var counter = initialCounter;
 
-    onConnecting?.call(remoteId);
-    await Future<void>.delayed(const Duration(milliseconds: 50));
-    onConnected?.call(remoteId);
+    if (!isConnected) {
+      onConnecting?.call(remoteId);
+      await Future<void>.delayed(const Duration(milliseconds: 50));
+      onConnected?.call(remoteId);
+    }
 
-    Timer.periodic(const Duration(milliseconds: 100), (timer) async {
+    Timer.periodic(timerInterval, (timer) async {
       if (counter == 0) {
         timer.cancel();
 
-        if (_shouldAbortDfu) {
+        if (dfuProcessConfiguration.shouldAbortDfu) {
           onAborted?.call(remoteId);
         } else {
           onCompleted?.call(remoteId);
