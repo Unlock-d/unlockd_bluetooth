@@ -9,19 +9,26 @@ import 'package:unlockd_fake_adapter/unlockd_fake_adapter.dart';
 
 UnlockdScanResult scanResult({
   UnlockdBluetoothDevice? device,
+  UnlockdAdvertisementData? advData,
   int rssi = -50,
 }) {
   return FakeScanResult(
     device: device ?? bluetoothDevice(),
     rssi: rssi,
-    advertisementData: FakeAdvertisementData(
-      advName: 'fake_adv_name',
-      txPowerLevel: 0,
-      connectable: true,
-      manufacturerData: {},
-      serviceData: {},
-      serviceUuids: [],
-    ),
+    advertisementData: advData ?? advertisementData(),
+  );
+}
+
+UnlockdAdvertisementData advertisementData({
+  String? advName,
+}) {
+  return FakeAdvertisementData(
+    advName: advName ?? 'fake_adv_name',
+    txPowerLevel: 0,
+    connectable: true,
+    manufacturerData: {},
+    serviceData: {},
+    serviceUuids: [],
   );
 }
 
