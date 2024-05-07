@@ -1,43 +1,5 @@
 part of 'fakes.dart';
 
-/// A configuration class for the DFU Process.
-class DFUProcessConfiguration {
-  /// Creates a [DFUProcessConfiguration],
-  const DFUProcessConfiguration({
-    this.shouldAbortDfu = false,
-    this.updateDuration = const Duration(seconds: 1),
-    this.amountOfProgressSteps = 10,
-  });
-
-  /// Whether the DFU process should be aborted.
-  final bool shouldAbortDfu;
-
-  /// The duration of the update process.
-  final Duration updateDuration;
-
-  /// The amount of times the progress should be updated.
-  final int amountOfProgressSteps;
-}
-
-/// A configuration class for the connection.
-class ConnectionConfiguration {
-  /// Creates a [ConnectionConfiguration].
-  const ConnectionConfiguration({
-    this.initialConnectionState = UnlockdBluetoothConnectionState.disconnected,
-    this.shouldFailConnecting = false,
-    this.shouldTimeout = false,
-  });
-
-  /// The initial connection state.
-  final UnlockdBluetoothConnectionState initialConnectionState;
-
-  /// Whether the connection should fail.
-  final bool shouldFailConnecting;
-
-  /// Whether the connection should timeout.
-  final bool shouldTimeout;
-}
-
 /// A [Fake] implementation of [UnlockdBluetoothDevice].
 class FakeBluetoothDevice extends Fake implements UnlockdBluetoothDevice {
   /// Creates a [FakeBluetoothDevice] with the given configuration.
@@ -48,6 +10,7 @@ class FakeBluetoothDevice extends Fake implements UnlockdBluetoothDevice {
     this.connectionConfiguration = const ConnectionConfiguration(),
   })  : connectionController = StreamController.broadcast(),
         subscriptionController = StreamController.broadcast(),
+        writeController = StreamController.broadcast(),
         _connectionStateNow = connectionConfiguration.initialConnectionState {
     connectionController.stream.listen((event) {
       _connectionStateNow = event;
@@ -59,6 +22,9 @@ class FakeBluetoothDevice extends Fake implements UnlockdBluetoothDevice {
 
   /// A [StreamController] to manipulate a subscription.
   final StreamController<Uint8List> subscriptionController;
+
+  /// A [StreamController] to manipulate a subscription.
+  final StreamController<FakeCharacteristicWrite> writeController;
 
   /// The configuration for the DFU process.
   final DFUProcessConfiguration dfuProcessConfiguration;
@@ -110,7 +76,15 @@ class FakeBluetoothDevice extends Fake implements UnlockdBluetoothDevice {
     required Uint8List value,
     bool? withoutResponse,
     bool? allowLongWrite,
-  }) async {}
+  }) async {
+    writeController.add(
+      FakeCharacteristicWrite(
+        serviceGuid: serviceUuid,
+        characteristicGuid: characteristicUuid,
+        value: value,
+      ),
+    );
+  }
 
   @override
   Stream<Uint8List> subscribe(
