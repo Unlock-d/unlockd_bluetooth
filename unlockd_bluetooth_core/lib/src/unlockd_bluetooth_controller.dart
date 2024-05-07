@@ -71,6 +71,7 @@ class UnlockdBluetoothController implements UnlockdBluetoothAdapter {
   @override
   Future<void> startScan({
     Duration? timeout,
+    Duration? removeAfter,
     bool? androidUsesFineLocation,
     List<UnlockdGuid>? withServices,
     List<String>? withRemoteIds,
@@ -80,6 +81,7 @@ class UnlockdBluetoothController implements UnlockdBluetoothAdapter {
   }) =>
       _adapter.startScan(
         timeout: timeout,
+        removeAfter: removeAfter,
         androidUsesFineLocation: androidUsesFineLocation,
         withServices: withServices,
         withRemoteIds: withRemoteIds,

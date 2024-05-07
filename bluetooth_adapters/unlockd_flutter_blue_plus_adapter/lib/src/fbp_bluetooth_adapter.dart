@@ -62,6 +62,7 @@ class FbpBluetoothAdapter extends UnlockdBluetoothAdapter {
   @override
   Future<void> startScan({
     Duration? timeout,
+    Duration? removeAfter,
     bool? androidUsesFineLocation,
     List<UnlockdGuid>? withServices,
     List<String>? withRemoteIds,
@@ -71,6 +72,8 @@ class FbpBluetoothAdapter extends UnlockdBluetoothAdapter {
   }) =>
       FlutterBluePlus.startScan(
         timeout: timeout,
+        removeIfGone: removeAfter,
+        continuousUpdates: removeAfter != null,
         androidUsesFineLocation: androidUsesFineLocation ?? false,
         withServices:
             withServices?.map((e) => Guid.fromBytes(e.bytes)).toList() ??

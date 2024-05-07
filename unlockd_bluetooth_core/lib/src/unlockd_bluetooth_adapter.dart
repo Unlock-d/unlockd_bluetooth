@@ -40,10 +40,13 @@ abstract class UnlockdBluetoothAdapter {
   ///   - [withKeywords] filter by advertised names (matches any substring)
   ///   - [withMsd] filter by manufacture specific data
   ///   - [timeout] calls stopScan after a specified duration
+  ///   - [removeAfter] if present, remove devices after they've stopped
+  ///   advertising for the given duration
   ///   - [androidUsesFineLocation] request `ACCESS_FINE_LOCATION`
   ///   permission at runtime
   Future<void> startScan({
     Duration? timeout,
+    Duration? removeAfter,
     bool? androidUsesFineLocation,
     List<UnlockdGuid>? withServices,
     List<String>? withRemoteIds,

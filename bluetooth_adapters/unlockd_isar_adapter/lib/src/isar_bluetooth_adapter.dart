@@ -82,6 +82,7 @@ class IsarBluetoothAdapter extends UnlockdBluetoothAdapter {
   @override
   Future<void> startScan({
     Duration? timeout,
+    Duration? removeAfter,
     bool? androidUsesFineLocation,
     List<UnlockdGuid>? withServices,
     List<String>? withRemoteIds,
