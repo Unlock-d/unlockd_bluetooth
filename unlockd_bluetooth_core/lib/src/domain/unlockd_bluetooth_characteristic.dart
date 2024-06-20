@@ -15,9 +15,11 @@ abstract class UnlockdBluetoothCharacteristic {
   /// Characteristic Bluetooth GUID
   UnlockdGuid get characteristicUuid;
 
-  /// This stream emits values:
+  /// this stream emits values:
   ///   - anytime `read()` is called
+  ///   - anytime `write()` is called
   ///   - anytime a notification arrives (if subscribed)
+  ///   - and when first listened to, it re-emits the last value for convenience
   Stream<Uint8List> get onValueReceived;
 
   /// this variable is updated:

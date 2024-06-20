@@ -31,7 +31,7 @@ class FbpBluetoothCharacteristic extends UnlockdBluetoothCharacteristic {
 
   @override
   Stream<Uint8List> get onValueReceived =>
-      _characteristic.onValueReceived.map(Uint8List.fromList);
+      _characteristic.lastValueStream.map(Uint8List.fromList);
 
   @override
   List<int> get lastValue => _characteristic.lastValue;
