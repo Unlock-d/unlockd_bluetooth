@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
@@ -26,6 +27,7 @@ class FbpBluetoothDevice extends UnlockdBluetoothDevice {
   }
 
   final BluetoothDevice _device;
+  List<UnlockdBluetoothService>? _services;
 
   @override
   String get remoteId => _device.remoteId.str;
@@ -63,11 +65,13 @@ class FbpBluetoothDevice extends UnlockdBluetoothDevice {
     bool autoConnect = false,
     int? mtu,
   }) =>
-      _device.connect(
-        timeout: timeout,
-        autoConnect: autoConnect,
-        mtu: mtu,
-      );
+      _device
+          .connect(
+            timeout: timeout,
+            autoConnect: autoConnect,
+            mtu: mtu,
+          )
+          .then((_) => _services = null);
 
   @override
   Future<void> disconnect() => _device.disconnect();
@@ -79,7 +83,7 @@ class FbpBluetoothDevice extends UnlockdBluetoothDevice {
   Future<int> readRssi() => _device.readRssi();
 
   @override
-  Future<List<UnlockdBluetoothService>> discoverServices() {
+  Future<List<UnlockdBluetoothService>> discoverServices() async {
     return _device
         .discoverServices()
         .then((value) => value.map(FbpBluetoothService.fromFbp).toList());
@@ -160,11 +164,8 @@ class FbpBluetoothDevice extends UnlockdBluetoothDevice {
     UnlockdGuid serviceUuid,
     UnlockdGuid characteristicUuid,
   ) async {
-    final service = await discoverServices().then(
-      (services) => services.firstWhere(
-        (service) => service.serviceUuid == serviceUuid,
-      ),
-    );
+    final service = (_services ?? await discoverServices())
+        .firstWhere((service) => service.serviceUuid == serviceUuid);
 
     final characteristic = service.characteristics.firstWhere(
       (characteristic) =>
