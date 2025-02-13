@@ -2,12 +2,15 @@ import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:logging/logging.dart';
 import 'package:unlockd_bluetooth_core/unlockd_bluetooth.dart';
 import 'package:unlockd_flutter_blue_plus_adapter/unlockd_flutter_blue_plus_adapter.dart';
 
 /// A [UnlockdBluetoothDevice] implementation for the [FlutterBluePlus] package.
 class FbpBluetoothDevice extends UnlockdBluetoothDevice {
-  FbpBluetoothDevice._(this._device);
+  FbpBluetoothDevice._(this._device) {
+    _logger = Logger(_device.remoteId.str);
+  }
 
   /// Creates a [FbpBluetoothDevice] from a [BluetoothDevice].
   factory FbpBluetoothDevice.fromFbp(BluetoothDevice device) {
@@ -28,6 +31,7 @@ class FbpBluetoothDevice extends UnlockdBluetoothDevice {
 
   final BluetoothDevice _device;
   List<UnlockdBluetoothService>? _services;
+  late final Logger _logger;
 
   @override
   String get remoteId => _device.remoteId.str;
@@ -94,10 +98,27 @@ class FbpBluetoothDevice extends UnlockdBluetoothDevice {
     UnlockdGuid serviceUuid,
     UnlockdGuid characteristicUuid,
   ) async {
+    final stopwatch = Stopwatch()..start();
+    _logger.finest(
+      'Reading $characteristicUuid on $serviceUuid',
+      stopwatch.elapsed,
+    );
     final characteristic =
         await _findCharacteristic(serviceUuid, characteristicUuid);
+    _logger.finest(
+      'Going to read $characteristicUuid',
+      stopwatch.elapsed,
+    );
 
-    return characteristic.read();
+    final result = await characteristic.read();
+
+    _logger.finest(
+      'Read $characteristicUuid, got value $result',
+      stopwatch.elapsed,
+    );
+    stopwatch.stop();
+
+    return result;
   }
 
   @override
@@ -167,10 +188,14 @@ class FbpBluetoothDevice extends UnlockdBluetoothDevice {
     final service = (_services ?? await discoverServices())
         .firstWhere((service) => service.serviceUuid == serviceUuid);
 
+    _logger.finest('Found service $serviceUuid');
+
     final characteristic = service.characteristics.firstWhere(
       (characteristic) =>
           characteristic.characteristicUuid == characteristicUuid,
     );
+
+    _logger.finest('Found characteristic $characteristicUuid');
 
     return characteristic;
   }
