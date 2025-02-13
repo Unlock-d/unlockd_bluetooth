@@ -88,9 +88,13 @@ class FbpBluetoothDevice extends UnlockdBluetoothDevice {
 
   @override
   Future<List<UnlockdBluetoothService>> discoverServices() async {
-    return _device
+    _logger.finest('Discovering services');
+
+    _services = await _device
         .discoverServices()
         .then((value) => value.map(FbpBluetoothService.fromFbp).toList());
+
+    return _services!;
   }
 
   @override
