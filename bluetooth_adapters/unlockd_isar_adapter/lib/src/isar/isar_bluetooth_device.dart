@@ -155,6 +155,9 @@ class IsarBluetoothDevice extends UnlockdBluetoothDevice {
     });
   }
 
+  @override
+  Future<void> removeBond({int timeout = 30}) async {}
+
   IsarBluetoothCharacteristic _findCharacteristic(
     UnlockdGuid serviceUuid,
     UnlockdGuid characteristicUuid,

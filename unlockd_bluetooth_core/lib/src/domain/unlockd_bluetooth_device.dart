@@ -132,4 +132,7 @@ abstract class UnlockdBluetoothDevice {
     DeviceCallback? onProcessStarting,
     int timeout = 10,
   });
+
+  /// Remove bond (Android Only)
+  Future<void> removeBond({int timeout = 30});
 }

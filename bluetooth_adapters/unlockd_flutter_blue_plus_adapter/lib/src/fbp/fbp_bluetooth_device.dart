@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:logging/logging.dart';
 import 'package:unlockd_bluetooth_core/unlockd_bluetooth.dart';
@@ -183,6 +184,13 @@ class FbpBluetoothDevice extends UnlockdBluetoothDevice {
       onProcessStarted: onProcessStarted,
       onProcessStarting: onProcessStarting,
     );
+  }
+
+  @override
+  Future<void> removeBond({int timeout = 30}) async {
+    if (defaultTargetPlatform == TargetPlatform.android) {
+      return _device.removeBond();
+    }
   }
 
   Future<UnlockdBluetoothCharacteristic> _findCharacteristic(

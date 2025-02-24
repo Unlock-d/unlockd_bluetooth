@@ -178,5 +178,12 @@ class UniversalBleBluetoothDevice extends UnlockdBluetoothDevice
   }
 
   @override
+  Future<void> removeBond() async {
+    if (defaultTargetPlatform == TargetPlatform.android) {
+      return UniversalBle.unPair(remoteId);
+    }
+  }
+
+  @override
   List<Object?> get props => [remoteId];
 }
