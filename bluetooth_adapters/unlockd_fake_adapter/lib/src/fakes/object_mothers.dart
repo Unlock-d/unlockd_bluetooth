@@ -32,7 +32,7 @@ UnlockdAdvertisementData advertisementData({
   );
 }
 
-UnlockdBluetoothDevice bluetoothDevice({
+FakeBluetoothDevice bluetoothDevice({
   String? remoteId,
   String? platformName,
   DFUProcessConfiguration? dfuProcessConfiguration,

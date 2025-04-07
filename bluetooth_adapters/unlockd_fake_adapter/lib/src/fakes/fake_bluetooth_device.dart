@@ -27,10 +27,10 @@ class FakeBluetoothDevice extends Fake implements UnlockdBluetoothDevice {
   final StreamController<FakeCharacteristicWrite> writeController;
 
   /// The configuration for the DFU process.
-  final DFUProcessConfiguration dfuProcessConfiguration;
+  DFUProcessConfiguration dfuProcessConfiguration;
 
   /// The configuration for the connection.
-  final ConnectionConfiguration connectionConfiguration;
+  ConnectionConfiguration connectionConfiguration;
 
   UnlockdBluetoothConnectionState _connectionStateNow;
 
@@ -70,6 +70,13 @@ class FakeBluetoothDevice extends Fake implements UnlockdBluetoothDevice {
   }
 
   @override
+  Future<Uint8List> read(
+    UnlockdGuid serviceUuid,
+    UnlockdGuid characteristicUuid,
+  ) =>
+      subscriptionController.stream.last;
+
+  @override
   Future<void> write(
     UnlockdGuid serviceUuid,
     UnlockdGuid characteristicUuid, {
@@ -77,6 +84,10 @@ class FakeBluetoothDevice extends Fake implements UnlockdBluetoothDevice {
     bool? withoutResponse,
     bool? allowLongWrite,
   }) async {
+    if (connectionConfiguration.shouldFailWriting) {
+      throw Exception('Failed to write');
+    }
+
     writeController.add(
       FakeCharacteristicWrite(
         serviceGuid: serviceUuid,

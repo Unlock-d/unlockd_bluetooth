@@ -25,6 +25,7 @@ class ConnectionConfiguration {
   const ConnectionConfiguration({
     this.initialConnectionState = UnlockdBluetoothConnectionState.disconnected,
     this.shouldFailConnecting = false,
+    this.shouldFailWriting = false,
     this.shouldTimeout = false,
   });
 
@@ -34,6 +35,10 @@ class ConnectionConfiguration {
   /// Whether the connection should fail.
   final bool shouldFailConnecting;
 
+  /// Whether the writing to a characteristic should fail.
+  final bool shouldFailWriting;
+
   /// Whether the connection should timeout.
   final bool shouldTimeout;
 }
+

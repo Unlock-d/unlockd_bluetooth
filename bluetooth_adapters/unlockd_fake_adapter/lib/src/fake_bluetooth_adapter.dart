@@ -9,7 +9,9 @@ class FakeBluetoothAdapter extends UnlockdBluetoothAdapter {
   /// to control the state of the adapter and the scan results.
   FakeBluetoothAdapter({
     bool isScanningNow = false,
+    Map<String, UnlockdBluetoothDevice> knownDevices = const {},
   })  : _isScanningNow = isScanningNow,
+        _knownDevices = knownDevices,
         adapterStateController = StreamController.broadcast(),
         isScanningController = StreamController.broadcast(),
         scanController = StreamController.broadcast();
@@ -22,6 +24,8 @@ class FakeBluetoothAdapter extends UnlockdBluetoothAdapter {
 
   /// A [StreamController] to manipulate the current isScanning state
   final StreamController<bool> isScanningController;
+
+  final Map<String, UnlockdBluetoothDevice> _knownDevices;
 
   Timer? _scanTimer;
   bool _isScanningNow;
@@ -120,9 +124,10 @@ class FakeBluetoothAdapter extends UnlockdBluetoothAdapter {
 
   @override
   UnlockdBluetoothDevice fromRemoteId(String remoteId) {
-    return FakeBluetoothDevice(
-      remoteId: remoteId,
-      platformName: 'Fake Device',
-    );
+    return _knownDevices[remoteId] ??
+        FakeBluetoothDevice(
+          remoteId: remoteId,
+          platformName: 'Fake Device',
+        );
   }
 }
